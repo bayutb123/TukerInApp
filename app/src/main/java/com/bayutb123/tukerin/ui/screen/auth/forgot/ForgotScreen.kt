@@ -67,7 +67,7 @@ fun ForgotScreen(
             Column(
                 modifier = modifier.padding(horizontal = 16.dp),
             ) {
-                Text(text = "Provide your email", style = MaterialTheme.typography.titleMedium)
+                Text(text = "Enter your registered email", style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(8.dp))
                 CustomTextField(
                     onTextChanged = { email = it },
@@ -83,7 +83,7 @@ fun ForgotScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
                 Column {
-                    FullWidthButton(onClick = { isAlertVisible = !isAlertVisible }, text = "Send password to email")
+                    FullWidthButton(onClick = { isAlertVisible = !isAlertVisible }, text = "Confirm")
                 }
             }
         }
