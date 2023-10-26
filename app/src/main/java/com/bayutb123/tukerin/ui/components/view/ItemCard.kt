@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -46,12 +47,13 @@ fun ItemGrid(
 
             Column {
                 AsyncImage(
-                    model = "https://p-id.ipricegroup.com/uploaded_2b02d1205956c08014101f2bd611024e.jpg",
+                    model = "https://images.tokopedia.net/img/cache/700/OJWluG/2023/2/9/4abdeaa5-c862-48e9-8a87-12db8c35a500.jpg?ect=4g",
                     contentDescription = null,
                     modifier = modifier
                         .fillMaxWidth()
                         .height(154.dp),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
+                    filterQuality = FilterQuality.Medium
                 )
                 Column(
                     modifier = modifier
@@ -59,14 +61,14 @@ fun ItemGrid(
                         .padding(8.dp),
                 ) {
                     Text(
-                        text = "Rp 5.631.000",
+                        text = "Rp 444.200",
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = modifier.fillMaxWidth(),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = "Apple MacBook Pro 13-inch 2022",
+                        text = "Google Nest Mini 2nd Gen",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = modifier.fillMaxWidth(),
