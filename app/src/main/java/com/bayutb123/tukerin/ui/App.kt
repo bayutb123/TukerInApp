@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.bayutb123.tukerin.ui.screen.Screen
+import com.bayutb123.tukerin.ui.screen.auth.forgot.ForgotScreen
 import com.bayutb123.tukerin.ui.screen.auth.login.LoginScreen
 import com.bayutb123.tukerin.ui.screen.auth.register.RegisterScreen
 import com.bayutb123.tukerin.ui.screen.detail.DetailScreen
@@ -34,15 +35,49 @@ fun App(
             )
         }
         composable(route = Screen.Login.route) {
-            LoginScreen {
-                navController.navigate(it)
-            }
+            LoginScreen(
+                onNavigationRequested = {
+                    navController.navigate(it)
+                },
+                onLoginAuthorized = {
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
         }
         composable(route = Screen.Register.route) {
-            RegisterScreen()
+            RegisterScreen(
+                onNavigationRequested = {
+                    navController.navigate(it)
+                },
+                onBackRequested = {
+                    navController.popBackStack()
+                }
+            )
         }
         composable(route = Screen.Detail.route) {
-            DetailScreen()
+            DetailScreen(
+                onNavigationRequested = {
+                    navController.navigate(it)
+                },
+                onBackRequested = {
+                    navController.popBackStack()
+                }
+            )
         }
+        composable(route = Screen.Forgot.route) {
+            ForgotScreen(
+                onNavigationRequested = {
+                    navController.navigate(it)
+                },
+                onBackRequested = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
     }
 }

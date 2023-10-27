@@ -43,7 +43,8 @@ import com.bayutb123.tukerin.ui.theme.TukerInTheme
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    onLoginAuthorized: (String) -> Unit
+    onLoginAuthorized: (String) -> Unit,
+    onNavigationRequested: (route: String) -> Unit
 ) {
     var isAlertVisible by rememberSaveable { mutableStateOf(false) }
     var email by rememberSaveable { mutableStateOf("") }
@@ -110,13 +111,17 @@ fun LoginScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
-                        TextButton(onClick = { /*TODO*/ }) {
+                        TextButton(onClick = {
+                            onNavigationRequested(Screen.Forgot.route)
+                        }) {
                             Text(
                                 text = "Forgot Password?",
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
-                        TextButton(onClick = { /*TODO*/ }) {
+                        TextButton(onClick = {
+                            onNavigationRequested(Screen.Register.route)
+                        }) {
                             Text(text = "Register", style = MaterialTheme.typography.bodyMedium)
                         }
                     }
@@ -130,8 +135,9 @@ fun LoginScreen(
 @Composable
 fun LoginScreenPreview() {
     TukerInTheme {
-        LoginScreen() {
-
-        }
+        LoginScreen(
+            onLoginAuthorized = {},
+            onNavigationRequested = { }
+        )
     }
 }

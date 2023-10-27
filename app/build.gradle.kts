@@ -70,5 +70,7 @@ dependencies {
     val navVersion = "2.7.4"
     implementation("androidx.navigation:navigation-compose:$navVersion")
 
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
+
     implementation("io.coil-kt:coil-compose:2.4.0")
 }

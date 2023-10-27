@@ -32,19 +32,24 @@ import com.bayutb123.tukerin.ui.components.input.CustomTextField
 import com.bayutb123.tukerin.ui.components.input.FullWidthButton
 import com.bayutb123.tukerin.ui.components.view.AlertDialogWithNoCancel
 import com.bayutb123.tukerin.ui.components.view.Backgrounds
+import com.bayutb123.tukerin.ui.screen.Screen
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ForgotScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigationRequested: (route: String) -> Unit,
+    onBackRequested: () -> Unit
 ) {
     var isAlertVisible by rememberSaveable { mutableStateOf(false) }
     var email by rememberSaveable { mutableStateOf("") }
     Scaffold(
         topBar = {
             TopAppBar(title = { Text(text = "Forgot Password") }, navigationIcon = {
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = {
+                    onBackRequested()
+                }) {
                     Icon(imageVector = Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Back")
                 }
             })
@@ -94,6 +99,9 @@ fun ForgotScreen(
 @Composable
 fun ForgotScreenPreview() {
     TukerInTheme {
-        ForgotScreen()
+        ForgotScreen(
+            onNavigationRequested = {},
+            onBackRequested = {}
+        )
     }
 }

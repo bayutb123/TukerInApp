@@ -36,11 +36,14 @@ import com.bayutb123.tukerin.ui.components.input.CustomTextField
 import com.bayutb123.tukerin.ui.components.input.FullWidthButton
 import com.bayutb123.tukerin.ui.components.view.AlertDialogWithNoCancel
 import com.bayutb123.tukerin.ui.components.view.Backgrounds
+import com.bayutb123.tukerin.ui.screen.Screen
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 
 @Composable
 fun RegisterScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigationRequested: (route: String) -> Unit,
+    onBackRequested: () -> Unit
 ) {
     var isAlertVisible by rememberSaveable { mutableStateOf(false) }
     var name by rememberSaveable { mutableStateOf("") }
@@ -148,7 +151,9 @@ fun RegisterScreen(
                             text = "Already have an account?",
                             style = MaterialTheme.typography.bodyMedium
                         )
-                        TextButton(onClick = { /*TODO*/ }) {
+                        TextButton(onClick = {
+                            onNavigationRequested(Screen.Login.route)
+                        }) {
                             Text(
                                 text = "Login",
                                 style = MaterialTheme.typography.bodyMedium,
@@ -171,6 +176,9 @@ fun RegisterScreen(
 @Preview
 fun RegisterScreenPreview() {
     TukerInTheme {
-        RegisterScreen()
+        RegisterScreen(
+            onNavigationRequested = {},
+            onBackRequested = {}
+        )
     }
 }
