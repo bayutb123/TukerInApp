@@ -14,28 +14,28 @@ import com.bayutb123.tukerin.ui.screen.Screen
 data class NavItem(
     val route: String,
     val title: String,
-    val icon: ImageVector,
-    val iconDisabled: ImageVector? = null
+    val iconSelected: ImageVector,
+    val icon: ImageVector
 ) {
     companion object {
         val items = listOf(
             NavItem(
                 route = Screen.Dashboard.route,
                 title = "Dashboard",
-                icon = Icons.Default.Dashboard,
-                iconDisabled = Icons.Outlined.Dashboard
+                iconSelected = Icons.Default.Dashboard,
+                icon = Icons.Outlined.Dashboard
             ),
             NavItem(
                 route = Screen.Saved.route,
                 title = "Saved",
-                icon = Icons.Default.Bookmarks,
-                iconDisabled = Icons.Outlined.Bookmarks
+                iconSelected = Icons.Default.Bookmarks,
+                icon = Icons.Outlined.Bookmarks
             ),
             NavItem(
                 route = Screen.Profile.route,
                 title = "Profile",
-                icon = Icons.Default.AccountCircle,
-                iconDisabled = Icons.Outlined.AccountCircle
+                iconSelected = Icons.Default.AccountCircle,
+                icon = Icons.Outlined.AccountCircle
             )
         )
     }

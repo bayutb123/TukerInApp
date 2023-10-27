@@ -33,9 +33,14 @@ fun HomeScreen(
             NavigationBar {
                 val navBackStackEntry by homeNavController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.destination
-                navItem.forEach {item ->
+                navItem.forEach { item ->
                     NavigationBarItem(
-                        icon = { Icon(imageVector = item.icon, contentDescription = null) },
+                        icon = {
+                            if (currentDestination?.hierarchy?.any { it.route == item.route } == true) {
+                                Icon(imageVector = item.iconSelected, contentDescription = null)
+                            } else {
+                                Icon(imageVector = item.icon, contentDescription = null)
+                            } },
                         label = { Text(item.title) },
                         selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
                         onClick = {
