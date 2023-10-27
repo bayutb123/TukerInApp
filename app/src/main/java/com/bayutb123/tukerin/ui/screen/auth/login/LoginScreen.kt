@@ -37,11 +37,13 @@ import com.bayutb123.tukerin.ui.components.input.CustomTextField
 import com.bayutb123.tukerin.ui.components.input.FullWidthButton
 import com.bayutb123.tukerin.ui.components.view.AlertDialogWithNoCancel
 import com.bayutb123.tukerin.ui.components.view.Backgrounds
+import com.bayutb123.tukerin.ui.screen.Screen
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 
 @Composable
 fun LoginScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onLoginAuthorized: (String) -> Unit
 ) {
     var isAlertVisible by rememberSaveable { mutableStateOf(false) }
     var email by rememberSaveable { mutableStateOf("") }
@@ -97,7 +99,10 @@ fun LoginScreen(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Column {
-                    FullWidthButton(onClick = { isAlertVisible = !isAlertVisible }, text = "Login")
+                    FullWidthButton(onClick = {
+                        isAlertVisible = !isAlertVisible
+                        onLoginAuthorized(Screen.Home.route)
+                    }, text = "Login")
                     Row(
                         modifier = modifier
                             .fillMaxWidth()
@@ -125,6 +130,8 @@ fun LoginScreen(
 @Composable
 fun LoginScreenPreview() {
     TukerInTheme {
-        LoginScreen()
+        LoginScreen() {
+
+        }
     }
 }
