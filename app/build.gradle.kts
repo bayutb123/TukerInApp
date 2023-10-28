@@ -3,6 +3,7 @@ import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.kapt")
 }
 
 val apiUrl : String = gradleLocalProperties(rootDir).getProperty("apiUrl")
@@ -75,10 +76,19 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
+    // Navigation
     val navVersion = "2.7.4"
     implementation("androidx.navigation:navigation-compose:$navVersion")
 
+    // Material Icons Extended
     implementation("androidx.compose.material:material-icons-extended:1.5.4")
 
+    // Coil
     implementation("io.coil-kt:coil-compose:2.4.0")
+
+    // Dagger Hilt
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    implementation("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
+
 }
