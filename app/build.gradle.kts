@@ -1,7 +1,11 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
 }
+
+val apiUrl : String = gradleLocalProperties(rootDir).getProperty("apiUrl")
 
 android {
     namespace = "com.bayutb123.tukerin"
@@ -21,6 +25,9 @@ android {
     }
 
     buildTypes {
+        getByName("debug") {
+            buildConfigField("String", "apiUrl", apiUrl)
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -38,6 +45,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"
