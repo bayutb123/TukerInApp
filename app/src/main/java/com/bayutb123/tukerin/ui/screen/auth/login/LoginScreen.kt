@@ -11,12 +11,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -104,26 +101,27 @@ fun LoginScreen(
                         isAlertVisible = !isAlertVisible
                         onLoginAuthorized(Screen.Home.route)
                     }, text = "Login")
-                    Row(
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        TextButton(onClick = {
-                            onNavigationRequested(Screen.Forgot.route)
-                        }) {
-                            Text(
-                                text = "Forgot Password?",
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                        TextButton(onClick = {
-                            onNavigationRequested(Screen.Register.route)
-                        }) {
-                            Text(text = "Register", style = MaterialTheme.typography.bodyMedium)
-                        }
+
+                }
+                Row(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    TextButton(onClick = {
+                        onNavigationRequested(Screen.Forgot.route)
+                    }) {
+                        Text(
+                            text = "Forgot Password?",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                    TextButton(onClick = {
+                        onNavigationRequested(Screen.Register.route)
+                    }) {
+                        Text(text = "Register", style = MaterialTheme.typography.bodyMedium)
                     }
                 }
             }
@@ -137,7 +135,7 @@ fun LoginScreenPreview() {
     TukerInTheme {
         LoginScreen(
             onLoginAuthorized = {},
-            onNavigationRequested = { }
+            onNavigationRequested = { },
         )
     }
 }

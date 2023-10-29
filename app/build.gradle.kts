@@ -3,7 +3,9 @@ import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.dagger.hilt.android")
     id("org.jetbrains.kotlin.kapt")
+    id("com.google.gms.google-services")
 }
 
 val apiUrl : String = gradleLocalProperties(rootDir).getProperty("apiUrl")
@@ -38,11 +40,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
     buildFeatures {
         compose = true
@@ -89,6 +91,26 @@ dependencies {
     // Dagger Hilt
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-android-compiler:2.44")
-    implementation("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
+
+    // Firebase login
+    implementation("com.google.firebase:firebase-auth:22.2.0")
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+
+
+
+}
+
+
+kapt {
+    correctErrorTypes = true
 }
