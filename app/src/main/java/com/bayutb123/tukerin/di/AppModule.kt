@@ -12,7 +12,6 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
     @Provides
     fun provideAuthRepository() : AuthRepository {
         return AuthRepositoryImpl()
@@ -22,5 +21,4 @@ object AppModule {
     fun provideAuthUseCase(authRepository: AuthRepository) : AuthUseCase {
         return AuthUseCase(authRepository)
     }
-
 }
