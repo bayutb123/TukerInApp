@@ -1,28 +1,24 @@
 package com.bayutb123.tukerin.ui.screen.auth.login
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.bayutb123.tukerin.ui.screen.auth.firebase.GoogleSignInResult
-import com.bayutb123.tukerin.ui.screen.auth.firebase.GoogleSignInState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import androidx.lifecycle.viewModelScope
+import com.bayutb123.tukerin.domain.usecase.AuthUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LoginViewModel : ViewModel() {
-    private val _state = MutableStateFlow(GoogleSignInState())
-    val state = _state.asStateFlow()
+@HiltViewModel
+class LoginViewModel @Inject constructor(
+    private val authUseCase: AuthUseCase
+) : ViewModel(){
+    private val _state = mutableStateOf("")
+    val state = _state
 
-    fun onSignInResult(result: GoogleSignInResult) {
-        _state.update {
-            it.copy(
-                isSignInSuccessful = result.data != null,
-                errorMessages = result.errorMessages
-            )
-        }
-    }
-
-    fun resetState() {
-        _state.update {
-            GoogleSignInState()
+    fun login() {
+        viewModelScope.launch {
+            authUseCase.login("" , "")
+            _state.value = "Logged in"
         }
     }
 }

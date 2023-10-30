@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bayutb123.tukerin.ui.components.input.CustomTextField
 import com.bayutb123.tukerin.ui.components.input.FullWidthButton
 import com.bayutb123.tukerin.ui.components.view.AlertDialogWithNoCancel
@@ -43,6 +44,7 @@ fun LoginScreen(
     onLoginAuthorized: (String) -> Unit,
     onNavigationRequested: (route: String) -> Unit
 ) {
+    val viewModel : LoginViewModel = hiltViewModel()
     var isAlertVisible by rememberSaveable { mutableStateOf(false) }
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
@@ -98,30 +100,30 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 Column {
                     FullWidthButton(onClick = {
+                        viewModel.login()
                         isAlertVisible = !isAlertVisible
                         onLoginAuthorized(Screen.Home.route)
-                    }, text = "Login")
-
-                }
-                Row(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    TextButton(onClick = {
-                        onNavigationRequested(Screen.Forgot.route)
-                    }) {
-                        Text(
-                            text = "Forgot Password?",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-                    TextButton(onClick = {
-                        onNavigationRequested(Screen.Register.route)
-                    }) {
-                        Text(text = "Register", style = MaterialTheme.typography.bodyMedium)
+                    }, text = "Login" + viewModel.state.value)
+                    Row(
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                    ) {
+                        TextButton(onClick = {
+                            onNavigationRequested(Screen.Forgot.route)
+                        }) {
+                            Text(
+                                text = "Forgot Password?",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                        TextButton(onClick = {
+                            onNavigationRequested(Screen.Register.route)
+                        }) {
+                            Text(text = "Register", style = MaterialTheme.typography.bodyMedium)
+                        }
                     }
                 }
             }

@@ -15,7 +15,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TukerIn"
         tools:targetApi="tiramisu"
-        android:name=".TukerInApp">
+        android:name=".Application">
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
