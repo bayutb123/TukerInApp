@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TukerIn"
-        tools:targetApi="tiramisu">
+        tools:targetApi="tiramisu"
+        android:name=".Application">
         <activity
             android:name=".MainActivity"
             android:exported="true"
