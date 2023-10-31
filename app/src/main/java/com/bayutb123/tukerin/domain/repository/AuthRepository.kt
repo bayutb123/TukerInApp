@@ -1,6 +1,8 @@
 package com.bayutb123.tukerin.domain.repository
 
-interface AuthRepository {
+import com.bayutb123.tukerin.data.repository.Resource
+import com.bayutb123.tukerin.domain.model.User
 
-    suspend fun login(name: String, password: String)
+interface AuthRepository {
+    suspend fun login(email: String, password: String) : User?
 }

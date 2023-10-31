@@ -8,6 +8,7 @@ plugins {
 }
 
 val apiUrl : String = gradleLocalProperties(rootDir).getProperty("apiUrl")
+val pathUrl : String = gradleLocalProperties(rootDir).getProperty("pathUrl")
 
 android {
     namespace = "com.bayutb123.tukerin"
@@ -29,6 +30,7 @@ android {
     buildTypes {
         getByName("debug") {
             buildConfigField("String", "apiUrl", apiUrl)
+            buildConfigField("String", "pathUrl", pathUrl)
         }
         release {
             isMinifyEnabled = false
@@ -90,14 +92,11 @@ dependencies {
     // Dependency Injection
     implementation("com.google.dagger:hilt-android:2.44")
     kapt("com.google.dagger:hilt-android-compiler:2.44")
-
-    implementation("androidx.hilt:hilt-work:1.0.0")
     kapt("androidx.hilt:hilt-compiler:1.0.0")
-    implementation("androidx.work:work-runtime-ktx:2.8.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
     // Lifecycle
-    val lifecycle_version = "2.6.0-alpha05"
+    val lifecycle_version = "2.7.0-alpha03"
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_version")
