@@ -53,6 +53,15 @@ fun RegisterScreen(
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var confirmPassword by rememberSaveable { mutableStateOf("") }
+    var errorMsg by rememberSaveable { mutableStateOf("") }
+
+    if (state.value is RegisterState.Success) {
+        // TODO: Redirect to home or login page
+        errorMsg = (state.value as RegisterState.Success).msg.toString()
+    } else if (state.value is RegisterState.Error) {
+        errorMsg = ((state.value as RegisterState.Error).errorMsg)
+    }
+
     Scaffold { paddingValues ->
         Box(
             modifier = modifier
@@ -64,7 +73,7 @@ fun RegisterScreen(
             AnimatedVisibility(visible = state.value is RegisterState.Error || state.value is RegisterState.Success) {
                 AlertDialogWithNoCancel(
                     title = "Notice",
-                    message = state.value.message ?: "",
+                    message = errorMsg,
                     onDismiss = { viewModel.resetState() },
                     onConfirm = { viewModel.resetState() }
                 )
@@ -137,7 +146,7 @@ fun RegisterScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 Column {
                     FullWidthButton(onClick = {
-                        viewModel.register(name, email, password)
+                        viewModel.register(name, email, password, confirmPassword)
                     }, text = "Register")
                     Row(
                         modifier = modifier

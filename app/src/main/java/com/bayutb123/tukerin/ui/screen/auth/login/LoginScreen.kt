@@ -46,13 +46,16 @@ fun LoginScreen(
     onNavigationRequested: (route: String) -> Unit
 ) {
     val viewModel : LoginViewModel = hiltViewModel()
+    val state = viewModel.state.collectAsState()
+
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
-
-    val state = viewModel.state.collectAsState()
+    var errorMsg by rememberSaveable { mutableStateOf("") }
 
     if (state.value is LoginState.Success) {
         onLoginAuthorized(Screen.Home.route)
+    } else if (state.value is LoginState.Error) {
+        errorMsg = state.value.message ?: ""
     }
 
     Scaffold { paddingValues ->
@@ -66,7 +69,7 @@ fun LoginScreen(
             AnimatedVisibility(visible = state.value is LoginState.Error) {
                 AlertDialogWithNoCancel(
                     title = "Login Failed",
-                    message = state.value.message ?: "",
+                    message = errorMsg,
                     onDismiss = { viewModel.resetState() },
                     onConfirm = { viewModel.resetState() }
                 )

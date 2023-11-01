@@ -1,8 +1,8 @@
 package com.bayutb123.tukerin.domain.repository
 
-import com.bayutb123.tukerin.domain.model.User
+import com.bayutb123.tukerin.data.source.remote.Resource
 
 interface AuthRepository {
-    suspend fun login(email: String, password: String) : User?
-    suspend fun register(name: String, email: String, password: String) : User?
+    suspend fun login(email: String, password: String) : Resource<Any>
+    suspend fun register(name: String, email: String, password: String) : Resource<Any>
 }
