@@ -9,4 +9,5 @@ sealed class LoginState(
     class Success(data: User) : LoginState(data)
     class Loading(data: User? = null) : LoginState(data)
     class Error(message: String) : LoginState(null, message)
+    object Idle : LoginState()
 }

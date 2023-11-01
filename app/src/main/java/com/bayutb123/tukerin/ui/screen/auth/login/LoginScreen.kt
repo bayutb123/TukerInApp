@@ -1,5 +1,6 @@
 package com.bayutb123.tukerin.ui.screen.auth.login
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,8 +21,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -38,6 +42,7 @@ import com.bayutb123.tukerin.ui.components.view.Backgrounds
 import com.bayutb123.tukerin.ui.screen.Screen
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
@@ -45,9 +50,16 @@ fun LoginScreen(
     onNavigationRequested: (route: String) -> Unit
 ) {
     val viewModel : LoginViewModel = hiltViewModel()
-    var isAlertVisible by rememberSaveable { mutableStateOf(false) }
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
+
+    val state = viewModel.state.collectAsState()
+    val isAlertVisible = state.value is LoginState.Error
+
+    if (state.value is LoginState.Success) {
+        onLoginAuthorized(Screen.Home.route)
+    }
+
     Scaffold { paddingValues ->
         Box(
             modifier = modifier
@@ -58,10 +70,10 @@ fun LoginScreen(
         ) {
             AnimatedVisibility(visible = isAlertVisible) {
                 AlertDialogWithNoCancel(
-                    title = "Invalid Credentials",
-                    message = "Please check your email and password",
-                    onDismiss = { isAlertVisible = !isAlertVisible },
-                    onConfirm = { isAlertVisible = !isAlertVisible })
+                    title = "Login Failed",
+                    message = state.value.message ?: "",
+                    onDismiss = { viewModel.resetState() },
+                    onConfirm = { viewModel.resetState() })
             }
             Column(
                 modifier = modifier.padding(horizontal = 16.dp),
@@ -100,10 +112,11 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 Column {
                     FullWidthButton(onClick = {
-                        viewModel.login()
-                        isAlertVisible = !isAlertVisible
-                        onLoginAuthorized(Screen.Home.route)
-                    }, text = "Login" + viewModel.state.value)
+                        viewModel.login(
+                            email = email,
+                            password = password
+                        )
+                    }, text = "Login", enabled = state.value !is LoginState.Loading)
                     Row(
                         modifier = modifier
                             .fillMaxWidth()

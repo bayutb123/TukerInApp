@@ -33,6 +33,7 @@ object AppModule {
         val gson = GsonBuilder()
             .setLenient()
             .create()
+        println(BuildConfig.apiUrl + BuildConfig.pathUrl)
         val retrofit = Retrofit.Builder()
             .baseUrl(BuildConfig.apiUrl + BuildConfig.pathUrl)
             .addConverterFactory(GsonConverterFactory.create(gson))

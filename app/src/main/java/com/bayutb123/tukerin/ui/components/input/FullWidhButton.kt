@@ -27,13 +27,15 @@ fun FullWidthButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     text: String,
-    color: ButtonColors = ButtonDefaults.buttonColors()
+    color: ButtonColors = ButtonDefaults.buttonColors(),
+    enabled: Boolean = true
 ) {
     Button(
         shape = RoundedCornerShape(MaterialTheme.shapes.medium.topStart),
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
-        colors = color
+        colors = color,
+        enabled = enabled
     ) {
         Text(text = text, textAlign = TextAlign.Center, modifier = modifier
             .fillMaxWidth()
