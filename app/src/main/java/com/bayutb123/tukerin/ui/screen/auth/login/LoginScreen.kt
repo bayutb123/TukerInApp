@@ -1,6 +1,5 @@
 package com.bayutb123.tukerin.ui.screen.auth.login
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,11 +20,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -42,7 +39,6 @@ import com.bayutb123.tukerin.ui.components.view.Backgrounds
 import com.bayutb123.tukerin.ui.screen.Screen
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 
-@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
@@ -54,7 +50,6 @@ fun LoginScreen(
     var password by rememberSaveable { mutableStateOf("") }
 
     val state = viewModel.state.collectAsState()
-    val isAlertVisible = state.value is LoginState.Error
 
     if (state.value is LoginState.Success) {
         onLoginAuthorized(Screen.Home.route)
@@ -68,12 +63,13 @@ fun LoginScreen(
                 .padding(paddingValues),
             contentAlignment = Alignment.Center
         ) {
-            AnimatedVisibility(visible = isAlertVisible) {
+            AnimatedVisibility(visible = state.value is LoginState.Error) {
                 AlertDialogWithNoCancel(
                     title = "Login Failed",
                     message = state.value.message ?: "",
                     onDismiss = { viewModel.resetState() },
-                    onConfirm = { viewModel.resetState() })
+                    onConfirm = { viewModel.resetState() }
+                )
             }
             Column(
                 modifier = modifier.padding(horizontal = 16.dp),

@@ -22,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -32,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bayutb123.tukerin.ui.components.input.CustomTextField
 import com.bayutb123.tukerin.ui.components.input.FullWidthButton
 import com.bayutb123.tukerin.ui.components.view.AlertDialogWithNoCancel
@@ -45,7 +47,8 @@ fun RegisterScreen(
     onNavigationRequested: (route: String) -> Unit,
     onBackRequested: () -> Unit
 ) {
-    var isAlertVisible by rememberSaveable { mutableStateOf(false) }
+    val viewModel: RegisterViewModel = hiltViewModel()
+    val state = viewModel.state.collectAsState()
     var name by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
@@ -58,12 +61,12 @@ fun RegisterScreen(
                 .padding(paddingValues),
             contentAlignment = Alignment.Center
         ) {
-            AnimatedVisibility(visible = isAlertVisible) {
+            AnimatedVisibility(visible = state.value is RegisterState.Error || state.value is RegisterState.Success) {
                 AlertDialogWithNoCancel(
-                    title = "Register success",
-                    message = "Please check your email to verify your account",
-                    onDismiss = { isAlertVisible = false },
-                    onConfirm = { isAlertVisible = false }
+                    title = "Notice",
+                    message = state.value.message ?: "",
+                    onDismiss = { viewModel.resetState() },
+                    onConfirm = { viewModel.resetState() }
                 )
             }
             Column(
@@ -134,11 +137,7 @@ fun RegisterScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 Column {
                     FullWidthButton(onClick = {
-                        isAlertVisible = !isAlertVisible
-                        println("name: $name")
-                        println("email: $email")
-                        println("password: $password")
-                        println("confirmPassword: $confirmPassword")
+                        viewModel.register(name, email, password)
                     }, text = "Register")
                     Row(
                         modifier = modifier

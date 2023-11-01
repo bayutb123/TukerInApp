@@ -1,11 +1,10 @@
 package com.bayutb123.tukerin.data.source.remote
 
 import com.bayutb123.tukerin.data.source.remote.response.LoginResponse
+import com.bayutb123.tukerin.data.source.remote.response.RegisterResponse
 import retrofit2.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface ApiService {
@@ -15,4 +14,12 @@ interface ApiService {
         @Field("email") email: String,
         @Field("password") password: String
     ) : Response<LoginResponse>
+
+    @POST("user/register")
+    @FormUrlEncoded
+    suspend fun register(
+        @Field("name") name: String,
+        @Field("email") email: String,
+        @Field("password") password: String
+    ) : Response<RegisterResponse>
 }
