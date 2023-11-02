@@ -6,7 +6,7 @@ import com.bayutb123.tukerin.domain.model.User
 
 class DataMapper {
     companion object{
-        fun convertLoginUserToUser(loginUser: LoginUser) : User = User (
+        fun mapLoginUserToUser(loginUser: LoginUser) : User = User (
             id = loginUser.id,
             name = loginUser.name,
             email = loginUser.email,
@@ -14,7 +14,7 @@ class DataMapper {
             isPremium = loginUser.isPremiumUser == 1
         )
 
-        fun convertRegisterUserToUser(register: UserRegister) : User = User (
+        fun mapRegisterUserToUser(register: UserRegister) : User = User (
             id = register.id,
             name = register.name,
             email = register.email,

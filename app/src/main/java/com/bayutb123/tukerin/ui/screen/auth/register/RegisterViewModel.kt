@@ -2,7 +2,7 @@ package com.bayutb123.tukerin.ui.screen.auth.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bayutb123.tukerin.data.source.remote.Resource
+import com.bayutb123.tukerin.data.Resource
 import com.bayutb123.tukerin.domain.model.User
 import com.bayutb123.tukerin.domain.usecase.AuthUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
