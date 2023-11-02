@@ -38,4 +38,20 @@ class DashboardViewModel @Inject constructor(
             }
         }
     }
+
+    fun searchPost(query: String, userId: Int) {
+        viewModelScope.launch {
+            when(val result = postUseCase.searchPost(query, userId)){
+                is Resource.Success -> {
+                    _state.value = DashboardState.Success(result.result as List<*>)
+                }
+                is Resource.Failed -> {
+                    _state.value = DashboardState.Failed(result.errorCode)
+                }
+                else -> {
+                    _state.value = DashboardState.Empty
+                }
+            }
+        }
+    }
 }

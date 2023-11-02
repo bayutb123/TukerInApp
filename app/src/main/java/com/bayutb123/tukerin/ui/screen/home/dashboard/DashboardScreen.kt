@@ -71,6 +71,7 @@ fun DashboardScreen(
                 active = active,
                 onActiveChange = { active = it },
                 onSearch = {
+                    viewModel.searchPost(text, 3)
                     active = false
                 },
                 content = {

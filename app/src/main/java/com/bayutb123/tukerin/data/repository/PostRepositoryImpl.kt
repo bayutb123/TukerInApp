@@ -23,4 +23,18 @@ class PostRepositoryImpl @Inject constructor(
             Resource.Exception(e) as Resource<List<Post>>
         }
     }
+
+    @Suppress("UNCHECKED_CAST")
+    override suspend fun searchPost(query: String, userId: Int): Resource<List<Post>> {
+        return try {
+            val response = apiService.searchPost(query, userId)
+            if (response.isSuccessful) {
+                Resource.Success(DataMapper.mapPostResponseToPost(response.body()!!.posts!!))
+            } else {
+                Resource.Failed(response.code()) as Resource<List<Post>>
+            }
+        } catch (e: Exception) {
+            Resource.Exception(e) as Resource<List<Post>>
+        }
+    }
 }

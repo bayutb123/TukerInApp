@@ -8,4 +8,6 @@ class PostUseCase @Inject constructor(
     private val postRepository: PostRepository
 ) {
     suspend fun getAllPosts(userId: Int) : Resource<Any> = postRepository.getAllPosts(userId)
+
+    suspend fun searchPost(query: String, userId: Int) : Resource<Any> = postRepository.searchPost(query, userId)
 }

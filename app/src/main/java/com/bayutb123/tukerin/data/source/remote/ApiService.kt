@@ -30,4 +30,10 @@ interface ApiService {
     suspend fun getAllPosts(
         @Path("user_id") userId: Int
     ) : Response<AllPostResponse>
+
+    @GET("post/search/{query}/{user_id}")
+    suspend fun searchPost(
+        @Path("query") query: String,
+        @Path("user_id") userId: Int
+    ) : Response<AllPostResponse>
 }
