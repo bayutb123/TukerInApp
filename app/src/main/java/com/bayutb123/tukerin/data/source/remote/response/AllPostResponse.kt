@@ -85,6 +85,9 @@ data class PostsItem(
 	@field:SerializedName("content")
 	val content: String,
 
+	@field:SerializedName("price")
+	val price: Int,
+
 	@field:SerializedName("is_premium")
 	val isPremium: Int,
 

@@ -22,10 +22,9 @@ class DashboardViewModel @Inject constructor(
     fun getAllPost(userId: Int) {
         _state.value = DashboardState.Loading
         viewModelScope.launch {
-            val result = postUseCase.getAllPosts(userId)
-            when(result){
+            when(val result = postUseCase.getAllPosts(userId)){
                 is Resource.Success -> {
-                    _state.value = DashboardState.Success(result.result as List<Post>)
+                    _state.value = DashboardState.Success<Post>(result.result as List<Post>)
                 }
                 is Resource.Failed -> {
                     _state.value = DashboardState.Failed(result.errorCode)
@@ -34,7 +33,7 @@ class DashboardViewModel @Inject constructor(
                     _state.value = DashboardState.Empty
                 }
             }
-            if (_state.value == DashboardState.Success(emptyList())) {
+            if (_state.value == DashboardState.Success<Post>(emptyList())) {
                 _state.value = DashboardState.Empty
             }
         }

@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.bayutb123.tukerin.BuildConfig
 import com.bayutb123.tukerin.domain.model.Post
+import com.bayutb123.tukerin.ui.Utils.Currency
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,14 +65,14 @@ fun ItemGrid(
                         .padding(8.dp),
                 ) {
                     Text(
-                        text = "Rp 444.200",
+                        text = Currency.convertIntToRupiah(item.price),
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = modifier.fillMaxWidth(),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = "Google Nest Mini 2nd Gen",
+                        text = item.title,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         modifier = modifier.fillMaxWidth(),
@@ -127,7 +128,7 @@ fun PreviewItemGrid() {
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(20) {
-                ItemGrid(isPremium = true, onClick = {}, item = Post(0, "", "", "", 0, "", true, true, ""))
+                ItemGrid(isPremium = true, onClick = {}, item = Post(0, "", "",100000, "", 0, "", true, true, ""))
             }
         }
     }
