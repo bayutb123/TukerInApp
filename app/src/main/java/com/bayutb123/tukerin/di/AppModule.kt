@@ -2,9 +2,12 @@ package com.bayutb123.tukerin.di
 
 import com.bayutb123.tukerin.BuildConfig
 import com.bayutb123.tukerin.data.repository.AuthRepositoryImpl
+import com.bayutb123.tukerin.data.repository.PostRepositoryImpl
 import com.bayutb123.tukerin.data.source.remote.ApiService
 import com.bayutb123.tukerin.domain.repository.AuthRepository
+import com.bayutb123.tukerin.domain.repository.PostRepository
 import com.bayutb123.tukerin.domain.usecase.AuthUseCase
+import com.bayutb123.tukerin.domain.usecase.PostUseCase
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
@@ -50,5 +53,15 @@ object AppModule {
     @Provides
     fun provideAuthUseCase(authRepository: AuthRepository) : AuthUseCase {
         return AuthUseCase(authRepository)
+    }
+
+    @Provides
+    fun providePostRepository(apiService: ApiService) : PostRepository {
+        return PostRepositoryImpl(apiService)
+    }
+
+    @Provides
+    fun providePostUseCase(postRepository: PostRepository) : PostUseCase {
+        return PostUseCase(postRepository)
     }
 }

@@ -1,10 +1,29 @@
 package com.bayutb123.tukerin.ui.screen.home.dashboard
 
+import android.widget.Toast
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import com.bayutb123.tukerin.ui.components.input.FullWidthButton
-import com.bayutb123.tukerin.ui.screen.Screen
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.bayutb123.tukerin.ui.components.view.ItemGrid
+import com.bayutb123.tukerin.ui.theme.TukerInTheme
 
 @Composable
 fun DashboardScreen(
@@ -12,11 +31,71 @@ fun DashboardScreen(
     onNavigationRequested: (route: String) -> Unit,
     onLogoutRequested: (route: String) -> Unit
 ) {
-    Column {
-        FullWidthButton(
-            onClick = { onNavigationRequested(Screen.Detail.route) },
-            text = "Go to Detail"
+    val viewModel: DashboardViewModel = hiltViewModel()
+    val state = viewModel.state.collectAsState()
+    val context = LocalContext.current
+
+    var isInitialized = rememberSaveable { false }
+    LaunchedEffect(key1 = isInitialized) {
+        if (!isInitialized) {
+            viewModel.getAllPost(3)
+            isInitialized = true
+        }
+    }
+
+    Scaffold { paddingValues ->
+        Column(
+            modifier = modifier
+                .consumeWindowInsets(paddingValues)
+                .fillMaxSize()
+        ) {
+            when (state.value) {
+                // suppress unchecked cast warning
+                is DashboardState.Loading -> {
+                    Text(text = "Loading")
+                }
+
+                is DashboardState.Success -> {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
+                        contentPadding = PaddingValues(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items((state.value as DashboardState.Success).data) { item ->
+                            ItemGrid(
+                                onClick = {
+                                    Toast.makeText(
+                                        context,
+                                        "${item.title} Clicked, seller ${item.ownerName}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                },
+                                item = item
+                            )
+                        }
+                    }
+                }
+
+                else -> {
+                    Text(text = "Empty", color = MaterialTheme.colorScheme.onSurface)
+                }
+            }
+        }
+    }
+}
+
+@Preview(
+    showBackground = true,
+    device = Devices.PIXEL_4_XL,
+)
+@Composable
+fun DashboardScreenPreview() {
+    TukerInTheme {
+        DashboardScreen(
+            modifier = Modifier.fillMaxSize(),
+            onNavigationRequested = {},
+            onLogoutRequested = {}
         )
-        FullWidthButton(onClick = { onLogoutRequested(Screen.Login.route) }, text = "Logout")
     }
 }

@@ -31,6 +31,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.bayutb123.tukerin.BuildConfig
+import com.bayutb123.tukerin.domain.model.Post
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,6 +41,7 @@ fun ItemGrid(
     modifier: Modifier = Modifier,
     onClick: (Int) -> Unit,
     isPremium: Boolean = false,
+    item: Post
 ) {
     Card(
         onClick = { onClick(0) },
@@ -47,7 +50,7 @@ fun ItemGrid(
 
             Column {
                 AsyncImage(
-                    model = "https://images.tokopedia.net/img/cache/700/OJWluG/2023/2/9/4abdeaa5-c862-48e9-8a87-12db8c35a500.jpg?ect=4g",
+                    model = BuildConfig.apiUrl + "/images/" + item.thumbnailImage,
                     contentDescription = null,
                     modifier = modifier
                         .fillMaxWidth()
@@ -124,7 +127,7 @@ fun PreviewItemGrid() {
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(20) {
-                ItemGrid(isPremium = true, onClick = {})
+                ItemGrid(isPremium = true, onClick = {}, item = Post(0, "", "", "", 0, "", true, true, ""))
             }
         }
     }
