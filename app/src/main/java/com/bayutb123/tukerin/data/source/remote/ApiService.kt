@@ -3,6 +3,7 @@ package com.bayutb123.tukerin.data.source.remote
 import com.bayutb123.tukerin.data.source.remote.response.AllPostResponse
 import com.bayutb123.tukerin.data.source.remote.response.LoginResponse
 import com.bayutb123.tukerin.data.source.remote.response.RegisterResponse
+import com.bayutb123.tukerin.data.source.remote.response.SuggestionsResponse
 import retrofit2.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -36,4 +37,10 @@ interface ApiService {
         @Path("query") query: String,
         @Path("user_id") userId: Int
     ) : Response<AllPostResponse>
+
+    @GET("post/search/suggestion/{query}/{user_id}")
+    suspend fun getSuggestions(
+        @Path("query") query: String,
+        @Path("user_id") userId: Int
+    ) : Response<SuggestionsResponse>
 }

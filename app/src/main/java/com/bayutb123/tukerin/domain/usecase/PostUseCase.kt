@@ -10,4 +10,6 @@ class PostUseCase @Inject constructor(
     suspend fun getAllPosts(userId: Int) : Resource<Any> = postRepository.getAllPosts(userId)
 
     suspend fun searchPost(query: String, userId: Int) : Resource<Any> = postRepository.searchPost(query, userId)
+
+    suspend fun getSuggestions(query: String, userId: Int) : Resource<List<String>> = postRepository.getSuggestions(query, userId)
 }
