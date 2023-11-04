@@ -4,8 +4,8 @@ import com.bayutb123.tukerin.domain.model.Post
 
 sealed class DashboardState {
     data class Success(val data: List<Post>) : DashboardState()
-    data class Failed(val code: Int) : DashboardState()
-    object Loading : DashboardState()
-    object Empty : DashboardState()
+    data class Failed(val message: String) : DashboardState()
+    data class Loading(val data: List<Post>?) : DashboardState()
+    data class Empty(val message: String) : DashboardState()
 
 }

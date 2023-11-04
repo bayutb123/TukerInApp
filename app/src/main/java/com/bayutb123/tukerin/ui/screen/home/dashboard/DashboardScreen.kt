@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bayutb123.tukerin.ui.components.input.CustomSearchBar
 import com.bayutb123.tukerin.ui.components.view.ItemGrid
-import com.bayutb123.tukerin.ui.screen.Screen
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 import kotlinx.coroutines.delay
 
@@ -58,7 +57,8 @@ fun DashboardScreen(
             viewModel.getAllPost(userId)
             isInitialized = true
         }
-        delay(1500)
+        viewModel.setLoading()
+        delay(1000)
         viewModel.getSuggestion(userId, text)
     }
 
@@ -68,78 +68,82 @@ fun DashboardScreen(
                 .consumeWindowInsets(paddingValues)
                 .fillMaxSize()
         ) {
-            CustomSearchBar(
-                query = text,
-                onQueryChange = {
-                    text = it
-                },
-                active = active,
-                onActiveChange = { active = it },
-                onSearch = {
-                    viewModel.searchPost(text, userId)
-                    active = false
-                },
-                content = {
-                    searchState.let { state ->
-                        when (state) {
-                            is SearchState.Loading -> {
-                                Text(text = "Getting search suggestion")
-                            }
-                            is SearchState.Success -> {
-                                LazyColumn(
-                                    contentPadding = PaddingValues(8.dp)) {
-                                    items(state.data) { item ->
-                                        ListItem(
-                                            headlineContent = { Text(item) },
-                                            leadingContent = { Icon(Icons.Filled.Recommend, contentDescription = null) },
-                                            modifier = Modifier
-                                                .clickable {
-                                                    text = item
-                                                    active = false
-                                                    viewModel.searchPost(text, userId)
-                                                }
-                                                .fillMaxWidth()
-                                                .padding(horizontal = 16.dp, vertical = 4.dp)
-                                        )
+                CustomSearchBar(
+                    query = text,
+                    onQueryChange = {
+                        text = it
+                    },
+                    active = active,
+                    onActiveChange = { active = it },
+                    onSearch = {
+                        if (text != "") {
+                            viewModel.searchPost(text, userId)
+                        } else {
+                            viewModel.getAllPost(userId)
+                        }
+                        active = false
+                    },
+                    content = {
+                        searchState.let { searchState ->
+                            when (searchState) {
+                                is SearchState.Loading -> {
+                                    Text(text = "Getting search suggestion")
+                                }
+                                is SearchState.Success -> {
+                                    LazyColumn(
+                                        contentPadding = PaddingValues(8.dp)) {
+                                        items(searchState.data) { item ->
+                                            ListItem(
+                                                headlineContent = { Text(item) },
+                                                leadingContent = { Icon(Icons.Filled.Recommend, contentDescription = null) },
+                                                modifier = Modifier
+                                                    .clickable {
+                                                        text = item
+                                                        active = false
+                                                        viewModel.searchPost(text, userId)
+                                                    }
+                                                    .fillMaxWidth()
+                                                    .padding(horizontal = 16.dp, vertical = 4.dp)
+                                            )
+                                        }
                                     }
                                 }
+                                is SearchState.Empty -> {
+                                    Text(text = SearchState.Empty("No suggestion").message)
+                                }
                             }
+                        }
 
-                            is SearchState.Empty -> {
-                                Text(text = SearchState.Empty("No suggestion").message)
+                    },
+                    mainContent = {
+
+                    }
+                )
+            state.let { dashboardStateState ->
+                when (dashboardStateState.value) {
+                    is DashboardState.Loading -> {
+                        Text(text = "Loading")
+                    }
+
+                    is DashboardState.Success -> {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(2),
+                            contentPadding = PaddingValues(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            if (state.value is DashboardState.Success) {
+                                items((state.value as DashboardState.Success).data) { item ->
+                                    ItemGrid(onClick = {}, item = item
+                                    )
+                                }
                             }
                         }
                     }
-                },
-                mainContent = {
 
-                }
-            )
-            when (state.value) {
-                is DashboardState.Loading -> {
-                    Text(text = "Loading")
-                }
-
-                is DashboardState.Success -> {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        contentPadding = PaddingValues(8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items((state.value as DashboardState.Success).data) { item ->
-                            ItemGrid(
-                                onClick = {
-                                    onNavigationRequested(Screen.Detail.route)
-                                },
-                                item = item
-                            )
-                        }
+                    else -> {
+                        Text(text = "Empty", color = MaterialTheme.colorScheme.onSurface)
                     }
-                }
-
-                else -> {
-                    Text(text = "Empty", color = MaterialTheme.colorScheme.onSurface)
                 }
             }
         }
