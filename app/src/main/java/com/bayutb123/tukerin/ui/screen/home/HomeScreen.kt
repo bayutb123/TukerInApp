@@ -24,10 +24,11 @@ import com.bayutb123.tukerin.ui.screen.home.saved.SavedScreen
 fun HomeScreen(
     modifier: Modifier = Modifier,
     onNavigationRequested: (route: String) -> Unit,
-    onLogoutRequested: (route: String) -> Unit
+    onAuthenticated: (route: String) -> Unit
 ) {
     val homeNavController = rememberNavController()
     val navItem = NavItem.items
+
     Scaffold(
         bottomBar = {
             NavigationBar {
@@ -77,7 +78,8 @@ fun HomeScreen(
             composable(route = Screen.Profile.route) {
                 ProfileScreen(
                     onLogout = {
-                        onLogoutRequested(Screen.Login.route)
+                        // for test only
+                        onAuthenticated(Screen.Login.route)
                     }
                 )
             }

@@ -1,4 +1,4 @@
-package com.bayutb123.tukerin.data.repository
+package com.bayutb123.tukerin.data.source.remote.repository
 
 import com.bayutb123.tukerin.data.DataMapper
 import com.bayutb123.tukerin.data.NetworkResult

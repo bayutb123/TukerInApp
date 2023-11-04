@@ -1,5 +1,6 @@
 package com.bayutb123.tukerin.ui.screen.auth.login
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,6 +47,8 @@ fun LoginScreen(
 ) {
     val viewModel : LoginViewModel = hiltViewModel()
     val state = viewModel.state.collectAsState()
+    val authState = viewModel.authStatus.collectAsState()
+    checkAuthState(authState.value, onLoginAuthorized)
 
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
@@ -73,75 +76,94 @@ fun LoginScreen(
                     onConfirm = { viewModel.resetState() }
                 )
             }
-            Column(
-                modifier = modifier.padding(horizontal = 16.dp),
-            ) {
-                Text(
-                    text = "Welcome Back",
-                    style = MaterialTheme.typography.displaySmall,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(text = "Login to continue", style = MaterialTheme.typography.titleMedium)
-                Spacer(modifier = Modifier.height(16.dp))
-                CustomTextField(
-                    onTextChanged = { email = it },
-                    placeholder = "Email",
-                    isError = !InputValidation.validateEmailInput(email),
-                    errorMsg = "Email is not valid",
-                    keyboardType = KeyboardType.Email,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Email,
-                            contentDescription = "Email"
-                        )
-                    },
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-                CustomTextField(
-                    onTextChanged = { password = it },
-                    placeholder = "Password",
-                    keyboardType = KeyboardType.Password,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Lock,
-                            contentDescription = "Password"
-                        )
-                    },
-                    isHidden = true
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Column {
-                    FullWidthButton(onClick = {
-                        viewModel.login(
-                            email = email,
-                            password = password
-                        )
-                    }, text = "Login", enabled = state.value !is LoginState.Loading)
-                    Row(
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                        TextButton(onClick = {
-                            onNavigationRequested(Screen.Forgot.route)
-                        }) {
+            authState.let {
+                when (it.value) {
+                    is AuthState.Loading -> {
+                        Text(text = "Checking for authenticated user")
+                    }
+                    is AuthState.Authenticated -> {
+                        Log.d("LoginScreen", "Authenticated")
+                    }
+                    is AuthState.Unauthenticated -> {
+                        Column(
+                            modifier = modifier.padding(horizontal = 16.dp),
+                        ) {
                             Text(
-                                text = "Forgot Password?",
-                                style = MaterialTheme.typography.bodyMedium
+                                text = "Welcome Back",
+                                style = MaterialTheme.typography.displaySmall,
+                                fontWeight = FontWeight.Bold
                             )
-                        }
-                        TextButton(onClick = {
-                            onNavigationRequested(Screen.Register.route)
-                        }) {
-                            Text(text = "Register", style = MaterialTheme.typography.bodyMedium)
+                            Text(text = "Login to continue", style = MaterialTheme.typography.titleMedium)
+                            Spacer(modifier = Modifier.height(16.dp))
+                            CustomTextField(
+                                onTextChanged = { email = it },
+                                placeholder = "Email",
+                                isError = !InputValidation.validateEmailInput(email),
+                                errorMsg = "Email is not valid",
+                                keyboardType = KeyboardType.Email,
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Default.Email,
+                                        contentDescription = "Email"
+                                    )
+                                },
+                            )
+
+                            Spacer(modifier = Modifier.height(16.dp))
+                            CustomTextField(
+                                onTextChanged = { password = it },
+                                placeholder = "Password",
+                                keyboardType = KeyboardType.Password,
+                                leadingIcon = {
+                                    Icon(
+                                        imageVector = Icons.Default.Lock,
+                                        contentDescription = "Password"
+                                    )
+                                },
+                                isHidden = true
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            Column {
+                                FullWidthButton(onClick = {
+                                    viewModel.login(
+                                        email = email,
+                                        password = password
+                                    )
+                                }, text = "Login", enabled = state.value !is LoginState.Loading)
+                                Row(
+                                    modifier = modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 8.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                ) {
+                                    TextButton(onClick = {
+                                        onNavigationRequested(Screen.Forgot.route)
+                                    }) {
+                                        Text(
+                                            text = "Forgot Password?",
+                                            style = MaterialTheme.typography.bodyMedium
+                                        )
+                                    }
+                                    TextButton(onClick = {
+                                        onNavigationRequested(Screen.Register.route)
+                                    }) {
+                                        Text(text = "Register", style = MaterialTheme.typography.bodyMedium)
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
         }
+    }
+}
+
+fun checkAuthState(state: AuthState, onLoginAuthorized: (String) -> Unit) {
+    if (state is AuthState.Authenticated) {
+        Log.d("HomeScreen", "Authenticated as ${state.id}")
+        onLoginAuthorized(Screen.Home.route)
     }
 }
 
