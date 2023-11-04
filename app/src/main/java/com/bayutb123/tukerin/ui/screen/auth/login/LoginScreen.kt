@@ -1,7 +1,6 @@
 package com.bayutb123.tukerin.ui.screen.auth.login
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,9 +34,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.bayutb123.tukerin.ui.components.input.CustomTextField
 import com.bayutb123.tukerin.ui.components.input.FullWidthButton
 import com.bayutb123.tukerin.ui.components.view.AlertDialogWithNoCancel
-import com.bayutb123.tukerin.ui.components.view.Backgrounds
 import com.bayutb123.tukerin.ui.screen.Screen
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
+import com.bayutb123.tukerin.ui.utils.InputValidation
 
 @Composable
 fun LoginScreen(
@@ -62,7 +61,7 @@ fun LoginScreen(
         Box(
             modifier = modifier
                 .fillMaxSize()
-                .background(Backgrounds.largeRadialGradient)
+//                .background(Backgrounds.largeRadialGradient)
                 .padding(paddingValues),
             contentAlignment = Alignment.Center
         ) {
@@ -87,6 +86,8 @@ fun LoginScreen(
                 CustomTextField(
                     onTextChanged = { email = it },
                     placeholder = "Email",
+                    isError = !InputValidation.validateEmailInput(email),
+                    errorMsg = "Email is not valid",
                     keyboardType = KeyboardType.Email,
                     leadingIcon = {
                         Icon(
@@ -95,6 +96,7 @@ fun LoginScreen(
                         )
                     },
                 )
+
                 Spacer(modifier = Modifier.height(16.dp))
                 CustomTextField(
                     onTextChanged = { password = it },
@@ -106,7 +108,7 @@ fun LoginScreen(
                             contentDescription = "Password"
                         )
                     },
-                    ishidden = true
+                    isHidden = true
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Column {
