@@ -14,6 +14,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -23,12 +24,24 @@ object AppModule {
 
     @Provides
     fun provideOkHttpClient() : OkHttpClient {
-        return OkHttpClient.Builder().addInterceptor() { chain ->
-            val request = chain.request().newBuilder()
-                .addHeader("Content-Type", "application/json")
-                .build()
-            chain.proceed(request)
-        }.build()
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC)
+        return if (BuildConfig.DEBUG) {
+            OkHttpClient.Builder()
+                .addInterceptor(interceptor)
+                .addInterceptor { chain ->
+                    val request = chain.request().newBuilder()
+                        .addHeader("Content-Type", "application/json")
+                        .build()
+                    chain.proceed(request)
+                }.build()
+        } else OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                val request = chain.request().newBuilder()
+                    .addHeader("Content-Type", "application/json")
+                    .build()
+                chain.proceed(request)
+            }.build()
     }
 
     @Provides
@@ -36,13 +49,11 @@ object AppModule {
         val gson = GsonBuilder()
             .setLenient()
             .create()
-        println(BuildConfig.apiUrl + BuildConfig.pathUrl)
         val retrofit = Retrofit.Builder()
             .baseUrl(BuildConfig.apiUrl + BuildConfig.pathUrl)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .client(okHttpClient)
             .build()
-
         return retrofit.create(ApiService::class.java)
     }
     @Provides
