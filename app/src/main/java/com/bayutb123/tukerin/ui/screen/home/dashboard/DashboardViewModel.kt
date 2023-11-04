@@ -30,7 +30,7 @@ class DashboardViewModel @Inject constructor(
                 }
 
                 is NetworkResult.Error -> {
-                    _state.value = DashboardState.Failed(result.message!!)
+                    _state.value = DashboardState.Failed("Error code ${result.message}")
                 }
 
                 else -> {
@@ -54,7 +54,7 @@ class DashboardViewModel @Inject constructor(
                 }
 
                 is NetworkResult.Error -> {
-                    _state.value = DashboardState.Failed(result.message!!)
+                    _state.value = DashboardState.Failed("Error code ${result.message}")
                 }
 
                 else -> {

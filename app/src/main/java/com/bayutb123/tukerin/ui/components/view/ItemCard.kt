@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.bayutb123.tukerin.BuildConfig
 import com.bayutb123.tukerin.domain.model.Post
-import com.bayutb123.tukerin.ui.Utils.Currency
+import com.bayutb123.tukerin.ui.utils.Currency
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 
 @OptIn(ExperimentalMaterial3Api::class)

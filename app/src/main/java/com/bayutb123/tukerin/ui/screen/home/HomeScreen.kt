@@ -66,9 +66,6 @@ fun HomeScreen(
         NavHost(modifier = modifier.padding(paddingValues) , navController = homeNavController, startDestination = Screen.Dashboard.route) {
             composable(route = Screen.Dashboard.route) {
                 DashboardScreen(
-                    onLogoutRequested = {
-                        onLogoutRequested(it)
-                    },
                     onNavigationRequested = {
                         onNavigationRequested(it)
                     }
@@ -78,7 +75,11 @@ fun HomeScreen(
                 SavedScreen()
             }
             composable(route = Screen.Profile.route) {
-                ProfileScreen()
+                ProfileScreen(
+                    onLogout = {
+                        onLogoutRequested(Screen.Login.route)
+                    }
+                )
             }
         }
     }

@@ -2,10 +2,12 @@ package com.bayutb123.tukerin.ui.components.input
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -45,45 +47,59 @@ fun CustomTextField(
     containerColor: Color = MaterialTheme.colorScheme.primaryContainer,
     contentColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
     placeholder: String?,
-    ishidden: Boolean = false
+    isHidden: Boolean = false,
+    isError: Boolean = false,
+    errorMsg: String = ""
 ) {
     var text by remember {
         mutableStateOf("")
     }
-    TextField(
-        modifier = modifier.fillMaxWidth(),
-        value = text,
-        onValueChange = {
-            text = it
-            onTextChanged(it)
-        },
-        singleLine = singleLine,
-        maxLines = maxLines,
-        shape = RoundedCornerShape(MaterialTheme.shapes.large.topStart),
-        colors = TextFieldDefaults.colors(
-            focusedTextColor = contentColor,
-            unfocusedTextColor = contentColor,
-            focusedContainerColor = containerColor,
-            unfocusedContainerColor = containerColor,
-            disabledContainerColor = containerColor,
-            cursorColor = contentColor,
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-        ),
-        leadingIcon = leadingIcon,
-        trailingIcon = trailingIcon,
-        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-        placeholder = {
-            if (placeholder != null) {
-                Text(text = placeholder, color = Color.Gray)
+    Column {
+        TextField(
+            modifier = modifier.fillMaxWidth(),
+            value = text,
+            onValueChange = {
+                text = it
+                onTextChanged(it)
+            },
+            isError = isError,
+            singleLine = singleLine,
+            maxLines = maxLines,
+            shape = RoundedCornerShape(MaterialTheme.shapes.large.topStart),
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = contentColor,
+                unfocusedTextColor = contentColor,
+                focusedContainerColor = containerColor,
+                unfocusedContainerColor = containerColor,
+                disabledContainerColor = containerColor,
+                cursorColor = contentColor,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                errorIndicatorColor = Color.Transparent
+            ),
+            leadingIcon = leadingIcon,
+            trailingIcon = trailingIcon,
+            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+            placeholder = {
+                if (placeholder != null) {
+                    Text(text = placeholder, color = Color.Gray)
+                }
+            },
+            visualTransformation = if (isHidden) {
+                PasswordVisualTransformation()
+            } else {
+                VisualTransformation.None
             }
-        },
-        visualTransformation = if (ishidden) {
-            PasswordVisualTransformation()
-        } else {
-            VisualTransformation.None
+        )
+        AnimatedVisibility(visible = isError && text.isNotEmpty()) {
+            Text(
+                modifier = modifier.padding(start = 16.dp),
+                text = errorMsg,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.error
+            )
         }
-    )
+    }
 }
 
 @Preview(uiMode = UI_MODE_NIGHT_NO)

@@ -45,7 +45,6 @@ import kotlinx.coroutines.delay
 fun DashboardScreen(
     modifier: Modifier = Modifier,
     onNavigationRequested: (route: String) -> Unit,
-    onLogoutRequested: (route: String) -> Unit
 ) {
     val userId = 5
     val viewModel: DashboardViewModel = hiltViewModel()
@@ -167,7 +166,6 @@ fun DashboardScreenPreview() {
         DashboardScreen(
             modifier = Modifier.fillMaxSize(),
             onNavigationRequested = {},
-            onLogoutRequested = {}
         )
     }
 }

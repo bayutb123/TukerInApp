@@ -2,7 +2,7 @@ package com.bayutb123.tukerin.ui.screen.auth.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bayutb123.tukerin.domain.model.User
+import com.bayutb123.tukerin.data.NetworkResult
 import com.bayutb123.tukerin.domain.usecase.AuthUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,17 +21,17 @@ class LoginViewModel @Inject constructor(
         _state.value = LoginState.Loading()
         viewModelScope.launch {
             when(val result = authUseCase.login(email, password)) {
-                is Resource.Success -> {
-                    _state.value = LoginState.Success(
-                        result.result as User
-                    )
+                is NetworkResult.Success -> {
+                    result.data?.let {
+                        _state.value = LoginState.Success(it)
+                    }
                 }
-                is Resource.Failed -> {
+                is NetworkResult.Error -> {
                     _state.value = LoginState.Error(
-                        message = if (result.errorCode == 401) {
+                        message = if (result.message == 401) {
                             "Email or password not valid"
                         } else {
-                            "Server error ${result.errorCode}"
+                            "Server error ${result.message}"
                         }
                     )
                 }

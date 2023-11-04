@@ -2,7 +2,7 @@ package com.bayutb123.tukerin.ui.screen.auth.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bayutb123.tukerin.domain.model.User
+import com.bayutb123.tukerin.data.NetworkResult
 import com.bayutb123.tukerin.domain.usecase.AuthUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,21 +28,21 @@ class RegisterViewModel @Inject constructor(
         if (password == confirmPassword) {
             viewModelScope.launch {
                 when (val result  = authUseCase.register(name, email, password)) {
-                    is Resource.Success -> {
-                        result.result.let {
+                    is NetworkResult.Success -> {
+                        result.data?.let {
                             _state.value = RegisterState.Success(
-                                user = result.result as User,
+                                user = it,
                                 msg = "Account registered successfully"
                             )
                         }
                     }
-                    is Resource.Failed -> {
-                        result.errorCode.let {
+                    is NetworkResult.Error -> {
+                        result.message.let { msg ->
                             _state.value = RegisterState.Error(
-                                errorMsg = if (it == 409) {
+                                errorMsg = if (msg == 409) {
                                     "Email already registered"
                                 } else {
-                                    "Server error $it"
+                                    "Server error $msg"
                                 }
                             )
                         }

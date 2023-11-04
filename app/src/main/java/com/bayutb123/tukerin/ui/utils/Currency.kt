@@ -1,4 +1,4 @@
-package com.bayutb123.tukerin.ui.Utils
+package com.bayutb123.tukerin.ui.utils
 
 class Currency {
     companion object {

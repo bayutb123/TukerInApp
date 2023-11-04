@@ -1,7 +1,6 @@
 package com.bayutb123.tukerin.ui.screen.auth.register
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,9 +36,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.bayutb123.tukerin.ui.components.input.CustomTextField
 import com.bayutb123.tukerin.ui.components.input.FullWidthButton
 import com.bayutb123.tukerin.ui.components.view.AlertDialogWithNoCancel
-import com.bayutb123.tukerin.ui.components.view.Backgrounds
 import com.bayutb123.tukerin.ui.screen.Screen
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
+import com.bayutb123.tukerin.ui.utils.InputValidation
 
 @Composable
 fun RegisterScreen(
@@ -66,7 +65,7 @@ fun RegisterScreen(
         Box(
             modifier = modifier
                 .fillMaxSize()
-                .background(Backgrounds.largeRadialGradient)
+//                .background(Backgrounds.largeRadialGradient)
                 .padding(paddingValues),
             contentAlignment = Alignment.Center
         ) {
@@ -109,6 +108,8 @@ fun RegisterScreen(
                 CustomTextField(
                     onTextChanged = { email = it },
                     placeholder = "Email",
+                    isError = !InputValidation.validateEmailInput(email),
+                    errorMsg = "Email is not valid",
                     keyboardType = KeyboardType.Email,
                     leadingIcon = {
                         Icon(
@@ -121,6 +122,8 @@ fun RegisterScreen(
                 CustomTextField(
                     onTextChanged = { password = it },
                     placeholder = "Password",
+                    isError = !InputValidation.validatePasswordInput(password),
+                    errorMsg = "Password must be at least 8 characters",
                     keyboardType = KeyboardType.Password,
                     leadingIcon = {
                         Icon(
@@ -128,12 +131,14 @@ fun RegisterScreen(
                             contentDescription = "Password"
                         )
                     },
-                    ishidden = true
+                    isHidden = true
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 CustomTextField(
                     onTextChanged = { confirmPassword = it },
                     placeholder = "Confirm Password",
+                    isError = password != confirmPassword,
+                    errorMsg = "Password are not match",
                     keyboardType = KeyboardType.Password,
                     leadingIcon = {
                         Icon(
@@ -141,7 +146,7 @@ fun RegisterScreen(
                             contentDescription = "Confirm Password"
                         )
                     },
-                    ishidden = true
+                    isHidden = true
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Column {
