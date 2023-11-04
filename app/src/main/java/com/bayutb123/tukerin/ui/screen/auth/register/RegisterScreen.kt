@@ -165,7 +165,7 @@ fun RegisterScreen(
                             style = MaterialTheme.typography.bodyMedium
                         )
                         TextButton(onClick = {
-                            onNavigationRequested(Screen.Login.route)
+                            onBackRequested()
                         }) {
                             Text(
                                 text = "Login",

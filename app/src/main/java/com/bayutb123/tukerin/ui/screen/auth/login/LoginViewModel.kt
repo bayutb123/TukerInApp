@@ -30,6 +30,8 @@ class LoginViewModel @Inject constructor(
                     _state.value = LoginState.Error(
                         message = if (result.message == 401) {
                             "Email or password not valid"
+                        } else if(email == "" || password == "") {
+                            "One or more field are empty"
                         } else {
                             "Server error ${result.message}"
                         }
@@ -38,7 +40,7 @@ class LoginViewModel @Inject constructor(
                 else -> {
                     if (email == "" || password == "") {
                         _state.value = LoginState.Error(
-                            message = "One or more field are empty"
+                            message = "Other error"
                         )
                     }
                 }

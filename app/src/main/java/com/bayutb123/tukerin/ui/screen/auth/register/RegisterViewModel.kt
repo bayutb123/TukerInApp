@@ -41,6 +41,8 @@ class RegisterViewModel @Inject constructor(
                             _state.value = RegisterState.Error(
                                 errorMsg = if (msg == 409) {
                                     "Email already registered"
+                                } else if (email == "" || password == "" || name == "") {
+                                    "One or more field are empty"
                                 } else {
                                     "Server error $msg"
                                 }
@@ -50,7 +52,7 @@ class RegisterViewModel @Inject constructor(
                     else -> {
                         if (email == "" || password == "" || name == "") {
                             _state.value = RegisterState.Error(
-                                errorMsg = "One or more field are empty"
+                                errorMsg = "Other error"
                             )
                         }
                     }
