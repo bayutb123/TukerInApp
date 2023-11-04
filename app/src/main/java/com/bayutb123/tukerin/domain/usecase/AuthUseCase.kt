@@ -1,6 +1,5 @@
 package com.bayutb123.tukerin.domain.usecase
 
-import com.bayutb123.tukerin.data.Resource
 import com.bayutb123.tukerin.domain.repository.AuthRepository
 import javax.inject.Inject
 

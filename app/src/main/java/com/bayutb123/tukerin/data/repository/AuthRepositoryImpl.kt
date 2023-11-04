@@ -2,7 +2,6 @@ package com.bayutb123.tukerin.data.repository
 
 import android.util.Log
 import com.bayutb123.tukerin.data.DataMapper
-import com.bayutb123.tukerin.data.Resource
 import com.bayutb123.tukerin.data.source.remote.ApiService
 import com.bayutb123.tukerin.domain.repository.AuthRepository
 import javax.inject.Inject
