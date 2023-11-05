@@ -4,7 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bayutb123.tukerin.data.NetworkResult
 import com.bayutb123.tukerin.domain.usecase.AuthUseCase
+import com.bayutb123.tukerin.domain.usecase.DataStoreUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -12,10 +15,30 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authUseCase: AuthUseCase
+    private val authUseCase: AuthUseCase,
+    private val dataStoreUseCase: DataStoreUseCase
 ) : ViewModel(){
     private val _state = MutableStateFlow<LoginState>(LoginState.Idle)
     val state = _state.asStateFlow()
+    private val _authStatus = MutableStateFlow<AuthState>(AuthState.Unauthenticated)
+    val authStatus = _authStatus.asStateFlow()
+
+    init {
+        checkAuth()
+    }
+    private fun checkAuth() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _authStatus.value = AuthState.Loading
+            delay(1500)
+            val token = dataStoreUseCase.getToken()
+            val id = dataStoreUseCase.getUserId()
+            if (token != null && id != null) {
+                _authStatus.value = AuthState.Authenticated(token, id)
+            } else {
+                _authStatus.value = AuthState.Unauthenticated
+            }
+        }
+    }
 
     fun login(email: String, password: String) {
         _state.value = LoginState.Loading()
@@ -24,6 +47,7 @@ class LoginViewModel @Inject constructor(
                 is NetworkResult.Success -> {
                     result.data?.let {
                         _state.value = LoginState.Success(it)
+                        dataStoreUseCase.saveUser(it)
                     }
                 }
                 is NetworkResult.Error -> {

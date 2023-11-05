@@ -20,13 +20,13 @@ fun App(
 
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Screen.Home.route ) {
+    NavHost(navController = navController, startDestination = Screen.Login.route ) {
         composable(route = Screen.Home.route) {
             HomeScreen(
                 onNavigationRequested = {
                     navController.navigate(it)
                 },
-                onLogoutRequested = {
+                onAuthenticated = {
                     navController.navigate(it) {
                         popUpTo(navController.graph.id) {
                             inclusive = true
