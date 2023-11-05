@@ -36,6 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.bayutb123.tukerin.ui.components.input.CustomTextField
 import com.bayutb123.tukerin.ui.components.input.FullWidthButton
 import com.bayutb123.tukerin.ui.components.view.CustomAlertDialog
+import com.bayutb123.tukerin.ui.screen.Screen
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 import com.bayutb123.tukerin.ui.utils.InputValidation
 
@@ -72,8 +73,14 @@ fun RegisterScreen(
                 CustomAlertDialog(
                     title = "Notice",
                     message = errorMsg,
-                    onDismiss = { viewModel.resetState() },
-                    onConfirm = { viewModel.resetState() }
+                    dismissEnabled = false,
+                    onConfirm = {
+                        if (state.value is RegisterState.Success) {
+                            onNavigationRequested(Screen.Login.route)
+                        } else {
+                            viewModel.resetState()
+                        }
+                    }
                 )
             }
             Column(

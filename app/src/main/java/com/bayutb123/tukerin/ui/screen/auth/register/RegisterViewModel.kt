@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bayutb123.tukerin.data.NetworkResult
 import com.bayutb123.tukerin.domain.usecase.AuthUseCase
+import com.bayutb123.tukerin.domain.usecase.DataStoreUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,7 +13,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    private val authUseCase: AuthUseCase
+    private val authUseCase: AuthUseCase,
+    private val dataStoreUseCase: DataStoreUseCase
 ) : ViewModel(){
 
     private val _state = MutableStateFlow<RegisterState>(RegisterState.Idle)
@@ -34,6 +36,7 @@ class RegisterViewModel @Inject constructor(
                                 user = it,
                                 msg = "Account registered successfully"
                             )
+                            dataStoreUseCase.saveUser(it)
                         }
                     }
                     is NetworkResult.Error -> {
