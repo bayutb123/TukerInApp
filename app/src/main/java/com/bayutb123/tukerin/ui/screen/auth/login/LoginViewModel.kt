@@ -20,7 +20,7 @@ class LoginViewModel @Inject constructor(
 ) : ViewModel(){
     private val _state = MutableStateFlow<LoginState>(LoginState.Idle)
     val state = _state.asStateFlow()
-    private val _authStatus = MutableStateFlow<AuthState>(AuthState.Loading)
+    private val _authStatus = MutableStateFlow<AuthState>(AuthState.Unauthenticated)
     val authStatus = _authStatus.asStateFlow()
 
     init {
@@ -28,6 +28,7 @@ class LoginViewModel @Inject constructor(
     }
     private fun checkAuth() {
         viewModelScope.launch(Dispatchers.IO) {
+            _authStatus.value = AuthState.Loading
             delay(1500)
             val token = dataStoreUseCase.getToken()
             val id = dataStoreUseCase.getUserId()

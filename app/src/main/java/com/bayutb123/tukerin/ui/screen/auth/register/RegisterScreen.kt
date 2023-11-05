@@ -35,8 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bayutb123.tukerin.ui.components.input.CustomTextField
 import com.bayutb123.tukerin.ui.components.input.FullWidthButton
-import com.bayutb123.tukerin.ui.components.view.AlertDialogWithNoCancel
-import com.bayutb123.tukerin.ui.screen.Screen
+import com.bayutb123.tukerin.ui.components.view.CustomAlertDialog
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 import com.bayutb123.tukerin.ui.utils.InputValidation
 
@@ -70,7 +69,7 @@ fun RegisterScreen(
             contentAlignment = Alignment.Center
         ) {
             AnimatedVisibility(visible = state.value is RegisterState.Error || state.value is RegisterState.Success) {
-                AlertDialogWithNoCancel(
+                CustomAlertDialog(
                     title = "Notice",
                     message = errorMsg,
                     onDismiss = { viewModel.resetState() },

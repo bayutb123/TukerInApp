@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bayutb123.tukerin.ui.components.input.CustomTextField
 import com.bayutb123.tukerin.ui.components.input.FullWidthButton
-import com.bayutb123.tukerin.ui.components.view.AlertDialogWithNoCancel
+import com.bayutb123.tukerin.ui.components.view.CustomAlertDialog
 import com.bayutb123.tukerin.ui.screen.Screen
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 import com.bayutb123.tukerin.ui.utils.InputValidation
@@ -69,93 +69,99 @@ fun LoginScreen(
             contentAlignment = Alignment.Center
         ) {
             AnimatedVisibility(visible = state.value is LoginState.Error) {
-                AlertDialogWithNoCancel(
+                CustomAlertDialog(
                     title = "Login Failed",
                     message = errorMsg,
+                    dismissEnabled = false,
                     onDismiss = { viewModel.resetState() },
                     onConfirm = { viewModel.resetState() }
                 )
             }
             authState.let {
-                when (it.value) {
-                    is AuthState.Loading -> {
-                        Text(text = "Checking for authenticated user")
-                    }
-                    is AuthState.Authenticated -> {
-                        Log.d("LoginScreen", "Authenticated")
-                    }
-                    is AuthState.Unauthenticated -> {
-                        Column(
-                            modifier = modifier.padding(horizontal = 16.dp),
-                        ) {
-                            Text(
-                                text = "Welcome Back",
-                                style = MaterialTheme.typography.displaySmall,
-                                fontWeight = FontWeight.Bold
+                Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    when (it.value) {
+                        is AuthState.Loading -> {
+                            CustomAlertDialog(
+                                title = "Notice",
+                                message = "Preparing for login session...",
+                                dismissEnabled = false,
+                                confirmEnabled = false,
+                                onDismiss = { viewModel.resetState() },
+                                onConfirm = { viewModel.resetState() }
                             )
-                            Text(text = "Login to continue", style = MaterialTheme.typography.titleMedium)
-                            Spacer(modifier = Modifier.height(16.dp))
-                            CustomTextField(
-                                onTextChanged = { email = it },
-                                placeholder = "Email",
-                                isError = !InputValidation.validateEmailInput(email),
-                                errorMsg = "Email is not valid",
-                                keyboardType = KeyboardType.Email,
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.Email,
-                                        contentDescription = "Email"
-                                    )
-                                },
-                            )
+                        }
 
-                            Spacer(modifier = Modifier.height(16.dp))
-                            CustomTextField(
-                                onTextChanged = { password = it },
-                                placeholder = "Password",
-                                keyboardType = KeyboardType.Password,
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.Lock,
-                                        contentDescription = "Password"
+                        else -> {}
+                    }
+                    Column(
+                        modifier = modifier.padding(horizontal = 16.dp),
+                    ) {
+                        Text(
+                            text = "Welcome Back",
+                            style = MaterialTheme.typography.displaySmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(text = "Login to continue", style = MaterialTheme.typography.titleMedium)
+                        Spacer(modifier = Modifier.height(16.dp))
+                        CustomTextField(
+                            onTextChanged = { email = it },
+                            placeholder = "Email",
+                            isError = !InputValidation.validateEmailInput(email),
+                            errorMsg = "Email is not valid",
+                            keyboardType = KeyboardType.Email,
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Email,
+                                    contentDescription = "Email"
+                                )
+                            },
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+                        CustomTextField(
+                            onTextChanged = { password = it },
+                            placeholder = "Password",
+                            keyboardType = KeyboardType.Password,
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Lock,
+                                    contentDescription = "Password"
+                                )
+                            },
+                            isHidden = true
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Column {
+                            FullWidthButton(onClick = {
+                                viewModel.login(
+                                    email = email,
+                                    password = password
+                                )
+                            }, text = "Login", enabled = state.value !is LoginState.Loading)
+                            Row(
+                                modifier = modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                            ) {
+                                TextButton(onClick = {
+                                    onNavigationRequested(Screen.Forgot.route)
+                                }) {
+                                    Text(
+                                        text = "Forgot Password?",
+                                        style = MaterialTheme.typography.bodyMedium
                                     )
-                                },
-                                isHidden = true
-                            )
-                            Spacer(modifier = Modifier.height(16.dp))
-                            Column {
-                                FullWidthButton(onClick = {
-                                    viewModel.login(
-                                        email = email,
-                                        password = password
-                                    )
-                                }, text = "Login", enabled = state.value !is LoginState.Loading)
-                                Row(
-                                    modifier = modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 8.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                ) {
-                                    TextButton(onClick = {
-                                        onNavigationRequested(Screen.Forgot.route)
-                                    }) {
-                                        Text(
-                                            text = "Forgot Password?",
-                                            style = MaterialTheme.typography.bodyMedium
-                                        )
-                                    }
-                                    TextButton(onClick = {
-                                        onNavigationRequested(Screen.Register.route)
-                                    }) {
-                                        Text(text = "Register", style = MaterialTheme.typography.bodyMedium)
-                                    }
+                                }
+                                TextButton(onClick = {
+                                    onNavigationRequested(Screen.Register.route)
+                                }) {
+                                    Text(text = "Register", style = MaterialTheme.typography.bodyMedium)
                                 }
                             }
                         }
                     }
-                }
-            }
+                }}
         }
     }
 }

@@ -30,9 +30,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bayutb123.tukerin.ui.components.input.CustomTextField
 import com.bayutb123.tukerin.ui.components.input.FullWidthButton
-import com.bayutb123.tukerin.ui.components.view.AlertDialogWithNoCancel
+import com.bayutb123.tukerin.ui.components.view.CustomAlertDialog
 import com.bayutb123.tukerin.ui.components.view.Backgrounds
-import com.bayutb123.tukerin.ui.screen.Screen
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,7 +62,7 @@ fun ForgotScreen(
             contentAlignment = Alignment.TopCenter
         ) {
             AnimatedVisibility(visible = isAlertVisible) {
-                AlertDialogWithNoCancel(
+                CustomAlertDialog(
                     title = "Password sent",
                     message = "Please check your email",
                     onDismiss = { isAlertVisible = !isAlertVisible },
