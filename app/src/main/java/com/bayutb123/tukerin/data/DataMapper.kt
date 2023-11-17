@@ -1,5 +1,6 @@
 package com.bayutb123.tukerin.data
 
+import com.bayutb123.tukerin.data.source.remote.response.DetailPost
 import com.bayutb123.tukerin.data.source.remote.response.LoginUser
 import com.bayutb123.tukerin.data.source.remote.response.PostsItem
 import com.bayutb123.tukerin.data.source.remote.response.UserRegister
@@ -38,11 +39,28 @@ class DataMapper {
                         ownerName = it.author.name,
                         active = it.status == 1,
                         premium = it.isPremium == 1,
-                        createdAt = it.createdAt
+                        createdAt = it.createdAt,
+                        images = listOf()
                     )
                 )
             }
             return result
+        }
+
+        fun mapPostDetailResponseToPost(post: DetailPost) : Post {
+            return Post(
+                id = post.id,
+                title = post.title,
+                description = post.content,
+                price = post.price,
+                thumbnailImage = post.images[0],
+                ownerId = post.userId,
+                ownerName = post.authorName,
+                active = post.status == 1,
+                premium = post.isPremium == 1,
+                createdAt = post.createdAt,
+                images = post.images
+            )
         }
     }
 }

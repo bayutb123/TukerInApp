@@ -7,6 +7,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -37,7 +39,9 @@ fun ImageInput(
         }
     }
 
-    Column {
+    Column(
+        modifier = modifier.fillMaxWidth()
+    ) {
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(16.dp),
@@ -56,7 +60,7 @@ fun ImageInput(
             }
         }
 
-        Button(onClick = { launcher.launch("image/*") }) {
+        Button(modifier = modifier.padding(horizontal = 16.dp), onClick = { launcher.launch("image/*") }) {
             Text(text = "Select Image")
         }
 

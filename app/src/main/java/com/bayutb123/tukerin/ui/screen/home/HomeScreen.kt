@@ -69,7 +69,7 @@ fun HomeScreen(
                 DashboardScreen(
                     onNavigationRequested = {
                         onNavigationRequested(it)
-                    }
+                    },
                 )
             }
             composable(route = Screen.Saved.route) {

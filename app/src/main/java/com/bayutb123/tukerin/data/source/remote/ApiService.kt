@@ -1,6 +1,7 @@
 package com.bayutb123.tukerin.data.source.remote
 
 import com.bayutb123.tukerin.data.source.remote.response.AllPostResponse
+import com.bayutb123.tukerin.data.source.remote.response.DetailPostResponse
 import com.bayutb123.tukerin.data.source.remote.response.LoginResponse
 import com.bayutb123.tukerin.data.source.remote.response.RegisterResponse
 import com.bayutb123.tukerin.data.source.remote.response.SuggestionsResponse
@@ -43,4 +44,10 @@ interface ApiService {
         @Path("query") query: String,
         @Path("user_id") userId: Int
     ) : Response<SuggestionsResponse>
+
+    @GET("post/get/{post_id}")
+    suspend fun getPost(
+        @Path("post_id") postId: Int
+    ) : Response<DetailPostResponse>
+
 }

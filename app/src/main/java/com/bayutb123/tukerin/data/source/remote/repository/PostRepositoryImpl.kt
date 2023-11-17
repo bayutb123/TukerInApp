@@ -50,4 +50,18 @@ class PostRepositoryImpl @Inject constructor(
             NetworkResult.Error(e.hashCode())
         }
     }
+
+    override suspend fun getPost(postId: Int): NetworkResult<Post> {
+        return try {
+            val response = apiService.getPost(postId)
+            if (response.isSuccessful) {
+                NetworkResult.Success(DataMapper.mapPostDetailResponseToPost(response.body()!!.post))
+            } else {
+                NetworkResult.Error(response.code())
+            }
+        } catch (e: Exception) {
+            NetworkResult.Error(e.hashCode())
+        }
+    }
+
 }

@@ -33,8 +33,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.bayutb123.tukerin.BuildConfig
 import com.bayutb123.tukerin.domain.model.Post
-import com.bayutb123.tukerin.ui.utils.Currency
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
+import com.bayutb123.tukerin.ui.utils.Currency
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -128,7 +128,7 @@ fun PreviewItemGrid() {
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(20) {
-                ItemGrid(isPremium = true, onClick = {}, item = Post(0, "", "",100000, "", 0, "", true, true, ""))
+                ItemGrid(isPremium = true, onClick = {}, item = Post(0, "", "",100000, "", 0, "", true, true, "", listOf()))
             }
         }
     }
