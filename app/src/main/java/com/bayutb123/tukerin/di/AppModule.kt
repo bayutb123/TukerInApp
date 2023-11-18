@@ -17,6 +17,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -28,6 +29,8 @@ object AppModule {
         interceptor.setLevel(HttpLoggingInterceptor.Level.BASIC)
         return if (BuildConfig.DEBUG) {
             OkHttpClient.Builder()
+                .callTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
                 .addInterceptor(interceptor)
                 .addInterceptor { chain ->
                     val request = chain.request().newBuilder()

@@ -87,7 +87,7 @@ fun ItemGrid(
                             modifier = modifier.size(12.dp)
                         )
                         Spacer(modifier = modifier.width(2.dp))
-                        Text(text = "Jakarta Pusat", style = MaterialTheme.typography.bodySmall)
+                        Text(text = item.address, style = MaterialTheme.typography.bodySmall)
                     }
                 }
 
@@ -128,7 +128,23 @@ fun PreviewItemGrid() {
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(20) {
-                ItemGrid(isPremium = true, onClick = {}, item = Post(0, "", "",100000, "", 0, "", true, true, "", listOf()))
+                ItemGrid(
+                    onClick = {},
+                    item = Post(
+                        id = 1,
+                        title = "Title",
+                        description = "Description",
+                        price = 100000,
+                        thumbnailImage = "https://picsum.photos/200/300",
+                        ownerId = 1,
+                        ownerName = "John Doe",
+                        active = true,
+                        premium = true,
+                        createdAt = "2021-08-01",
+                        images = listOf(),
+                        address = "Jakarta Pusat"
+                    )
+                )
             }
         }
     }

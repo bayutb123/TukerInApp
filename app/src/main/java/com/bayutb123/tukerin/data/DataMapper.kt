@@ -1,9 +1,9 @@
 package com.bayutb123.tukerin.data
 
-import com.bayutb123.tukerin.data.source.remote.response.DetailPost
-import com.bayutb123.tukerin.data.source.remote.response.LoginUser
-import com.bayutb123.tukerin.data.source.remote.response.PostsItem
-import com.bayutb123.tukerin.data.source.remote.response.UserRegister
+import com.bayutb123.tukerin.data.source.remote.response.auth.LoginUser
+import com.bayutb123.tukerin.data.source.remote.response.auth.UserRegister
+import com.bayutb123.tukerin.data.source.remote.response.detail.DetailPost
+import com.bayutb123.tukerin.data.source.remote.response.home.PostsItem
 import com.bayutb123.tukerin.domain.model.Post
 import com.bayutb123.tukerin.domain.model.User
 
@@ -40,7 +40,8 @@ class DataMapper {
                         active = it.status == 1,
                         premium = it.isPremium == 1,
                         createdAt = it.createdAt,
-                        images = listOf()
+                        images = listOf(),
+                        address = it.address
                     )
                 )
             }
@@ -59,7 +60,8 @@ class DataMapper {
                 active = post.status == 1,
                 premium = post.isPremium == 1,
                 createdAt = post.createdAt,
-                images = post.images
+                images = post.images,
+                address = post.address
             )
         }
     }

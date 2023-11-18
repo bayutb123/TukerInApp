@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,6 +28,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.bayutb123.tukerin.BuildConfig
+import com.bayutb123.tukerin.ui.components.view.SellerCard
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,10 +39,11 @@ fun DetailScreen(
     onNavigationRequested: (route: String) -> Unit,
     postId: Int = 12
 ) {
+    val context = LocalContext.current
     val viewModel = hiltViewModel<DetailViewModel>()
     val post = viewModel.post.collectAsStateWithLifecycle()
 
-    LaunchedEffect(key1 = viewModel) {
+    LaunchedEffect(key1 = postId) {
         viewModel.getPost(postId)
     }
     Scaffold(
@@ -58,13 +61,17 @@ fun DetailScreen(
         }
     ) { paddingValues ->
         Box(modifier = modifier.padding(paddingValues = paddingValues)) {
-            Column {
-                post.value?.let {
-                    Text(text = it.title)
-                    Text(text = it.description)
-                    it.images.forEach {imageUrl ->
-                        AsyncImage(model = "${BuildConfig.apiUrl}/images/$imageUrl", contentDescription = it.title)
+            post.value?.let { post ->
+                Column {
+                    Text(text = post.title)
+                    Text(text = post.address)
+                    post.images.forEach { imageUrl ->
+                        AsyncImage(
+                            model = "${BuildConfig.apiUrl}/images/$imageUrl",
+                            contentDescription = post.title
+                        )
                     }
+                    SellerCard(sellerName = post.ownerName, sellerLocation = "", sellerImage = post.ownerName)
                 }
             }
         }
@@ -83,7 +90,8 @@ fun ImagesView(
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         itemsIndexed(images) { index, item ->
-            AsyncImage(model = item, contentDescription = index.toString(),
+            AsyncImage(
+                model = item, contentDescription = index.toString(),
                 contentScale = ContentScale.Crop
             )
         }

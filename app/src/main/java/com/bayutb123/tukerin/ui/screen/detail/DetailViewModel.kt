@@ -1,5 +1,6 @@
 package com.bayutb123.tukerin.ui.screen.detail
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bayutb123.tukerin.domain.model.Post
@@ -22,6 +23,7 @@ class DetailViewModel @Inject constructor(
             when (val result = postUseCase.getPost(postId)) {
                 is com.bayutb123.tukerin.data.NetworkResult.Success -> {
                     _post.value = result.data
+                    Log.d("DetailViewModel", "getPost: ${result.data}")
                 }
                 is com.bayutb123.tukerin.data.NetworkResult.Error -> {
                     _post.value = null

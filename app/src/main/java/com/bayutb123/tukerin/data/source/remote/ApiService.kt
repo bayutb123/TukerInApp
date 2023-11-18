@@ -1,10 +1,10 @@
 package com.bayutb123.tukerin.data.source.remote
 
-import com.bayutb123.tukerin.data.source.remote.response.AllPostResponse
-import com.bayutb123.tukerin.data.source.remote.response.DetailPostResponse
-import com.bayutb123.tukerin.data.source.remote.response.LoginResponse
-import com.bayutb123.tukerin.data.source.remote.response.RegisterResponse
-import com.bayutb123.tukerin.data.source.remote.response.SuggestionsResponse
+import com.bayutb123.tukerin.data.source.remote.response.auth.LoginResponse
+import com.bayutb123.tukerin.data.source.remote.response.auth.RegisterResponse
+import com.bayutb123.tukerin.data.source.remote.response.detail.DetailPostResponse
+import com.bayutb123.tukerin.data.source.remote.response.home.AllPostResponse
+import com.bayutb123.tukerin.data.source.remote.response.home.SuggestionsResponse
 import retrofit2.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
