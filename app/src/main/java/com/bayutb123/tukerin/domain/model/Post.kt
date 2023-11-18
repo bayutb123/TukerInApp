@@ -12,6 +12,6 @@ data class Post(
     val active: Boolean,
     val premium: Boolean,
     val createdAt: String,
-    val images: List<String>
+    val images: List<String>? = null
 )
 

@@ -1,5 +1,6 @@
 package com.bayutb123.tukerin.data.source.remote.repository
 
+import android.util.Log
 import com.bayutb123.tukerin.data.DataMapper
 import com.bayutb123.tukerin.data.NetworkResult
 import com.bayutb123.tukerin.data.source.remote.ApiService
@@ -14,11 +15,14 @@ class PostRepositoryImpl @Inject constructor(
         return try {
             val response = apiService.getAllPosts(userId)
             if (response.isSuccessful) {
-                NetworkResult.Success(DataMapper.mapPostResponseToPost(response.body()!!.posts!!))
+                Log.d("PostRepositoryImpl", "getAllPosts: ${response.body()!!.posts}")
+                val result = DataMapper.mapPostResponseToPost(response.body()!!.posts)
+                NetworkResult.Success(result)
             } else {
                 NetworkResult.Error(response.code())
             }
         } catch (e: Exception) {
+            throw e
             NetworkResult.Error(e.hashCode())
         }
     }

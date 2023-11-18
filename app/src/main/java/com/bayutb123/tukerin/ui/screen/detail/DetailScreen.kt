@@ -65,7 +65,7 @@ fun DetailScreen(
                 Column {
                     Text(text = post.title)
                     Text(text = post.address)
-                    post.images.forEach { imageUrl ->
+                    post.images?.forEach { imageUrl ->
                         AsyncImage(
                             model = "${BuildConfig.apiUrl}/images/$imageUrl",
                             contentDescription = post.title

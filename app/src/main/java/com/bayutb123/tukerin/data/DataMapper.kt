@@ -1,5 +1,6 @@
 package com.bayutb123.tukerin.data
 
+import android.util.Log
 import com.bayutb123.tukerin.data.source.remote.response.auth.LoginUser
 import com.bayutb123.tukerin.data.source.remote.response.auth.UserRegister
 import com.bayutb123.tukerin.data.source.remote.response.detail.DetailPost
@@ -27,6 +28,7 @@ class DataMapper {
 
         fun mapPostResponseToPost(post: List<PostsItem>) : List<Post> {
             val result = mutableListOf<Post>()
+            Log.d("DataMapper", "mapPostResponseToPost: $post")
             post.forEach {
                 result.add(
                     Post(
@@ -40,8 +42,7 @@ class DataMapper {
                         active = it.status == 1,
                         premium = it.isPremium == 1,
                         createdAt = it.createdAt,
-                        images = listOf(),
-                        address = it.address
+                        address = it.city
                     )
                 )
             }
