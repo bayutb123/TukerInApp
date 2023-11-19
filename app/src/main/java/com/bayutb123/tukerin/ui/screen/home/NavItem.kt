@@ -2,10 +2,11 @@ package com.bayutb123.tukerin.ui.screen.home
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.ArtTrack
 import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.Dashboard
-import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.ArtTrack
 import androidx.compose.material.icons.outlined.Bookmarks
 import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -30,6 +31,12 @@ data class NavItem(
                 title = "Saved",
                 iconSelected = Icons.Default.Bookmarks,
                 icon = Icons.Outlined.Bookmarks
+            ),
+            NavItem(
+                route = Screen.Profile.route, // TODO: Change this to MyPost
+                title = "My Ads",
+                iconSelected = Icons.Default.ArtTrack,
+                icon = Icons.Outlined.ArtTrack
             ),
             NavItem(
                 route = Screen.Profile.route,

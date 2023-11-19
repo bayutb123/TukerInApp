@@ -1,6 +1,7 @@
 package com.bayutb123.tukerin.ui.screen.home.dashboard
 
-import android.util.Log
+import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bayutb123.tukerin.data.NetworkResult
@@ -19,16 +20,29 @@ class DashboardViewModel @Inject constructor(
     val state = _state.asStateFlow()
     private val _searchState = MutableStateFlow<SearchState>(SearchState.Empty("Type something"))
     val searchState = _searchState.asStateFlow()
+    private var currentPage = 1
 
-    fun getAllPost(userId: Int) {
-        _state.value = DashboardState.Loading(emptyList())
+    fun getAllPost(userId: Int, isReset: Boolean = false, context: Context) {
+        var oldData = _state.value
+        if (isReset) {
+            currentPage = 1
+            oldData = DashboardState.Loading(emptyList())
+        }
         viewModelScope.launch {
-            val result = postUseCase.getAllPosts(userId)
-            Log.d("DashboardViewModel", "getAllPost: ${result.message}")
-            when (result) {
+            when (val result = postUseCase.getAllPosts(userId, currentPage++)) {
                 is NetworkResult.Success -> {
-                    result.data?.let {
-                        _state.value = DashboardState.Success(it)
+                    if (result.data?.isNotEmpty() == true) {
+                        if (oldData is DashboardState.Success) {
+                            _state.value = DashboardState.Success(oldData.data + result.data)
+                        } else {
+                            _state.value = DashboardState.Success(result.data)
+                        }
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "No more ad to show for now",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
 

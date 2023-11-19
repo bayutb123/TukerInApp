@@ -1,5 +1,11 @@
 package com.bayutb123.tukerin.ui.screen.home.dashboard
 
+import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,13 +15,18 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Recommend
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -24,13 +35,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,11 +56,13 @@ import com.bayutb123.tukerin.ui.screen.Screen
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 import kotlinx.coroutines.delay
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun DashboardScreen(
     modifier: Modifier = Modifier,
     onNavigationRequested: (route: String) -> Unit,
 ) {
+    val context = LocalContext.current
     val userId = 5
     val viewModel: DashboardViewModel = hiltViewModel()
     val state = viewModel.state.collectAsState()
@@ -55,9 +71,18 @@ fun DashboardScreen(
     var text by remember { mutableStateOf("") }
     var active by rememberSaveable { mutableStateOf(false) }
 
+    val lazyGridState = rememberLazyGridState()
+    val lastItemVisible = derivedStateOf {
+        lazyGridState.layoutInfo.visibleItemsInfo.lastOrNull()
+    }
+    val isLastItemVisible =
+        remember { derivedStateOf { lazyGridState.layoutInfo } }.value.totalItemsCount == lastItemVisible.value?.index?.plus(
+            1
+        )
+
     LaunchedEffect(key1 = isInitialized, key2 = text) {
         if (!isInitialized) {
-            viewModel.getAllPost(userId)
+            viewModel.getAllPost(userId, context = context)
             isInitialized = true
         }
         viewModel.setLoading()
@@ -65,11 +90,27 @@ fun DashboardScreen(
         viewModel.getSuggestion(userId, text)
     }
 
-    Scaffold { paddingValues ->
+    Scaffold(
+        floatingActionButton = {
+            AnimatedVisibility(
+                visible = isLastItemVisible,
+                enter = fadeIn() + slideInVertically(),
+                exit = fadeOut() + slideOutVertically()
+            ) {
+                ExtendedFloatingActionButton(onClick = {
+                    viewModel.getAllPost(userId, context = context)
+                }) {
+                    Text(text = "Load More")
+                }
+            }
+        },
+        floatingActionButtonPosition = FabPosition.Center
+    ) { paddingValues ->
         Column(
             modifier = modifier
                 .consumeWindowInsets(paddingValues)
-                .fillMaxSize()
+                .fillMaxSize(),
+            horizontalAlignment = CenterHorizontally
         ) {
             CustomSearchBar(
                 query = text,
@@ -82,7 +123,7 @@ fun DashboardScreen(
                     if (text != "") {
                         viewModel.searchPost(text, userId)
                     } else {
-                        viewModel.getAllPost(userId)
+                        viewModel.getAllPost(userId, true, context = context)
                     }
                     active = false
                 },
@@ -143,26 +184,39 @@ fun DashboardScreen(
             state.let { dashboardStateState ->
                 when (dashboardStateState.value) {
                     is DashboardState.Loading -> {
-                        Text(text = "Loading")
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentWidth(CenterHorizontally)
+                        )
                     }
 
                     is DashboardState.Success -> {
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(2),
-                            contentPadding = PaddingValues(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        Column(
+                            modifier = modifier.fillMaxSize(),
+                            horizontalAlignment = CenterHorizontally
                         ) {
-                            if (state.value is DashboardState.Success) {
-                                items((state.value as DashboardState.Success).data) { item ->
-                                    ItemGrid(
-                                        onClick = {
-                                            onNavigationRequested(Screen.Detail.route + "/${item.id}")
-                                        }, item = item
-                                    )
+                            LazyVerticalGrid(
+                                columns = GridCells.Fixed(2),
+                                contentPadding = PaddingValues(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                modifier = Modifier.weight(1f),
+                                state = lazyGridState
+                            ) {
+                                if (state.value is DashboardState.Success) {
+                                    items((state.value as DashboardState.Success).data) { item ->
+                                        ItemGrid(
+                                            onClick = {
+                                                onNavigationRequested(Screen.Detail.route + "/${item.id}")
+                                            }, item = item
+                                        )
+                                    }
                                 }
                             }
+
                         }
+
                     }
 
                     else -> {
@@ -170,6 +224,7 @@ fun DashboardScreen(
                     }
                 }
             }
+
         }
     }
 }
