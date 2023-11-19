@@ -2,7 +2,6 @@ package com.bayutb123.tukerin.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -33,6 +32,7 @@ fun App(
                         popUpTo(navController.graph.id) {
                             inclusive = true
                         }
+                        launchSingleTop = true
                     }
                 }
             )
@@ -44,9 +44,10 @@ fun App(
                 },
                 onLoginAuthorized = {
                     navController.navigate(Screen.Home.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
+                        popUpTo(navController.graph.id) {
                             inclusive = true
                         }
+                        launchSingleTop = true
                     }
                 },
             )

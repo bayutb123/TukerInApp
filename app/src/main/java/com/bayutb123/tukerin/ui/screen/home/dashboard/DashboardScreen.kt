@@ -65,7 +65,7 @@ fun DashboardScreen(
     val context = LocalContext.current
     val userId = 5
     val viewModel: DashboardViewModel = hiltViewModel()
-    val state = viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsState()
     val searchState by viewModel.searchState.collectAsState()
     var isInitialized by rememberSaveable { mutableStateOf(false) }
     var text by remember { mutableStateOf("") }
@@ -73,12 +73,9 @@ fun DashboardScreen(
 
     // LazyGridState
     val lazyGridState = rememberLazyGridState()
-    val lastItemVisible = derivedStateOf {
-        lazyGridState.layoutInfo
-    }.value.visibleItemsInfo.lastOrNull()
-    val isLastItemVisible = derivedStateOf {
-        lazyGridState.layoutInfo
-    }.value.totalItemsCount == lastItemVisible?.index?.plus(1)
+    val isLastItemVisible by derivedStateOf {
+        lazyGridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == lazyGridState.layoutInfo.totalItemsCount - 1
+    }
 
     LaunchedEffect(key1 = isInitialized, key2 = text) {
         if (!isInitialized) {
@@ -182,7 +179,7 @@ fun DashboardScreen(
                 }
             )
             state.let { dashboardStateState ->
-                when (dashboardStateState.value) {
+                when (dashboardStateState) {
                     is DashboardState.Loading -> {
                         CircularProgressIndicator(
                             modifier = Modifier
@@ -204,14 +201,17 @@ fun DashboardScreen(
                                 modifier = Modifier.weight(1f),
                                 state = lazyGridState
                             ) {
-                                if (state.value is DashboardState.Success) {
-                                    items((state.value as DashboardState.Success).data) { item ->
-                                        ItemGrid(
-                                            onClick = {
-                                                onNavigationRequested(Screen.Detail.route + "/${item.id}")
-                                            }, item = item
-                                        )
+                                items(
+                                    items = (state as DashboardState.Success).data,
+                                    key = {
+                                        it.id
                                     }
+                                ) { item ->
+                                    ItemGrid(
+                                        onClick = {
+                                            onNavigationRequested(Screen.Detail.route + "/${item.id}")
+                                        }, item = item
+                                    )
                                 }
                             }
 
