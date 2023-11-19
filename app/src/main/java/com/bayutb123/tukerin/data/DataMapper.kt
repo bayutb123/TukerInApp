@@ -1,8 +1,10 @@
 package com.bayutb123.tukerin.data
 
-import com.bayutb123.tukerin.data.source.remote.response.LoginUser
-import com.bayutb123.tukerin.data.source.remote.response.PostsItem
-import com.bayutb123.tukerin.data.source.remote.response.UserRegister
+import android.util.Log
+import com.bayutb123.tukerin.data.source.remote.response.auth.LoginUser
+import com.bayutb123.tukerin.data.source.remote.response.auth.UserRegister
+import com.bayutb123.tukerin.data.source.remote.response.detail.DetailPost
+import com.bayutb123.tukerin.data.source.remote.response.home.PostsItem
 import com.bayutb123.tukerin.domain.model.Post
 import com.bayutb123.tukerin.domain.model.User
 
@@ -26,6 +28,7 @@ class DataMapper {
 
         fun mapPostResponseToPost(post: List<PostsItem>) : List<Post> {
             val result = mutableListOf<Post>()
+            Log.d("DataMapper", "mapPostResponseToPost: $post")
             post.forEach {
                 result.add(
                     Post(
@@ -38,11 +41,29 @@ class DataMapper {
                         ownerName = it.author.name,
                         active = it.status == 1,
                         premium = it.isPremium == 1,
-                        createdAt = it.createdAt
+                        createdAt = it.createdAt,
+                        address = it.city
                     )
                 )
             }
             return result
+        }
+
+        fun mapPostDetailResponseToPost(post: DetailPost) : Post {
+            return Post(
+                id = post.id,
+                title = post.title,
+                description = post.content,
+                price = post.price,
+                thumbnailImage = post.images[0],
+                ownerId = post.userId,
+                ownerName = post.authorName,
+                active = post.status == 1,
+                premium = post.isPremium == 1,
+                createdAt = post.createdAt,
+                images = post.images,
+                address = post.address
+            )
         }
     }
 }

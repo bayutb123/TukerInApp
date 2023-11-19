@@ -7,4 +7,5 @@ interface PostRepository {
     suspend fun getAllPosts(userId: Int) : NetworkResult<List<Post>>
     suspend fun searchPost(query: String, userId: Int) : NetworkResult<List<Post>>
     suspend fun getSuggestions(query: String, userId: Int) : NetworkResult<List<String>>
+    suspend fun getPost(postId: Int) : NetworkResult<Post>
 }

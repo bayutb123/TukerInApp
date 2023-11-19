@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "385494040465",
+    "project_id": "tukerin-e4791",
+    "storage_bucket": "tukerin-e4791.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385494040465:android:9a4bf6e091d7ff0d91a430",
+        "android_client_info": {
+          "package_name": "com.bayutb123.tukerin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "385494040465-uhlku9p698rqct5iia6mch9fkgb0qfff.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bayutb123.tukerin",
+            "certificate_hash": "8c5311934fc2800c82cb3ac8ba92bf53f263df08"
+          }
+        },
+        {
+          "client_id": "385494040465-l0ge5krcr1g6vi0ekb4kk90ra69jopb8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnhv_1gXzMNEGvNOzJiJ_8aA7n5k2pi5U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "385494040465-l0ge5krcr1g6vi0ekb4kk90ra69jopb8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,23 +1,20 @@
-package com.bayutb123.tukerin.data.source.remote.response
+package com.bayutb123.tukerin.data.source.remote.response.auth
 
 import com.google.gson.annotations.SerializedName
 
-data class LoginResponse(
+data class RegisterResponse(
 
 	@field:SerializedName("message")
 	val message: String,
 
 	@field:SerializedName("user")
-	val user: LoginUser? = null
+	val user: UserRegister
 )
 
-data class LoginUser(
+data class UserRegister(
 
 	@field:SerializedName("updated_at")
 	val updatedAt: String,
-
-	@field:SerializedName("verified_at")
-	val verifiedAt: Any,
 
 	@field:SerializedName("api_token")
 	val apiToken: String,
@@ -28,14 +25,8 @@ data class LoginUser(
 	@field:SerializedName("created_at")
 	val createdAt: String,
 
-	@field:SerializedName("is_premium_user")
-	val isPremiumUser: Int,
-
 	@field:SerializedName("id")
 	val id: Int,
-
-	@field:SerializedName("profile_photo_path")
-	val profilePhotoPath: Any,
 
 	@field:SerializedName("email")
 	val email: String

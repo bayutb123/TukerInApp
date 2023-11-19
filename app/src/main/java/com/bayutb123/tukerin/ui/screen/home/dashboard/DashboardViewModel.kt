@@ -1,5 +1,6 @@
 package com.bayutb123.tukerin.ui.screen.home.dashboard
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bayutb123.tukerin.data.NetworkResult
@@ -22,7 +23,9 @@ class DashboardViewModel @Inject constructor(
     fun getAllPost(userId: Int) {
         _state.value = DashboardState.Loading(emptyList())
         viewModelScope.launch {
-            when (val result = postUseCase.getAllPosts(userId)) {
+            val result = postUseCase.getAllPosts(userId)
+            Log.d("DashboardViewModel", "getAllPost: ${result.message}")
+            when (result) {
                 is NetworkResult.Success -> {
                     result.data?.let {
                         _state.value = DashboardState.Success(it)

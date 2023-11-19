@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bayutb123.tukerin.ui.components.input.CustomSearchBar
 import com.bayutb123.tukerin.ui.components.view.ItemGrid
+import com.bayutb123.tukerin.ui.screen.Screen
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 import kotlinx.coroutines.delay
 
@@ -70,61 +71,75 @@ fun DashboardScreen(
                 .consumeWindowInsets(paddingValues)
                 .fillMaxSize()
         ) {
-                CustomSearchBar(
-                    query = text,
-                    onQueryChange = {
-                        text = it
-                    },
-                    active = active,
-                    onActiveChange = { active = it },
-                    onSearch = {
-                        if (text != "") {
-                            viewModel.searchPost(text, userId)
-                        } else {
-                            viewModel.getAllPost(userId)
-                        }
-                        active = false
-                    },
-                    content = {
-                        searchState.let { searchState ->
-                            when (searchState) {
-                                is SearchState.Loading -> {
-                                    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                        Text(text = "Working on it!", textAlign = TextAlign.Center)
-                                    }
+            CustomSearchBar(
+                query = text,
+                onQueryChange = {
+                    text = it
+                },
+                active = active,
+                onActiveChange = { active = it },
+                onSearch = {
+                    if (text != "") {
+                        viewModel.searchPost(text, userId)
+                    } else {
+                        viewModel.getAllPost(userId)
+                    }
+                    active = false
+                },
+                content = {
+                    searchState.let { searchState ->
+                        when (searchState) {
+                            is SearchState.Loading -> {
+                                Box(
+                                    modifier = modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(text = "Working on it!", textAlign = TextAlign.Center)
                                 }
-                                is SearchState.Success -> {
-                                    LazyColumn(
-                                        contentPadding = PaddingValues(8.dp)) {
-                                        items(searchState.data) { item ->
-                                            ListItem(
-                                                headlineContent = { Text(item) },
-                                                leadingContent = { Icon(Icons.Filled.Recommend, contentDescription = null) },
-                                                modifier = Modifier
-                                                    .clickable {
-                                                        text = item
-                                                        active = false
-                                                        viewModel.searchPost(text, userId)
-                                                    }
-                                                    .fillMaxWidth()
-                                                    .padding(horizontal = 16.dp, vertical = 4.dp)
-                                            )
-                                        }
-                                    }
-                                }
-                                is SearchState.Empty -> {
-                                    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                                        Text(text = searchState.message, textAlign = TextAlign.Center)
+                            }
+
+                            is SearchState.Success -> {
+                                LazyColumn(
+                                    contentPadding = PaddingValues(8.dp)
+                                ) {
+                                    items(searchState.data) { item ->
+                                        ListItem(
+                                            headlineContent = { Text(item) },
+                                            leadingContent = {
+                                                Icon(
+                                                    Icons.Filled.Recommend,
+                                                    contentDescription = null
+                                                )
+                                            },
+                                            modifier = Modifier
+                                                .clickable {
+                                                    text = item
+                                                    active = false
+                                                    viewModel.searchPost(text, userId)
+                                                }
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 16.dp, vertical = 4.dp)
+                                        )
                                     }
                                 }
                             }
+
+                            is SearchState.Empty -> {
+                                Box(
+                                    modifier = modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(text = searchState.message, textAlign = TextAlign.Center)
+                                }
+                            }
                         }
-
-                    },
-                    mainContent = {
-
                     }
-                )
+
+                },
+                mainContent = {
+
+                }
+            )
             state.let { dashboardStateState ->
                 when (dashboardStateState.value) {
                     is DashboardState.Loading -> {
@@ -140,7 +155,10 @@ fun DashboardScreen(
                         ) {
                             if (state.value is DashboardState.Success) {
                                 items((state.value as DashboardState.Success).data) { item ->
-                                    ItemGrid(onClick = {}, item = item
+                                    ItemGrid(
+                                        onClick = {
+                                            onNavigationRequested(Screen.Detail.route + "/${item.id}")
+                                        }, item = item
                                     )
                                 }
                             }

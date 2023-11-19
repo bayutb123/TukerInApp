@@ -17,8 +17,8 @@ import com.bayutb123.tukerin.ui.components.input.FullWidthButton
 fun CustomAlertDialog(
     title: String,
     message: String,
-    onDismiss: () -> Unit,
-    onConfirm: () -> Unit,
+    onDismiss: () -> Unit = {},
+    onConfirm: () -> Unit = {},
     confirmText: String = "OK",
     dismissEnabled: Boolean = true,
     confirmEnabled: Boolean = true,

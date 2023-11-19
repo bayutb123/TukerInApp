@@ -3,9 +3,11 @@ package com.bayutb123.tukerin.ui
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.bayutb123.tukerin.ui.screen.Screen
 import com.bayutb123.tukerin.ui.screen.auth.forgot.ForgotScreen
 import com.bayutb123.tukerin.ui.screen.auth.login.LoginScreen
@@ -59,14 +61,22 @@ fun App(
                 }
             )
         }
-        composable(route = Screen.Detail.route) {
+        composable(
+            route = "${Screen.Detail.route}/{postId}",
+            arguments = listOf(navArgument(
+                name = "postId"
+            ) {
+                type = NavType.IntType
+            })
+        ) { backStackEntry ->
             DetailScreen(
                 onNavigationRequested = {
                     navController.navigate(it)
                 },
                 onBackRequested = {
                     navController.popBackStack()
-                }
+                },
+                postId = backStackEntry.arguments?.getInt("postId") ?: 0
             )
         }
         composable(route = Screen.Forgot.route) {
@@ -82,3 +92,4 @@ fun App(
 
     }
 }
+

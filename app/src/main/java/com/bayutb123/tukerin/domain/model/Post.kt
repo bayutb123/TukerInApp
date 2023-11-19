@@ -4,6 +4,7 @@ data class Post(
     val id: Int,
     val title: String,
     val description: String,
+    val address : String,
     val price: Int,
     val thumbnailImage : String,
     val ownerId: Int,
@@ -11,4 +12,6 @@ data class Post(
     val active: Boolean,
     val premium: Boolean,
     val createdAt: String,
+    val images: List<String>? = null
 )
+
