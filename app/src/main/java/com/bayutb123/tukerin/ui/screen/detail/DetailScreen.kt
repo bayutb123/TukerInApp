@@ -36,6 +36,7 @@ import com.bayutb123.tukerin.BuildConfig
 import com.bayutb123.tukerin.ui.components.view.SellerCard
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 import com.bayutb123.tukerin.ui.utils.Currency
+import com.bayutb123.tukerin.ui.utils.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,6 +53,7 @@ fun DetailScreen(
 
     LaunchedEffect(key1 = postId) {
         viewModel.getPost(postId)
+
     }
     Scaffold(
         topBar = {
@@ -79,6 +81,7 @@ fun DetailScreen(
                 post.value.let {
                     it?.let {
                         it.images?.let { it1 -> ImagesView(images = it1) }
+                        Date().formatStringDate(it.createdAt)
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -91,6 +94,7 @@ fun DetailScreen(
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold
                             )
+                            Text(text = Date().formatStringDate(it.createdAt))
                             Spacer(modifier = Modifier.height(8.dp))
                             SellerCard(
                                 sellerName = it.ownerName,
@@ -98,7 +102,7 @@ fun DetailScreen(
                                 sellerImage = "https://media.licdn.com/dms/image/D5603AQEQqJu4ohbltA/profile-displayphoto-shrink_200_200/0/1679033845873?e=1705536000&v=beta&t=w4rpjT0ZRRd1eo49L3TURJGqpXXmFVH7MXlJzLseg8I"
                             )
                             Spacer(modifier = Modifier.height(8.dp))
-                            Text(text = it.description)
+                                Text(text = it.description)
                         }
                     }
                 }
