@@ -69,16 +69,16 @@ fun DashboardScreen(
     val searchState by viewModel.searchState.collectAsState()
     var isInitialized by rememberSaveable { mutableStateOf(false) }
     var text by remember { mutableStateOf("") }
-    var active by rememberSaveable { mutableStateOf(false) }
+    var active by remember { mutableStateOf(false) }
 
+    // LazyGridState
     val lazyGridState = rememberLazyGridState()
     val lastItemVisible = derivedStateOf {
-        lazyGridState.layoutInfo.visibleItemsInfo.lastOrNull()
-    }
-    val isLastItemVisible =
-        remember { derivedStateOf { lazyGridState.layoutInfo } }.value.totalItemsCount == lastItemVisible.value?.index?.plus(
-            1
-        )
+        lazyGridState.layoutInfo
+    }.value.visibleItemsInfo.lastOrNull()
+    val isLastItemVisible = derivedStateOf {
+        lazyGridState.layoutInfo
+    }.value.totalItemsCount == lastItemVisible?.index?.plus(1)
 
     LaunchedEffect(key1 = isInitialized, key2 = text) {
         if (!isInitialized) {
