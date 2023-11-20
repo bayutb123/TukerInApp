@@ -1,12 +1,15 @@
 package com.bayutb123.tukerin.ui.screen.home.dashboard
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bayutb123.tukerin.data.NetworkResult
 import com.bayutb123.tukerin.domain.usecase.PostUseCase
+import com.bayutb123.tukerin.ui.utils.Connection
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -16,11 +19,24 @@ import javax.inject.Inject
 class DashboardViewModel @Inject constructor(
     private val postUseCase: PostUseCase
 ) : ViewModel() {
+
+
     private val _state = MutableStateFlow<DashboardState>(DashboardState.Loading(emptyList()))
     val state = _state.asStateFlow()
     private val _searchState = MutableStateFlow<SearchState>(SearchState.Empty("Type something"))
     val searchState = _searchState.asStateFlow()
+    private val _fetchState = MutableStateFlow(true)
+    val fetchState = _fetchState.asStateFlow()
     private var currentPage = 1
+
+    fun checkConnection(context: Context): Boolean {
+        val connectionState = Connection(context).isConnected()
+        Log.d("CONNECTION", connectionState.toString())
+        if (!connectionState) {
+            _state.value = DashboardState.Failed("No internet connection")
+        }
+        return connectionState
+    }
 
     fun getAllPost(userId: Int, isReset: Boolean = false, context: Context) {
         var oldData = _state.value
@@ -29,6 +45,8 @@ class DashboardViewModel @Inject constructor(
             oldData = DashboardState.Loading(emptyList())
         }
         viewModelScope.launch {
+            _fetchState.value = true
+            delay(2000)
             when (val result = postUseCase.getAllPosts(userId, currentPage++)) {
                 is NetworkResult.Success -> {
                     if (result.data?.isNotEmpty() == true) {
@@ -47,7 +65,7 @@ class DashboardViewModel @Inject constructor(
                 }
 
                 is NetworkResult.Error -> {
-                    _state.value = DashboardState.Failed("Error code ${result.message}")
+                    _state.value = DashboardState.Failed("Server error :( \nplease try again later")
                 }
 
                 else -> {
@@ -57,6 +75,7 @@ class DashboardViewModel @Inject constructor(
             if (_state.value == DashboardState.Success(emptyList())) {
                 _state.value = DashboardState.Empty("No result")
             }
+            _fetchState.value = false
         }
     }
 

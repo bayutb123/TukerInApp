@@ -11,11 +11,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -28,8 +30,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -77,14 +79,20 @@ fun DashboardScreen(
         lazyGridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == lazyGridState.layoutInfo.totalItemsCount - 1
     }
 
+    // FAB state
+    val fabState by viewModel.fetchState.collectAsState()
+
     LaunchedEffect(key1 = isInitialized, key2 = text) {
-        if (!isInitialized) {
-            viewModel.getAllPost(userId, context = context)
-            isInitialized = true
+        if (viewModel.checkConnection(context)) {
+            if (!isInitialized) {
+                viewModel.getAllPost(userId, context = context)
+                isInitialized = true
+            }
+            // Search suggestion
+            delay(1000)
+            viewModel.setLoading()
+            viewModel.getSuggestion(userId, text)
         }
-        viewModel.setLoading()
-        delay(1000)
-        viewModel.getSuggestion(userId, text)
     }
 
     Scaffold(
@@ -97,7 +105,19 @@ fun DashboardScreen(
                 ExtendedFloatingActionButton(onClick = {
                     viewModel.getAllPost(userId, context = context)
                 }) {
-                    Text(text = "Load More")
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.height(48.dp)
+                    ) {
+                        AnimatedVisibility(visible = fabState) {
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .size(24.dp)
+                            )
+                        }
+                        Text(text = "Load More")
+                    }
                 }
             }
         },
@@ -110,12 +130,6 @@ fun DashboardScreen(
             horizontalAlignment = CenterHorizontally
         ) {
             CustomSearchBar(
-                query = text,
-                onQueryChange = {
-                    text = it
-                },
-                active = active,
-                onActiveChange = { active = it },
                 onSearch = {
                     if (text != "") {
                         viewModel.searchPost(text, userId)
@@ -124,6 +138,12 @@ fun DashboardScreen(
                     }
                     active = false
                 },
+                onQueryChange = {
+                    text = it
+                },
+                query = text,
+                active = active,
+                onActiveChange = { active = it },
                 content = {
                     searchState.let { searchState ->
                         when (searchState) {
@@ -173,19 +193,16 @@ fun DashboardScreen(
                         }
                     }
 
-                },
-                mainContent = {
-
                 }
-            )
+            ) {
+
+            }
             state.let { dashboardStateState ->
                 when (dashboardStateState) {
                     is DashboardState.Loading -> {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .wrapContentWidth(CenterHorizontally)
-                        )
+                        Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            LinearProgressIndicator()
+                        }
                     }
 
                     is DashboardState.Success -> {
@@ -201,12 +218,7 @@ fun DashboardScreen(
                                 modifier = Modifier.weight(1f),
                                 state = lazyGridState
                             ) {
-                                items(
-                                    items = (state as DashboardState.Success).data,
-                                    key = {
-                                        it.id
-                                    }
-                                ) { item ->
+                                items(dashboardStateState.data) { item ->
                                     ItemGrid(
                                         onClick = {
                                             onNavigationRequested(Screen.Detail.route + "/${item.id}")
@@ -219,8 +231,16 @@ fun DashboardScreen(
 
                     }
 
+                    is DashboardState.Failed -> {
+                        Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Text(text = dashboardStateState.message, textAlign = TextAlign.Center)
+                        }
+                    }
+
                     else -> {
-                        Text(text = "Empty", color = MaterialTheme.colorScheme.onSurface)
+                        Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Text(text = "No result")
+                        }
                     }
                 }
             }
