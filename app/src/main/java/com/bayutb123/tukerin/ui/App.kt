@@ -13,6 +13,7 @@ import com.bayutb123.tukerin.ui.screen.auth.login.LoginScreen
 import com.bayutb123.tukerin.ui.screen.auth.register.RegisterScreen
 import com.bayutb123.tukerin.ui.screen.detail.DetailScreen
 import com.bayutb123.tukerin.ui.screen.home.HomeScreen
+import com.bayutb123.tukerin.ui.screen.splash.SplashScreen
 
 @Composable
 fun App(
@@ -21,7 +22,7 @@ fun App(
 
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Screen.Login.route ) {
+    NavHost(navController = navController, startDestination = Screen.Splash.route ) {
         composable(route = Screen.Home.route) {
             HomeScreen(
                 onNavigationRequested = {
@@ -35,6 +36,18 @@ fun App(
                         launchSingleTop = true
                     }
                 }
+            )
+        }
+        composable(route = Screen.Splash.route) {
+            SplashScreen(
+                onNavigationRequested = {
+                    navController.navigate(it) {
+                        popUpTo(navController.graph.id) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
+                },
             )
         }
         composable(route = Screen.Login.route) {

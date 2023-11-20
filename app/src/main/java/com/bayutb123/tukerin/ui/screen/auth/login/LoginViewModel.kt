@@ -43,6 +43,7 @@ class LoginViewModel @Inject constructor(
     fun login(email: String, password: String) {
         _state.value = LoginState.Loading()
         viewModelScope.launch {
+            delay(1500)
             when(val result = authUseCase.login(email, password)) {
                 is NetworkResult.Success -> {
                     result.data?.let {
