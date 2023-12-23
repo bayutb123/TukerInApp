@@ -25,9 +25,9 @@ fun ChipItem(
     text: String,
     shape: Shape = RoundedCornerShape(8.dp)
 ) {
-    var contentColor: Color = MaterialTheme.colorScheme.primary
+    var contentColor: Color = MaterialTheme.colorScheme.onPrimary
     var state by rememberSaveable { mutableStateOf(false) }
-    if (state) contentColor = MaterialTheme.colorScheme.surface
+    if (!state) contentColor = MaterialTheme.colorScheme.primary
     Box(
         modifier = Modifier
             .clickable {
@@ -35,13 +35,13 @@ fun ChipItem(
             }
             .background(
                 color = if (state) {
-                    MaterialTheme.colorScheme.onSurface
+                    MaterialTheme.colorScheme.primary
                 } else {
-                    MaterialTheme.colorScheme.surface
+                    MaterialTheme.colorScheme.onPrimary
                 },
                 shape = shape
             )
-            .border(width = 1.dp, shape = shape, color = contentColor)
+            .border(width = 1.dp, shape = shape, color = MaterialTheme.colorScheme.primary)
             .padding(4.dp)
     ) {
         Text(text = text, color = contentColor)
