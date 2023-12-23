@@ -33,7 +33,7 @@ data class NavItem(
                 icon = Icons.Outlined.Bookmarks
             ),
             NavItem(
-                route = Screen.Profile.route, // TODO: Change this to MyPost
+                route = Screen.MyAds.route,
                 title = "My Ads",
                 iconSelected = Icons.Default.ArtTrack,
                 icon = Icons.Outlined.ArtTrack

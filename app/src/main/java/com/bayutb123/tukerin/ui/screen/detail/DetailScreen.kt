@@ -144,7 +144,7 @@ fun DetailScreenPreview() {
         DetailScreen(
             onBackRequested = {},
             onNavigationRequested = {},
-            postId = 1
+            postId = 4
         )
     }
 }

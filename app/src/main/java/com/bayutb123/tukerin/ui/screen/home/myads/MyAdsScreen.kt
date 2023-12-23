@@ -1,11 +1,15 @@
 package com.bayutb123.tukerin.ui.screen.home.myads
 
+import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
@@ -22,11 +26,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.bayutb123.tukerin.domain.model.Post
+import com.bayutb123.tukerin.ui.components.input.ChipItem
+import com.bayutb123.tukerin.ui.components.view.ItemList
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyAdsScreen(
@@ -36,74 +45,45 @@ fun MyAdsScreen(
     // initialize dummy list of strings
     val list = mutableListOf<String>()
     // add some dummy data to the list
-    repeat(100) {
+    repeat(20) {
         list.add("Item ${it + 1}")
     }
     Scaffold(
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = {
-                    /* do something */
-                }
+        topBar = { TopAppBar(title = { Text(text = "My Ads") }) }
+    ) {
+        Column(Modifier.padding(it)) {
+            LazyRow(
+                contentPadding = PaddingValues(vertical = 8.dp , horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Create,
-                    contentDescription = "Create",
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(text = "Compose")
-            }
-        },
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        "Simple TopAppBar",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { /* doSomething() */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Menu,
-                            contentDescription = "Localized description"
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* doSomething() */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Favorite,
-                            contentDescription = "Localized description"
-                        )
-                    }
+                items(5) {
+                    ChipItem(text = "Category $it")
                 }
-            )
-        },
-    ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier,
-            contentPadding = paddingValues
-        ) {
-
-            items(items = list, key = { item ->
-                item
-            }) { item ->
-                ElevatedCard(
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp).fillMaxWidth()
-                ) {
-                    Column(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp).fillMaxWidth()
-                    ) {
-                        Text(
-                            text = item,
-                            style = MaterialTheme.typography.bodyMedium,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+            }
+            LazyColumn(
+                modifier = Modifier,
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(items = list, key = { item ->
+                    item
+                }) {
+                    ItemList(
+                        onClick = {}, item = Post(
+                            id = 1,
+                            title = "Title",
+                            description = "Description",
+                            price = 1000000,
+                            thumbnailImage = "https://assets.jenius.com/assets/2020/08/15022111/Jenius-Features-.jpg",
+                            ownerId = 1,
+                            ownerName = "John Doe",
+                            active = true,
+                            premium = true,
+                            createdAt = "2023-12-23T07:12:57.000000Z",
+                            images = listOf(),
+                            address = "Jakarta Pusat"
                         )
-                        Text(text = "This is a description")
-                    }
+                    )
                 }
             }
         }

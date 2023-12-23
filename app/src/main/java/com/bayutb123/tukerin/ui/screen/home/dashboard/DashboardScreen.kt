@@ -127,6 +127,7 @@ fun DashboardScreen(
             modifier = modifier
                 .consumeWindowInsets(paddingValues)
                 .fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = CenterHorizontally
         ) {
             CustomSearchBar(
@@ -212,7 +213,7 @@ fun DashboardScreen(
                         ) {
                             LazyVerticalGrid(
                                 columns = GridCells.Fixed(2),
-                                contentPadding = PaddingValues(16.dp),
+                                contentPadding = PaddingValues(bottom = 16.dp, start = 16.dp, end = 16.dp),
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 modifier = Modifier.weight(1f),
