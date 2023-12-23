@@ -23,12 +23,11 @@ import com.bayutb123.tukerin.ui.theme.TukerInTheme
 @Composable
 fun ChipItem(
     text: String,
-    contentColor: Color = MaterialTheme.colorScheme.primary,
     shape: Shape = RoundedCornerShape(8.dp)
 ) {
-    var state by rememberSaveable {
-        mutableStateOf(false)
-    }
+    var contentColor: Color = MaterialTheme.colorScheme.primary
+    var state by rememberSaveable { mutableStateOf(false) }
+    if (state) contentColor = MaterialTheme.colorScheme.surface
     Box(
         modifier = Modifier
             .clickable {
