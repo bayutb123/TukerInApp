@@ -11,6 +11,7 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
     @POST("user/login")
@@ -30,7 +31,8 @@ interface ApiService {
 
     @GET("post/all/{user_id}")
     suspend fun getAllPosts(
-        @Path("user_id") userId: Int
+        @Path("user_id") userId: Int,
+        @Query("page") page: Int
     ) : Response<GetAllPostResponse>
 
     @GET("post/search/{query}/{user_id}")
