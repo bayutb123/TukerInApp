@@ -36,15 +36,14 @@ import com.bayutb123.tukerin.ui.theme.TukerInTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomSearchBar(
-    modifier: Modifier = Modifier,
     onSearch: (String) -> Unit,
     onQueryChange: (String) -> Unit,
     query: String,
     active: Boolean,
     onActiveChange: (Boolean) -> Unit,
     placeholder: String = "Search",
-    content: @Composable ColumnScope.() -> Unit,
-    mainContent: @Composable BoxScope.() -> Unit,
+    content: @Composable() (ColumnScope.() -> Unit),
+    mainContent: @Composable() (BoxScope.() -> Unit),
 ) {
     Box(
         Modifier
@@ -63,7 +62,8 @@ fun CustomSearchBar(
             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
             trailingIcon = {
                 if (query.isNotEmpty()) {
-                    IconButton(onClick = { onQueryChange("") }) {
+                    IconButton(onClick = { onSearch("")
+                    onQueryChange("")}) {
                         Icon(Icons.Default.Clear, contentDescription = null)
                     }
                 }
@@ -83,13 +83,13 @@ fun PreviewCustomSearchBar() {
         var active by rememberSaveable { mutableStateOf(false) }
 
         CustomSearchBar(
-            query = text,
-            onQueryChange = { text = it },
-            active = active,
-            onActiveChange = { active = it },
             onSearch = {
                 active = false
             },
+            onQueryChange = { text = it },
+            query = text,
+            active = active,
+            onActiveChange = { active = it },
             content = {
                 repeat(4) { idx ->
                     val resultText = "Suggestion $idx"
@@ -106,29 +106,28 @@ fun PreviewCustomSearchBar() {
                             .padding(horizontal = 16.dp, vertical = 4.dp)
                     )
                 }
-            },
-            mainContent = {
-                LazyColumn(
-                    contentPadding = PaddingValues(
-                        start = 16.dp,
-                        top = 72.dp,
-                        end = 16.dp,
-                        bottom = 16.dp
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    val list = List(100) { "Text $it" }
-                    items(count = list.size) {
-                        Text(
-                            list[it],
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp)
-                        )
-                    }
+            }
+        ) {
+            LazyColumn(
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    top = 72.dp,
+                    end = 16.dp,
+                    bottom = 16.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                val list = List(100) { "Text $it" }
+                items(count = list.size) {
+                    Text(
+                        list[it],
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                    )
                 }
             }
-        )
+        }
 
 
     }

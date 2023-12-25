@@ -41,7 +41,7 @@ data class PostsItem(
 	val latitude: String,
 
 	@field:SerializedName("thumnail")
-	val thumnail: Thumnail,
+	val thumbnail: Thumbnail,
 
 	@field:SerializedName("created_at")
 	val createdAt: String,
@@ -77,7 +77,7 @@ data class PostsItem(
 	val longitude: String
 )
 
-data class Thumnail(
+data class Thumbnail(
 
 	@field:SerializedName("image_name")
 	val imageName: String,

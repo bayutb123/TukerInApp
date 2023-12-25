@@ -36,7 +36,7 @@ class DataMapper {
                         title = it.title,
                         description = it.content,
                         price = it.price,
-                        thumbnailImage = it.thumnail.imageName,
+                        thumbnailImage = it.thumbnail.imageName,
                         ownerId = it.userId,
                         ownerName = it.author.name,
                         active = it.status == 1,

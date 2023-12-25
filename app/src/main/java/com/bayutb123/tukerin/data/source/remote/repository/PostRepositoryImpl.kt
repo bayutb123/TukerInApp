@@ -11,9 +11,9 @@ import javax.inject.Inject
 class PostRepositoryImpl @Inject constructor(
     private val apiService: ApiService
 ) : PostRepository {
-    override suspend fun getAllPosts(userId: Int): NetworkResult<List<Post>> {
+    override suspend fun getAllPosts(userId: Int, page: Int): NetworkResult<List<Post>> {
         return try {
-            val response = apiService.getAllPosts(userId)
+            val response = apiService.getAllPosts(userId, page)
             if (response.isSuccessful) {
                 Log.d("PostRepositoryImpl", "getAllPosts: ${response.body()!!.posts}")
                 val result = DataMapper.mapPostResponseToPost(response.body()!!.posts)
@@ -22,7 +22,6 @@ class PostRepositoryImpl @Inject constructor(
                 NetworkResult.Error(response.code())
             }
         } catch (e: Exception) {
-            throw e
             NetworkResult.Error(e.hashCode())
         }
     }
