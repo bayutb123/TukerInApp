@@ -1,6 +1,9 @@
 package com.bayutb123.tukerin.ui.screen.home
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -14,6 +17,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -59,36 +63,42 @@ fun HomeScreen(
             }
         },
         bottomBar = {
-            NavigationBar {
-                val navBackStackEntry by homeNavController.currentBackStackEntryAsState()
-                val currentDestination = navBackStackEntry?.destination
-                navItem.forEach { item ->
-                    NavigationBarItem(
-                        icon = {
-                            if (currentDestination?.hierarchy?.any { it.route == item.route } == true) {
-                                Icon(imageVector = item.iconSelected, contentDescription = null)
-                            } else {
-                                Icon(imageVector = item.icon, contentDescription = null)
-                            }
-                        },
-                        label = { Text(item.title) },
-                        selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
-                        onClick = {
-                            homeNavController.navigate(item.route) {
-                                // Pop up to the start destination of the graph to
-                                // avoid building up a large stack of destinations
-                                // on the back stack as users select items
-                                popUpTo(homeNavController.graph.findStartDestination().id) {
-                                    saveState = true
+            Box(
+                modifier = Modifier
+                    .height(56.dp)
+                    .fillMaxSize(),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                NavigationBar() {
+                    val navBackStackEntry by homeNavController.currentBackStackEntryAsState()
+                    val currentDestination = navBackStackEntry?.destination
+                    navItem.forEach { item ->
+                        NavigationBarItem(
+                            icon = {
+                                if (currentDestination?.hierarchy?.any { it.route == item.route } == true) {
+                                    Icon(imageVector = item.iconSelected, contentDescription = null)
+                                } else {
+                                    Icon(imageVector = item.icon, contentDescription = null)
                                 }
-                                // Avoid multiple copies of the same destination when
-                                // reselecting the same item
-                                launchSingleTop = true
-                                // Restore state when reselecting a previously selected item
-                                restoreState = true
+                            },
+                            selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+                            onClick = {
+                                homeNavController.navigate(item.route) {
+                                    // Pop up to the start destination of the graph to
+                                    // avoid building up a large stack of destinations
+                                    // on the back stack as users select items
+                                    popUpTo(homeNavController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    // Avoid multiple copies of the same destination when
+                                    // reselecting the same item
+                                    launchSingleTop = true
+                                    // Restore state when reselecting a previously selected item
+                                    restoreState = true
+                                }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }
