@@ -8,7 +8,7 @@ import javax.inject.Inject
 class PostUseCase @Inject constructor(
     private val postRepository: PostRepository
 ) {
-    suspend fun getAllPosts(userId: Int) : NetworkResult<List<Post>> = postRepository.getAllPosts(userId)
+    suspend fun getAllPosts(userId: Int, page: Int) : NetworkResult<List<Post>> = postRepository.getAllPosts(userId, page)
 
     suspend fun searchPost(query: String, userId: Int) : NetworkResult<List<Post>> = postRepository.searchPost(query, userId)
 
