@@ -16,7 +16,6 @@ class PostRepositoryImpl @Inject constructor(
         return try {
             val response = postService.getAllPosts(userId, page)
             if (response.isSuccessful) {
-                Log.d("PostRepositoryImpl", "getAllPosts: ${response.body()!!.posts}")
                 val result = DataMapper.mapPostResponseToPost(response.body()!!.posts)
                 NetworkResult.Success(result)
             } else {

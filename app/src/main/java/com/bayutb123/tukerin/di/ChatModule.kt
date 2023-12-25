@@ -1,7 +1,10 @@
 package com.bayutb123.tukerin.di
 
 import com.bayutb123.tukerin.BuildConfig
+import com.bayutb123.tukerin.data.source.remote.repository.ChatRepositoryImpl
 import com.bayutb123.tukerin.data.source.remote.service.ChatService
+import com.bayutb123.tukerin.domain.repository.ChatRepository
+import com.bayutb123.tukerin.domain.usecase.ChatUseCase
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
@@ -20,4 +23,15 @@ object ChatModule {
     fun provideChatService(retrofit: Retrofit) : ChatService {
         return retrofit.create(ChatService::class.java)
     }
+
+    @Provides
+    fun provideChatRepository(chatService: ChatService) : ChatRepository {
+        return ChatRepositoryImpl(chatService)
+    }
+
+    @Provides
+    fun provideChatUseCase(chatRepository: ChatRepository) : ChatUseCase {
+        return ChatUseCase(chatRepository)
+    }
+
 }

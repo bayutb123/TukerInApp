@@ -23,5 +23,4 @@ interface AuthService {
         @Field("password") password: String
     ) : Response<RegisterResponse>
 
-
 }

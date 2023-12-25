@@ -3,8 +3,12 @@ package com.bayutb123.tukerin.data
 import android.util.Log
 import com.bayutb123.tukerin.data.source.remote.response.auth.LoginUser
 import com.bayutb123.tukerin.data.source.remote.response.auth.UserRegister
+import com.bayutb123.tukerin.data.source.remote.response.chat.AllChatsResponse
 import com.bayutb123.tukerin.data.source.remote.response.detail.DetailPost
 import com.bayutb123.tukerin.data.source.remote.response.home.PostsItem
+import com.bayutb123.tukerin.data.source.remote.response.message.ChatMessagesResponse
+import com.bayutb123.tukerin.domain.model.Chat
+import com.bayutb123.tukerin.domain.model.Message
 import com.bayutb123.tukerin.domain.model.Post
 import com.bayutb123.tukerin.domain.model.User
 
@@ -28,7 +32,6 @@ class DataMapper {
 
         fun mapPostResponseToPost(post: List<PostsItem>) : List<Post> {
             val result = mutableListOf<Post>()
-            Log.d("DataMapper", "mapPostResponseToPost: $post")
             post.forEach {
                 result.add(
                     Post(
@@ -64,6 +67,54 @@ class DataMapper {
                 images = post.images,
                 address = post.address
             )
+        }
+
+        fun mapChatResponseToChat(chatsResponse: AllChatsResponse) : List<Chat> {
+            val result = mutableListOf<Chat>()
+
+            chatsResponse.data.forEach { dataItem ->
+                result.add(Chat(
+                    id = dataItem.id,
+                    userId = dataItem.userId,
+                    receiver = User(
+                        id = dataItem.receiver.id,
+                        name = dataItem.receiver.name,
+                        email = dataItem.receiver.email,
+                        token = dataItem.receiver.apiToken,
+                        isPremium = dataItem.receiver.isPremiumUser == 1
+                    ),
+                    context = dataItem.context,
+                    createdAt = dataItem.createdAt,
+                    lastMessage = Message(
+                        id = dataItem.lastMessage.id,
+                        chatId = dataItem.lastMessage.chatId,
+                        message = dataItem.lastMessage.message,
+                        senderId = dataItem.lastMessage.senderId,
+                        attachment = null,
+                        isRead = dataItem.lastMessage.isRead == 1,
+                        receiverId = dataItem.lastMessage.receiverId
+                    )
+                ))
+            }
+            return result
+        }
+
+        fun mapMessageResponseToMessage(messagesResponse: ChatMessagesResponse) : List<Message> {
+            val result = mutableListOf<Message>()
+
+            messagesResponse.data.forEach { message ->
+                result.add(Message(
+                    id = message.id,
+                    senderId = message.senderId,
+                    receiverId = message.receiverId,
+                    message = message.message,
+                    isRead = message.isRead == 1,
+                    attachment = message.attachments,
+                    chatId = message.chatId
+                ))
+            }
+
+            return result
         }
     }
 }

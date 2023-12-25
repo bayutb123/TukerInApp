@@ -27,12 +27,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.bayutb123.tukerin.ui.screen.Screen
+import com.bayutb123.tukerin.ui.screen.home.chat.ChatScreen
 import com.bayutb123.tukerin.ui.screen.home.dashboard.DashboardScreen
 import com.bayutb123.tukerin.ui.screen.home.myads.MyAdsScreen
 import com.bayutb123.tukerin.ui.screen.home.profile.ProfileScreen
-import com.bayutb123.tukerin.ui.screen.home.message.SavedScreen
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
@@ -116,7 +115,7 @@ fun HomeScreen(
                 )
             }
             composable(route = Screen.Saved.route) {
-                SavedScreen()
+                ChatScreen()
             }
             composable(route = Screen.MyAds.route) {
                 MyAdsScreen(onNavigationRequested = {

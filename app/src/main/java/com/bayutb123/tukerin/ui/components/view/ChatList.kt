@@ -13,20 +13,20 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.bayutb123.tukerin.domain.model.Chat
 import com.bayutb123.tukerin.domain.model.Message
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MessageList(
-    data: List<Message>,
+fun ChatList(
+    data: List<Chat>,
     onItemClick: (Int) -> Unit
 ) {
     Scaffold(
@@ -37,12 +37,12 @@ fun MessageList(
         LazyColumn(
             modifier = Modifier.padding(paddingValues)
         ) {
-            items(items = data, key = { item -> item.id } ){ message ->
+            items(items = data, key = { item -> item.id } ){ chat ->
                 ListItem(
-                    headlineContent = { Text(text = message.sender) },
+                    headlineContent = { Text(text = chat.receiver.name) },
                     leadingContent = {
                         AsyncImage(
-                            model = message.attachment[0],
+                            model = "",
                             contentDescription = "",
                             modifier = Modifier
                                 .background(shape = CircleShape, color = Color.Transparent)
@@ -51,10 +51,10 @@ fun MessageList(
                         )
                     },
                     supportingContent = {
-                        Text(text = message.message)
+                        Text(text = chat.lastMessage!!.message)
                     },
                     modifier = Modifier.clickable {
-                        onItemClick(message.id)
+                        onItemClick(chat.id)
                     }
                 )
             }
@@ -66,16 +66,6 @@ fun MessageList(
 @Composable
 fun PreviewMessageList() {
     TukerInTheme {
-        MessageList(data = listOf(
-            Message(
-                1,
-                "Post Name",
-                "User Account",
-                message = "Message",
-                attachment = listOf("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQfQ-FW4almFWo8m9YPTj2JNAR2Ha82G7qC_w&usqp=CAU")
-            )
-        ), onItemClick = {
 
-        })
     }
 }

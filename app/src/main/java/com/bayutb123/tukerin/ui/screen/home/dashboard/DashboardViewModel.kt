@@ -29,13 +29,13 @@ class DashboardViewModel @Inject constructor(
     val fetchState = _fetchState.asStateFlow()
     private var currentPage = 1
 
+
     fun checkConnection(context: Context): Boolean {
-        val connectionState = Connection(context).isConnected()
-        Log.d("CONNECTION", connectionState.toString())
-        if (!connectionState) {
+        val connectionInfo = Connection(context).isConnected()
+        if (!connectionInfo) {
             _state.value = DashboardState.Failed("No internet connection")
         }
-        return connectionState
+        return connectionInfo
     }
 
     fun getAllPost(userId: Int, isReset: Boolean = false, context: Context) {
