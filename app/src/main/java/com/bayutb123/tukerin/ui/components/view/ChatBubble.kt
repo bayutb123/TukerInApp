@@ -1,6 +1,7 @@
 package com.bayutb123.tukerin.ui.components.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,25 +28,19 @@ fun ChatBubble(
     message: String,
     isSender: Boolean,
     isRead: Boolean,
+    time: String
 ) {
-    val senderPaddingEnd = if (!isSender) {
-        16.dp
-    } else {
-        0.dp
-    }
+    val startPadding = if (isSender) 16.dp else 0.dp
+    val endPadding = if (!isSender) 16.dp else 0.dp
     Box(
         modifier = modifier
             .fillMaxWidth(),
-        contentAlignment = if (isSender) {
-            Alignment.CenterEnd
-        } else {
-            Alignment.CenterStart
-        }
+        contentAlignment = if (isSender) Alignment.CenterEnd else Alignment.CenterStart
     ) {
         Row(
             modifier = modifier
                 .padding(horizontal = 16.dp, vertical = 8.dp)
-                .padding(end = senderPaddingEnd, start = senderPaddingEnd),
+                .padding(start = startPadding, end = endPadding),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             if (!isSender) {
@@ -57,19 +53,25 @@ fun ChatBubble(
                         .background(color = Color.Transparent, shape = CircleShape),
                 )
             }
-            Row(
-                modifier = Modifier
+            Column(
+                modifier = Modifier.clickable {  }
                     .background(
                         color = if (isSender) {
-                            Color(0xFFE0E0E0)
+                            MaterialTheme.colorScheme.primary
                         } else {
                             Color(0xFFBDBDBD)
                         },
                         shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp)
                     )
-                    .padding(8.dp)
+                    .padding(8.dp),
+                horizontalAlignment = Alignment.End
             ) {
-                Text(text = message)
+                Text(text = message, color = MaterialTheme.colorScheme.onPrimary)
+                Text(
+                    text = time,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
             }
         }
     }
@@ -80,16 +82,34 @@ fun ChatBubble(
 fun ChatBubblePreview() {
     TukerInTheme {
         Column {
-            ChatBubble(message = "Hello", isSender = true, isRead = true)
+            ChatBubble(
+                message = "Hello", isSender = true, isRead = true,
+                time = "10:21 PM"
+            )
             ChatBubble(
                 message = "trxId value can be obtained from each transaction history at transaction list. Example: 1282556767 \n" +
                         "\n" +
                         "trxType value can be obtained from each transaction history at transaction list. Example: RECHARGE ",
                 isSender = false,
-                isRead = true
+                isRead = true,
+                time = "10:21 PM"
             )
-            ChatBubble(message = "Hello", isSender = true, isRead = true)
-            ChatBubble(message = "Hello", isSender = true, isRead = true)
+            ChatBubble(
+                message = "trxId value can be obtained from each transaction history at transaction list. Example: 1282556767 \n" +
+                        "\n" +
+                        "trxType value can be obtained from each transaction history at transaction list. Example: RECHARGE ",
+                isSender = true,
+                isRead = true,
+                time = "10:21 PM"
+            )
+            ChatBubble(
+                message = "Hello", isSender = true, isRead = true,
+                time = "10:21 PM"
+            )
+            ChatBubble(
+                message = "Hello", isSender = true, isRead = true,
+                time = "10:21 PM"
+            )
         }
     }
 }
