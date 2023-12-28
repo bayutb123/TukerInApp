@@ -32,6 +32,7 @@ fun ChatBubble(
 ) {
     val startPadding = if (isSender) 16.dp else 0.dp
     val endPadding = if (!isSender) 16.dp else 0.dp
+    val alignment: Alignment.Horizontal = if (!isSender) Alignment.Start else Alignment.End
     Box(
         modifier = modifier
             .fillMaxWidth(),
@@ -49,7 +50,7 @@ fun ChatBubble(
                     contentDescription = "",
                     contentScale = ContentScale.Crop,
                     modifier = modifier
-                        .size(50.dp)
+                        .size(32.dp)
                         .background(color = Color.Transparent, shape = CircleShape),
                 )
             }
@@ -59,12 +60,12 @@ fun ChatBubble(
                         color = if (isSender) {
                             MaterialTheme.colorScheme.primary
                         } else {
-                            Color(0xFFBDBDBD)
+                            MaterialTheme.colorScheme.tertiary
                         },
                         shape = androidx.compose.foundation.shape.RoundedCornerShape(8.dp)
                     )
-                    .padding(8.dp),
-                horizontalAlignment = Alignment.End
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                horizontalAlignment = alignment
             ) {
                 Text(text = message, color = MaterialTheme.colorScheme.onPrimary)
                 Text(
