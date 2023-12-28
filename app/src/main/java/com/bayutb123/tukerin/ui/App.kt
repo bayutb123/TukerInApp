@@ -112,7 +112,7 @@ fun App(
             )
         ) {
             ChatRoomScreen(
-                chatId = it.arguments?.getString("chatId")?.toInt() ?: 0,
+                chatId = it.arguments?.getInt("chatId") ?: 0,
             )
         }
     }
