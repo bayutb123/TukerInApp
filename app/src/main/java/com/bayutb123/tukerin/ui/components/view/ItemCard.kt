@@ -137,13 +137,13 @@ fun ItemList(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = modifier
-                    .height(140.dp)
+                    .height(124.dp)
                     .padding(16.dp)
             ) {
                 AsyncImage(
                     model = item.thumbnailImage,
                     contentDescription = item.title,
-                    modifier = modifier.size(108.dp),
+                    modifier = modifier.size(92.dp),
                     contentScale = ContentScale.Crop
                 )
                 Column(

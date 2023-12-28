@@ -41,6 +41,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -73,7 +74,7 @@ fun DashboardScreen(
 
     var searchText by remember { mutableStateOf("") }
     var isSearching by remember { mutableStateOf(false) }
-    var isInitiated by remember { mutableStateOf(false) }
+    var isInitiated by rememberSaveable { mutableStateOf(false) }
 
     // LazyGridState
     val lazyGridState = rememberLazyGridState()
@@ -84,9 +85,10 @@ fun DashboardScreen(
     DisposableEffect(Unit) {
         if (viewModel.checkConnection(context) && !isInitiated) {
             viewModel.getAllPost(isReset = true, context = context)
+            isInitiated = true
         }
         onDispose {
-            isInitiated = true
+
         }
     }
 
