@@ -14,7 +14,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bayutb123.tukerin.domain.model.Message
 import com.bayutb123.tukerin.ui.components.view.ChatBubble
-import com.bayutb123.tukerin.ui.components.view.ChatList
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -24,7 +23,7 @@ fun ChatRoomScreen(
     chatRoomViewModel: ChatRoomViewModel = hiltViewModel(),
     chatId: Int,
 ) {
-    val listMessage = listOf<Message>(
+    val listMessage = listOf(
         Message(
             id = 1,
             chatId = 1,
@@ -106,7 +105,7 @@ fun ChatRoomScreen(
         Column(
             modifier = Modifier.padding(paddingValues)
         ) {
-            LazyColumn() {
+            LazyColumn {
                 items(listMessage) {
                     ChatBubble(
                         message = it.message,

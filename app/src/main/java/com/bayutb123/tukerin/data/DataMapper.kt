@@ -1,6 +1,5 @@
 package com.bayutb123.tukerin.data
 
-import android.util.Log
 import com.bayutb123.tukerin.data.source.remote.response.auth.LoginUser
 import com.bayutb123.tukerin.data.source.remote.response.auth.UserRegister
 import com.bayutb123.tukerin.data.source.remote.response.chat.AllChatsResponse

@@ -3,12 +3,10 @@ package com.bayutb123.tukerin.data.source.remote.repository
 import android.util.Log
 import com.bayutb123.tukerin.data.DataMapper
 import com.bayutb123.tukerin.data.NetworkResult
-import com.bayutb123.tukerin.data.source.remote.response.chat.AllChatsResponse
 import com.bayutb123.tukerin.data.source.remote.service.ChatService
 import com.bayutb123.tukerin.domain.model.Chat
 import com.bayutb123.tukerin.domain.model.Message
 import com.bayutb123.tukerin.domain.repository.ChatRepository
-import retrofit2.Response
 import javax.inject.Inject
 
 class ChatRepositoryImpl @Inject constructor(

@@ -42,8 +42,8 @@ fun CustomSearchBar(
     active: Boolean,
     onActiveChange: (Boolean) -> Unit,
     placeholder: String = "Search",
-    content: @Composable() (ColumnScope.() -> Unit),
-    mainContent: @Composable() (BoxScope.() -> Unit),
+    content: @Composable (ColumnScope.() -> Unit),
+    mainContent: @Composable (BoxScope.() -> Unit),
 ) {
     Box(
         Modifier

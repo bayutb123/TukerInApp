@@ -1,6 +1,5 @@
 package com.bayutb123.tukerin.di
 
-import com.bayutb123.tukerin.data.source.remote.service.AuthService
 import com.bayutb123.tukerin.data.source.remote.repository.PostRepositoryImpl
 import com.bayutb123.tukerin.data.source.remote.service.PostService
 import com.bayutb123.tukerin.domain.repository.PostRepository

@@ -34,7 +34,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTextField(
     modifier: Modifier = Modifier,

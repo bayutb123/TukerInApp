@@ -3,7 +3,6 @@ package com.bayutb123.tukerin.data.source.remote.repository
 import android.util.Log
 import com.bayutb123.tukerin.data.DataMapper
 import com.bayutb123.tukerin.data.NetworkResult
-import com.bayutb123.tukerin.data.source.remote.service.AuthService
 import com.bayutb123.tukerin.data.source.remote.service.PostService
 import com.bayutb123.tukerin.domain.model.Post
 import com.bayutb123.tukerin.domain.repository.PostRepository
@@ -31,7 +30,7 @@ class PostRepositoryImpl @Inject constructor(
         return try {
             val response = postService.searchPost(query, userId)
             if (response.isSuccessful) {
-                NetworkResult.Success(DataMapper.mapPostResponseToPost(response.body()!!.posts!!))
+                NetworkResult.Success(DataMapper.mapPostResponseToPost(response.body()!!.posts))
             } else {
                 NetworkResult.Error(response.code())
             }

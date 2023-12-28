@@ -1,7 +1,6 @@
 package com.bayutb123.tukerin.ui.screen.home.chat
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bayutb123.tukerin.data.NetworkResult

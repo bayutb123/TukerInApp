@@ -19,8 +19,7 @@ class DetailViewModel @Inject constructor(
 
     fun getPost(postId: Int) {
         viewModelScope.launch {
-            val result = postUseCase.getPost(postId)
-            when (result) {
+            when (val result = postUseCase.getPost(postId)) {
                 is com.bayutb123.tukerin.data.NetworkResult.Success -> {
                     _post.value = result.data
                 }

@@ -2,7 +2,6 @@ package com.bayutb123.tukerin.di
 
 import com.bayutb123.tukerin.data.source.remote.repository.AuthRepositoryImpl
 import com.bayutb123.tukerin.data.source.remote.service.AuthService
-import com.bayutb123.tukerin.data.source.remote.service.PostService
 import com.bayutb123.tukerin.domain.repository.AuthRepository
 import com.bayutb123.tukerin.domain.usecase.AuthUseCase
 import dagger.Module
