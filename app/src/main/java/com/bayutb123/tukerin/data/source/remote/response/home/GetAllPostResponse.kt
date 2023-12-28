@@ -65,7 +65,7 @@ data class PostsItem(
 	val userId: Int,
 
 	@field:SerializedName("price")
-	val price: Int,
+	val price: Long,
 
 	@field:SerializedName("id")
 	val id: Int,

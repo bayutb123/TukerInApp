@@ -13,6 +13,7 @@ import com.bayutb123.tukerin.ui.screen.auth.login.LoginScreen
 import com.bayutb123.tukerin.ui.screen.auth.register.RegisterScreen
 import com.bayutb123.tukerin.ui.screen.detail.DetailScreen
 import com.bayutb123.tukerin.ui.screen.home.HomeScreen
+import com.bayutb123.tukerin.ui.screen.home.chat.chatroom.ChatRoomScreen
 import com.bayutb123.tukerin.ui.screen.splash.SplashScreen
 
 @Composable
@@ -103,7 +104,17 @@ fun App(
                 }
             )
         }
-
+        composable(route = Screen.ChatRoom.route + "/{chatId}",
+            arguments = listOf(
+                navArgument("chatId") {
+                    type = NavType.IntType
+                },
+            )
+        ) {
+            ChatRoomScreen(
+                chatId = it.arguments?.getString("chatId")?.toInt() ?: 0,
+            )
+        }
     }
 }
 

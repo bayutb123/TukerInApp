@@ -30,7 +30,7 @@ data class NavItem(
                 icon = Icons.Outlined.Dashboard
             ),
             NavItem(
-                route = Screen.Saved.route,
+                route = Screen.ChatList.route,
                 title = "Messages",
                 iconSelected = Icons.AutoMirrored.Filled.Message,
                 icon = Icons.AutoMirrored.Outlined.Message

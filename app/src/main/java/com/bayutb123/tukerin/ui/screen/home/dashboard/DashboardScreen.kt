@@ -35,13 +35,12 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
@@ -52,6 +51,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bayutb123.tukerin.ui.components.input.CustomSearchBar
 import com.bayutb123.tukerin.ui.components.view.ItemGrid
 import com.bayutb123.tukerin.ui.screen.Screen
@@ -63,15 +63,17 @@ import kotlinx.coroutines.delay
 fun DashboardScreen(
     modifier: Modifier = Modifier,
     onNavigationRequested: (route: String) -> Unit,
+    viewModel: DashboardViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
-    val userId = 5
-    val viewModel: DashboardViewModel = hiltViewModel()
-    val state by viewModel.state.collectAsState()
-    val searchState by viewModel.searchState.collectAsState()
-    var isInitialized by rememberSaveable { mutableStateOf(false) }
-    var text by remember { mutableStateOf("") }
-    var active by remember { mutableStateOf(false) }
+
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val searchState by viewModel.searchState.collectAsStateWithLifecycle()
+    val fabState by viewModel.fetchState.collectAsStateWithLifecycle()
+
+    var searchText by remember { mutableStateOf("") }
+    var isSearching by remember { mutableStateOf(false) }
+    var isInitiated by remember { mutableStateOf(false) }
 
     // LazyGridState
     val lazyGridState = rememberLazyGridState()
@@ -79,19 +81,21 @@ fun DashboardScreen(
         lazyGridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == lazyGridState.layoutInfo.totalItemsCount - 1
     }
 
-    // FAB state
-    val fabState by viewModel.fetchState.collectAsState()
+    DisposableEffect(Unit) {
+        if (viewModel.checkConnection(context) && !isInitiated) {
+            viewModel.getAllPost(isReset = true, context = context)
+        }
+        onDispose {
+            isInitiated = true
+        }
+    }
 
-    LaunchedEffect(key1 = isInitialized, key2 = text) {
+    LaunchedEffect(key1 = searchText) {
         if (viewModel.checkConnection(context)) {
-            if (!isInitialized) {
-                viewModel.getAllPost(userId, context = context)
-                isInitialized = true
-            }
             // Search suggestion
             delay(1000)
             viewModel.setLoading()
-            viewModel.getSuggestion(userId, text)
+            viewModel.getSuggestion(searchText)
         }
     }
 
@@ -103,7 +107,7 @@ fun DashboardScreen(
                 exit = fadeOut() + slideOutVertically()
             ) {
                 ExtendedFloatingActionButton(onClick = {
-                    viewModel.getAllPost(userId, context = context)
+                    viewModel.getAllPost(context = context)
                 }) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -132,19 +136,19 @@ fun DashboardScreen(
         ) {
             CustomSearchBar(
                 onSearch = {
-                    if (text != "") {
-                        viewModel.searchPost(text, userId)
+                    if (searchText != "") {
+                        viewModel.searchPost(searchText)
                     } else {
-                        viewModel.getAllPost(userId, true, context = context)
+                        viewModel.getAllPost(true, context = context)
                     }
-                    active = false
+                    isSearching = false
                 },
                 onQueryChange = {
-                    text = it
+                    searchText = it
                 },
-                query = text,
-                active = active,
-                onActiveChange = { active = it },
+                query = searchText,
+                active = isSearching,
+                onActiveChange = { isSearching = it },
                 content = {
                     searchState.let { searchState ->
                         when (searchState) {
@@ -172,9 +176,9 @@ fun DashboardScreen(
                                             },
                                             modifier = Modifier
                                                 .clickable {
-                                                    text = item
-                                                    active = false
-                                                    viewModel.searchPost(text, userId)
+                                                    searchText = item
+                                                    isSearching = false
+                                                    viewModel.searchPost(searchText)
                                                 }
                                                 .fillMaxWidth()
                                                 .padding(horizontal = 16.dp, vertical = 4.dp)
@@ -198,8 +202,8 @@ fun DashboardScreen(
             ) {
 
             }
-            state.let { dashboardStateState ->
-                when (dashboardStateState) {
+            state.let { dashboardState ->
+                when (dashboardState) {
                     is DashboardState.Loading -> {
                         Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                             LinearProgressIndicator()
@@ -219,7 +223,7 @@ fun DashboardScreen(
                                 modifier = Modifier.weight(1f),
                                 state = lazyGridState
                             ) {
-                                items(dashboardStateState.data) { item ->
+                                items(dashboardState.data) { item ->
                                     ItemGrid(
                                         onClick = {
                                             onNavigationRequested(Screen.Detail.route + "/${item.id}")
@@ -234,7 +238,7 @@ fun DashboardScreen(
 
                     is DashboardState.Failed -> {
                         Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            Text(text = dashboardStateState.message, textAlign = TextAlign.Center)
+                            Text(text = dashboardState.message, textAlign = TextAlign.Center)
                         }
                     }
 

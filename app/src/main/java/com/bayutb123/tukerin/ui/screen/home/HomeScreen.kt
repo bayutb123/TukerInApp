@@ -22,12 +22,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.bayutb123.tukerin.ui.screen.Screen
 import com.bayutb123.tukerin.ui.screen.home.chat.ChatScreen
+import com.bayutb123.tukerin.ui.screen.home.chat.chatroom.ChatRoomScreen
 import com.bayutb123.tukerin.ui.screen.home.dashboard.DashboardScreen
 import com.bayutb123.tukerin.ui.screen.home.myads.MyAdsScreen
 import com.bayutb123.tukerin.ui.screen.home.profile.ProfileScreen
@@ -46,7 +49,8 @@ fun HomeScreen(
             if (homeNavController.currentBackStackEntryAsState()
                     .value
                     ?.destination
-                    ?.route == Screen.MyAds.route) {
+                    ?.route == Screen.MyAds.route
+            ) {
                 ExtendedFloatingActionButton(
                     onClick = {
                         /* do something */
@@ -114,13 +118,19 @@ fun HomeScreen(
                     },
                 )
             }
-            composable(route = Screen.Saved.route) {
-                ChatScreen()
+            composable(route = Screen.ChatList.route) {
+                ChatScreen(
+                    onNavigationRequested = {
+                        onNavigationRequested(it)
+                    }
+                )
             }
             composable(route = Screen.MyAds.route) {
-                MyAdsScreen(onNavigationRequested = {
-                    onNavigationRequested(it)
-                })
+                MyAdsScreen(
+                    onNavigationRequested = {
+                        onNavigationRequested(it)
+                    }
+                )
             }
             composable(route = Screen.Profile.route) {
                 ProfileScreen(
@@ -130,6 +140,7 @@ fun HomeScreen(
                     }
                 )
             }
+
         }
     }
 }

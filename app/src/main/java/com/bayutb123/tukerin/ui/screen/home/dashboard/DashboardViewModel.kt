@@ -1,11 +1,11 @@
 package com.bayutb123.tukerin.ui.screen.home.dashboard
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bayutb123.tukerin.data.NetworkResult
+import com.bayutb123.tukerin.domain.usecase.DataStoreUseCase
 import com.bayutb123.tukerin.domain.usecase.PostUseCase
 import com.bayutb123.tukerin.ui.utils.Connection
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,9 +17,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-    private val postUseCase: PostUseCase
+    private val postUseCase: PostUseCase,
+    private val dataStoreUseCase: DataStoreUseCase
 ) : ViewModel() {
-
 
     private val _state = MutableStateFlow<DashboardState>(DashboardState.Loading(emptyList()))
     val state = _state.asStateFlow()
@@ -29,7 +29,6 @@ class DashboardViewModel @Inject constructor(
     val fetchState = _fetchState.asStateFlow()
     private var currentPage = 1
 
-
     fun checkConnection(context: Context): Boolean {
         val connectionInfo = Connection(context).isConnected()
         if (!connectionInfo) {
@@ -38,7 +37,7 @@ class DashboardViewModel @Inject constructor(
         return connectionInfo
     }
 
-    fun getAllPost(userId: Int, isReset: Boolean = false, context: Context) {
+    fun getAllPost(isReset: Boolean = false, context: Context) {
         var oldData = _state.value
         if (isReset) {
             currentPage = 1
@@ -47,7 +46,7 @@ class DashboardViewModel @Inject constructor(
         viewModelScope.launch {
             _fetchState.value = true
             delay(2000)
-            when (val result = postUseCase.getAllPosts(userId, currentPage++)) {
+            when (val result = postUseCase.getAllPosts(dataStoreUseCase.getUserId()!!, currentPage++)) {
                 is NetworkResult.Success -> {
                     if (result.data?.isNotEmpty() == true) {
                         if (oldData is DashboardState.Success) {
@@ -65,7 +64,7 @@ class DashboardViewModel @Inject constructor(
                 }
 
                 is NetworkResult.Error -> {
-                    _state.value = DashboardState.Failed("Server error :( \nplease try again later")
+                    _state.value = DashboardState.Failed("Server error :( \nplease try again later.")
                 }
 
                 else -> {
@@ -79,10 +78,10 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    fun searchPost(query: String, userId: Int) {
+    fun searchPost(query: String) {
         viewModelScope.launch {
             _state.value = DashboardState.Loading(emptyList())
-            when (val result = postUseCase.searchPost(query, userId)) {
+            when (val result = postUseCase.searchPost(query, dataStoreUseCase.getUserId()!!)) {
                 is NetworkResult.Success -> {
                     result.data?.let {
                         _state.value = DashboardState.Success(it)
@@ -100,14 +99,14 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    fun getSuggestion(userId: Int, query: String) {
+    fun getSuggestion(query: String) {
         if (query == "") {
             _searchState.value = SearchState.Empty(
                 "Type something,\nwe will generate suggestion for you"
             )
         } else {
             viewModelScope.launch {
-                when (val result = postUseCase.getSuggestions(query, userId)) {
+                when (val result = postUseCase.getSuggestions(query, dataStoreUseCase.getUserId()!!)) {
                     is NetworkResult.Success -> {
                         result.data?.let {
                             _searchState.value = SearchState.Success(it)

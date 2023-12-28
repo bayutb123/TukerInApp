@@ -47,7 +47,7 @@ data class DetailPost(
 	val userId: Int,
 
 	@field:SerializedName("price")
-	val price: Int,
+	val price: Long,
 
 	@field:SerializedName("author_email")
 	val authorEmail: String,

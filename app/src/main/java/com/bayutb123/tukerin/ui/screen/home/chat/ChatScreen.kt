@@ -8,10 +8,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bayutb123.tukerin.ui.components.view.ChatList
+import com.bayutb123.tukerin.ui.screen.Screen
 
 @Composable
 fun ChatScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigationRequested : (String) -> Unit
 ) {
     val chatViewModel = hiltViewModel<ChatViewModel>()
     DisposableEffect(Unit) {
@@ -27,9 +29,9 @@ fun ChatScreen(
         when (state) {
             is ChatListState.Success -> {
                 Log.d("ChatList", state.chatList.toString())
-                ChatList(data = state.chatList, onItemClick = {
-
-                })
+                ChatList(data = state.chatList) {
+                    onNavigationRequested(Screen.ChatRoom.route + "/${it}")
+                }
             }
 
             is ChatListState.Loading -> {

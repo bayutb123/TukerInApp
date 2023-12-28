@@ -2,7 +2,7 @@ package com.bayutb123.tukerin.ui.utils
 
 class Currency {
     companion object {
-        fun convertIntToRupiah(price: Int): String {
+        fun convertIntToRupiah(price: Long): String {
             val priceString = price.toString()
             val result = StringBuilder()
             var counter = 0

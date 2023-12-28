@@ -22,6 +22,7 @@ class PostRepositoryImpl @Inject constructor(
                 NetworkResult.Error(response.code())
             }
         } catch (e: Exception) {
+            Log.d("Error", e.toString())
             NetworkResult.Error(e.hashCode())
         }
     }

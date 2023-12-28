@@ -5,7 +5,7 @@ data class Post(
     val title: String,
     val description: String,
     val address : String,
-    val price: Int,
+    val price: Long,
     val thumbnailImage : String,
     val ownerId: Int,
     val ownerName: String,
