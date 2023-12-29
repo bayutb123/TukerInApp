@@ -26,7 +26,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.bayutb123.tukerin.ui.screen.Screen
-import com.bayutb123.tukerin.ui.screen.home.chat.ChatScreen
+import com.bayutb123.tukerin.ui.screen.home.chat.chatlist.ChatListScreen
 import com.bayutb123.tukerin.ui.screen.home.dashboard.DashboardScreen
 import com.bayutb123.tukerin.ui.screen.home.myads.MyAdsScreen
 import com.bayutb123.tukerin.ui.screen.home.profile.ProfileScreen
@@ -115,7 +115,7 @@ fun HomeScreen(
                 )
             }
             composable(route = Screen.ChatList.route) {
-                ChatScreen(
+                ChatListScreen(
                     onNavigationRequested = {
                         onNavigationRequested(it)
                     }

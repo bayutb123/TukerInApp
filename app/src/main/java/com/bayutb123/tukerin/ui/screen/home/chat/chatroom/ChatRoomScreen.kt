@@ -9,6 +9,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -23,80 +25,8 @@ fun ChatRoomScreen(
     chatRoomViewModel: ChatRoomViewModel = hiltViewModel(),
     chatId: Int,
 ) {
-    val listMessage = listOf(
-        Message(
-            id = 1,
-            chatId = 1,
-            senderId = 1,
-            message = "Halo",
-            isRead = true,
-            attachment = null,
-            receiverId = 2,
-        ),
-        Message(
-            id = 2,
-            chatId = 1,
-            senderId = 2,
-            message = "Halo juga",
-            isRead = true,
-            attachment = null,
-            receiverId = 1,
-        ),
-        Message(
-            id = 3,
-            chatId = 1,
-            senderId = 1,
-            message = "Apa kabar?",
-            isRead = true,
-            attachment = null,
-            receiverId = 2,
-        ),
-        Message(
-            id = 4,
-            chatId = 1,
-            senderId = 2,
-            message = "Baik",
-            isRead = true,
-            attachment = null,
-            receiverId = 1,
-        ),
-        Message(
-            id = 5,
-            chatId = 1,
-            senderId = 1,
-            message = "Saya mau tanya",
-            isRead = true,
-            attachment = null,
-            receiverId = 2,
-        ),
-        Message(
-            id = 6,
-            chatId = 1,
-            senderId = 2,
-            message = "Apa?",
-            isRead = true,
-            attachment = null,
-            receiverId = 1,
-        ),
-        Message(
-            id = 7,
-            chatId = 1,
-            senderId = 1,
-            message = "Saya mau tanya",
-            isRead = true,
-            attachment = null,
-            receiverId = 2,
-        ),
-        Message(
-            id = 8,
-            chatId = 1,
-            senderId = 2,
-            message = "Apa?",
-            isRead = true,
-            attachment = null,
-            receiverId = 1,
-        ),
-    )
+    chatRoomViewModel.getAllMessages(chatId)
+    val state by chatRoomViewModel.state.collectAsState()
     Scaffold(
         topBar = {
             TopAppBar(title = { Text(text = "Nama Produk") })
@@ -105,14 +35,21 @@ fun ChatRoomScreen(
         Column(
             modifier = Modifier.padding(paddingValues)
         ) {
-            LazyColumn {
-                items(listMessage) {
-                    ChatBubble(
-                        message = it.message,
-                        isSender = it.senderId == 1,
-                        isRead = it.isRead,
-                        time = "10:21 PM"
-                    )
+            when (state) {
+                is ChatRoomState.Success -> {
+                    LazyColumn {
+                        items(items = (state as ChatRoomState.Success).data, key = { item -> item.id }) { message ->
+                            ChatBubble(message = message, userId = 1)
+                        }
+                    }
+                }
+
+                is ChatRoomState.Loading -> {
+                    Text(text = "Loading")
+                }
+
+                else -> {
+                    Text(text = (state as ChatRoomState.Failed).message)
                 }
             }
         }

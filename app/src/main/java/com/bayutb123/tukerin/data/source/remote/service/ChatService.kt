@@ -1,7 +1,7 @@
 package com.bayutb123.tukerin.data.source.remote.service
 
 import com.bayutb123.tukerin.data.source.remote.response.chat.AllChatsResponse
-import com.bayutb123.tukerin.data.source.remote.response.message.ChatMessagesResponse
+import com.bayutb123.tukerin.data.source.remote.response.message.AllMessageResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -12,8 +12,8 @@ interface ChatService {
         @Path("userId") userId: Int
     ) : Response<AllChatsResponse>
 
-    @GET("message/messages/{messageId}")
+    @GET("message/messages/{chatId}")
     suspend fun getChatMessages(
-        @Path("messageId") messageId: Int
-    ) : Response<ChatMessagesResponse>
+        @Path("chatId") chatId: Int
+    ) : Response<AllMessageResponse>
 }

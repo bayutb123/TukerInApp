@@ -13,7 +13,7 @@ class ChatUseCase @Inject constructor(
         return chatRepository.getAllChats(userId)
     }
 
-    suspend fun getChatMessages(chatId: Int) : NetworkResult<List<Message>> {
+    suspend fun getChatMessages(chatId: Int): NetworkResult<List<Message>> {
         return chatRepository.getAllMessage(chatId)
     }
 }

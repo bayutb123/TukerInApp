@@ -5,7 +5,7 @@ import com.bayutb123.tukerin.data.source.remote.response.auth.UserRegister
 import com.bayutb123.tukerin.data.source.remote.response.chat.AllChatsResponse
 import com.bayutb123.tukerin.data.source.remote.response.detail.DetailPost
 import com.bayutb123.tukerin.data.source.remote.response.home.PostsItem
-import com.bayutb123.tukerin.data.source.remote.response.message.ChatMessagesResponse
+import com.bayutb123.tukerin.data.source.remote.response.message.AllMessageResponse
 import com.bayutb123.tukerin.domain.model.Chat
 import com.bayutb123.tukerin.domain.model.Message
 import com.bayutb123.tukerin.domain.model.Post
@@ -98,7 +98,7 @@ class DataMapper {
             return result
         }
 
-        fun mapMessageResponseToMessage(messagesResponse: ChatMessagesResponse) : List<Message> {
+        fun mapMessageResponseToMessage(messagesResponse: AllMessageResponse) : List<Message> {
             val result = mutableListOf<Message>()
 
             messagesResponse.data.forEach { message ->
@@ -108,7 +108,7 @@ class DataMapper {
                     receiverId = message.receiverId,
                     message = message.message,
                     isRead = message.isRead == 1,
-                    attachment = message.attachments,
+                    attachment = null, // Sementara null dulu
                     chatId = message.chatId
                 ))
             }

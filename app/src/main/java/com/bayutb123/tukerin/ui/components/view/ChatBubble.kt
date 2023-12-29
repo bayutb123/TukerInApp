@@ -20,16 +20,17 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.bayutb123.tukerin.domain.model.Message
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 
 @Composable
 fun ChatBubble(
     modifier: Modifier = Modifier,
-    message: String,
-    isSender: Boolean,
-    isRead: Boolean,
-    time: String
+    message: Message,
+    time: String = "12:00",
+    userId: Int
 ) {
+    val isSender = message.senderId == userId
     val startPadding = if (isSender) 16.dp else 0.dp
     val endPadding = if (!isSender) 16.dp else 0.dp
     val alignment: Alignment.Horizontal = if (!isSender) Alignment.Start else Alignment.End
@@ -67,7 +68,7 @@ fun ChatBubble(
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 horizontalAlignment = alignment
             ) {
-                Text(text = message, color = MaterialTheme.colorScheme.onPrimary)
+                Text(text = message.message, color = MaterialTheme.colorScheme.onPrimary)
                 Text(
                     text = time,
                     style = MaterialTheme.typography.labelSmall,
@@ -83,34 +84,7 @@ fun ChatBubble(
 fun ChatBubblePreview() {
     TukerInTheme {
         Column {
-            ChatBubble(
-                message = "Hello", isSender = true, isRead = true,
-                time = "10:21 PM"
-            )
-            ChatBubble(
-                message = "trxId value can be obtained from each transaction history at transaction list. Example: 1282556767 \n" +
-                        "\n" +
-                        "trxType value can be obtained from each transaction history at transaction list. Example: RECHARGE ",
-                isSender = false,
-                isRead = true,
-                time = "10:21 PM"
-            )
-            ChatBubble(
-                message = "trxId value can be obtained from each transaction history at transaction list. Example: 1282556767 \n" +
-                        "\n" +
-                        "trxType value can be obtained from each transaction history at transaction list. Example: RECHARGE ",
-                isSender = true,
-                isRead = true,
-                time = "10:21 PM"
-            )
-            ChatBubble(
-                message = "Hello", isSender = true, isRead = true,
-                time = "10:21 PM"
-            )
-            ChatBubble(
-                message = "Hello", isSender = true, isRead = true,
-                time = "10:21 PM"
-            )
+
         }
     }
 }

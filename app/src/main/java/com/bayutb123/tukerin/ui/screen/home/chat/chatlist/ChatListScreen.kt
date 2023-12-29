@@ -1,4 +1,4 @@
-package com.bayutb123.tukerin.ui.screen.home.chat
+package com.bayutb123.tukerin.ui.screen.home.chat.chatlist
 
 import android.util.Log
 import androidx.compose.runtime.Composable
@@ -11,7 +11,7 @@ import com.bayutb123.tukerin.ui.components.view.ChatList
 import com.bayutb123.tukerin.ui.screen.Screen
 
 @Composable
-fun ChatScreen(
+fun ChatListScreen(
     modifier: Modifier = Modifier,
     onNavigationRequested : (String) -> Unit
 ) {
@@ -24,11 +24,9 @@ fun ChatScreen(
     }
     val chatListState by chatViewModel.chatListState.collectAsState()
 
-    Log.d("Test", chatViewModel.userId.toString())
     chatListState.let { state ->
         when (state) {
             is ChatListState.Success -> {
-                Log.d("ChatList", state.chatList.toString())
                 ChatList(data = state.chatList) {
                     onNavigationRequested(Screen.ChatRoom.route + "/${it}")
                 }

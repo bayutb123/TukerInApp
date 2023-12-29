@@ -1,4 +1,4 @@
-package com.bayutb123.tukerin.ui.screen.home.chat
+package com.bayutb123.tukerin.ui.screen.home.chat.chatlist
 
 import android.content.Context
 import androidx.lifecycle.ViewModel

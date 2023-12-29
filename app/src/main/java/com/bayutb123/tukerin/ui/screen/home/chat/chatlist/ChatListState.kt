@@ -1,4 +1,4 @@
-package com.bayutb123.tukerin.ui.screen.home.chat
+package com.bayutb123.tukerin.ui.screen.home.chat.chatlist
 
 import com.bayutb123.tukerin.domain.model.Chat
 

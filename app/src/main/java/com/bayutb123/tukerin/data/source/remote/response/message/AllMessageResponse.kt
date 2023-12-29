@@ -2,7 +2,7 @@ package com.bayutb123.tukerin.data.source.remote.response.message
 
 import com.google.gson.annotations.SerializedName
 
-data class ChatMessagesResponse(
+data class AllMessageResponse(
 
 	@field:SerializedName("data")
 	val data: List<DataItem>,
@@ -17,7 +17,7 @@ data class DataItem(
 	val isRead: Int,
 
 	@field:SerializedName("attachments")
-	val attachments: List<String>?,
+	val attachments: List<AttachmentsItem>,
 
 	@field:SerializedName("updated_at")
 	val updatedAt: String,
