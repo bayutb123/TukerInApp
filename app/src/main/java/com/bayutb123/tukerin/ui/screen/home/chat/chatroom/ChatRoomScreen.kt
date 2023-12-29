@@ -4,11 +4,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -25,6 +27,7 @@ fun ChatRoomScreen(
     chatRoomViewModel: ChatRoomViewModel = hiltViewModel(),
     chatId: Int,
 ) {
+    val listState = rememberLazyListState()
     chatRoomViewModel.getAllMessages(chatId)
     val state by chatRoomViewModel.state.collectAsState()
     Scaffold(
@@ -37,10 +40,14 @@ fun ChatRoomScreen(
         ) {
             when (state) {
                 is ChatRoomState.Success -> {
-                    LazyColumn {
+                    LazyColumn(state = listState) {
                         items(items = (state as ChatRoomState.Success).data, key = { item -> item.id }) { message ->
                             ChatBubble(message = message, userId = 1)
                         }
+                    }
+
+                    LaunchedEffect(listState) {
+                        listState.scrollToItem(listState.layoutInfo.totalItemsCount - 1)
                     }
                 }
 

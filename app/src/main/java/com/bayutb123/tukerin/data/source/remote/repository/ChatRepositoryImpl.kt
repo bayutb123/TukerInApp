@@ -35,10 +35,7 @@ class ChatRepositoryImpl @Inject constructor(
 
     override suspend fun getAllMessage(chatId: Int): NetworkResult<List<Message>> {
         return try {
-            Log.d("ChatRepoImpl", chatId.toString())
-            Log.d("ChatRepoImpl", chatService.getChatMessages(chatId).toString())
             val result = chatService.getChatMessages(chatId)
-            Log.d("ChatRepoImpl", result.code().toString())
             if (result.isSuccessful) {
                 when (result.code()) {
                     200 -> {
