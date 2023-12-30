@@ -9,8 +9,17 @@ import javax.inject.Inject
 class ChatUseCase @Inject constructor(
     private val chatRepository: ChatRepository
 ) {
-    suspend fun getAllChats(userId: Int) : NetworkResult<List<Chat>> {
-        return chatRepository.getAllChats(userId)
+    suspend fun getAllChats(userId: Int): NetworkResult<List<Chat>> {
+        return when (val result = chatRepository.getAllChats(userId)) {
+            is NetworkResult.Success -> {
+                val reversedChats = result.data!!.reversed()
+                NetworkResult.Success(reversedChats)
+            }
+            else -> {
+                result
+            }
+        }
+
     }
 
     suspend fun getChatMessages(chatId: Int): NetworkResult<List<Message>> {

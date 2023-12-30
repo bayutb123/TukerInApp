@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bayutb123.tukerin.ui.components.input.CustomMessageField
 import com.bayutb123.tukerin.ui.components.view.ChatBubble
@@ -52,7 +53,7 @@ fun ChatRoomScreen(
             })
         },
         bottomBar = {
-            CustomMessageField(onTextChanged = {message = it}, singleLine = false, maxLines = 3, placeholder = "Ketik pesan disini" ) {
+            CustomMessageField(onTextChanged = {message = it}, singleLine = false, maxLines = 3, placeholder = "Ketik pesan disini", modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp) ) {
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                 message = ""
             }
