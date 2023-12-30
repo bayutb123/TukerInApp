@@ -115,11 +115,9 @@ fun HomeScreen(
                 )
             }
             composable(route = Screen.ChatList.route) {
-                ChatListScreen(
-                    onNavigationRequested = {
-                        onNavigationRequested(it)
-                    }
-                )
+                ChatListScreen {
+                    onNavigationRequested(it)
+                }
             }
             composable(route = Screen.MyAds.route) {
                 MyAdsScreen(
