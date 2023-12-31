@@ -7,5 +7,6 @@ data class Message(
     val receiverId: Int,
     val message: String,
     val attachment: List<String>?,
-    val isRead: Boolean
+    val isRead: Boolean,
+    val createdAt: String,
 )

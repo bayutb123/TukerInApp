@@ -7,6 +7,7 @@ import com.bayutb123.tukerin.ui.screen.auth.login.AuthState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,16 +16,16 @@ class SplashViewModel @Inject constructor(
     private val dataStoreUseCase: DataStoreUseCase
 ) : ViewModel (){
     private val _authState = MutableStateFlow<AuthState>(AuthState.Loading)
-    val authState = _authState
+    val authState = _authState.asStateFlow()
     init {
         checkAuthState()
     }
     private fun checkAuthState() {
         _authState.value = AuthState.Loading
         viewModelScope.launch {
-            delay(5000)
             val token = dataStoreUseCase.getToken()
             val userId = dataStoreUseCase.getUserId()
+            delay(3500)
             if (token != null && userId != null) {
                 _authState.value = AuthState.Authenticated(
                     token = token,

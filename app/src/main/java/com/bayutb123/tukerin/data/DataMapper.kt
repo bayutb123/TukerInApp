@@ -91,7 +91,8 @@ class DataMapper {
                         senderId = dataItem.lastMessage.senderId,
                         attachment = null,
                         isRead = dataItem.lastMessage.isRead == 1,
-                        receiverId = dataItem.lastMessage.receiverId
+                        receiverId = dataItem.lastMessage.receiverId,
+                        createdAt = dataItem.lastMessage.createdAt
                     )
                 ))
             }
@@ -109,7 +110,8 @@ class DataMapper {
                     message = message.message,
                     isRead = message.isRead == 1,
                     attachment = null, // Sementara null dulu
-                    chatId = message.chatId
+                    chatId = message.chatId,
+                    createdAt = message.createdAt
                 ))
             }
 

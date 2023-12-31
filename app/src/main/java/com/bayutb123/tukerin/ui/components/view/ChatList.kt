@@ -89,7 +89,8 @@ fun PreviewMessageList() {
                         receiverId = 2,
                         message = "Hello",
                         attachment = null,
-                        isRead = false
+                        isRead = false,
+                        createdAt = ""
                     ),
                     userId = 1,
                     createdAt = "",
