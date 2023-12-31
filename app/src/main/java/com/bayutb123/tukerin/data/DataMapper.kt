@@ -75,25 +75,10 @@ class DataMapper {
                 result.add(Chat(
                     id = dataItem.id,
                     userId = dataItem.userId,
-                    receiver = User(
-                        id = dataItem.receiver.id,
-                        name = dataItem.receiver.name,
-                        email = dataItem.receiver.email,
-                        token = dataItem.receiver.apiToken,
-                        isPremium = dataItem.receiver.isPremiumUser == 1
-                    ),
+                    receiver = dataItem.receiverId,
                     context = dataItem.context,
                     createdAt = dataItem.createdAt,
-                    lastMessage = Message(
-                        id = dataItem.lastMessage.id,
-                        chatId = dataItem.lastMessage.chatId,
-                        message = dataItem.lastMessage.message,
-                        senderId = dataItem.lastMessage.senderId,
-                        attachment = null,
-                        isRead = dataItem.lastMessage.isRead == 1,
-                        receiverId = dataItem.lastMessage.receiverId,
-                        createdAt = dataItem.lastMessage.createdAt
-                    )
+                    lastMessage = dataItem.lastMessage.message
                 ))
             }
             return result

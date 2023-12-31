@@ -20,9 +20,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.bayutb123.tukerin.domain.model.Chat
-import com.bayutb123.tukerin.domain.model.Message
-import com.bayutb123.tukerin.domain.model.User
-import com.bayutb123.tukerin.ui.theme.TukerInTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,7 +37,7 @@ fun ChatList(
         ) {
             items(items = data, key = { item -> item.id } ){ chat ->
                 ListItem(
-                    headlineContent = { Text(text = chat.receiver.name) },
+                    headlineContent = { Text(text = chat.receiver.toString()) },
                     overlineContent = {
                         Text(text = chat.context)
                     },
@@ -55,7 +52,7 @@ fun ChatList(
                         )
                     },
                     supportingContent = {
-                        Text(text = chat.lastMessage!!.message)
+                        Text(text = chat.lastMessage)
                     },
                     modifier = Modifier.clickable {
                         onItemClick(chat.id)
@@ -69,34 +66,5 @@ fun ChatList(
 @Preview
 @Composable
 fun PreviewMessageList() {
-    TukerInTheme {
-        ChatList(
-            data = listOf(
-                Chat(
-                    id = 1,
-                    receiver = User(
-                        id = 2,
-                        name = "Bayu",
-                        email = "",
-                        token = "",
-                        isPremium = false
-                    ),
-                    context = "Product",
-                    lastMessage = Message(
-                        id = 1,
-                        chatId = 1,
-                        senderId = 1,
-                        receiverId = 2,
-                        message = "Hello",
-                        attachment = null,
-                        isRead = false,
-                        createdAt = ""
-                    ),
-                    userId = 1,
-                    createdAt = "",
-                )
-            ),
-            onItemClick = {}
-        )
-    }
+
 }

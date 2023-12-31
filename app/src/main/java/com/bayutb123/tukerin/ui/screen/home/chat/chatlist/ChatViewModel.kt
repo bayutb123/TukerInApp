@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.bayutb123.tukerin.data.NetworkResult
 import com.bayutb123.tukerin.domain.usecase.ChatUseCase
 import com.bayutb123.tukerin.domain.usecase.DataStoreUseCase
+import com.bayutb123.tukerin.domain.usecase.RoomUseCase
 import com.bayutb123.tukerin.ui.utils.Connection
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +17,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val chatUseCase: ChatUseCase,
-    private val dataStoreUseCase: DataStoreUseCase
+    private val dataStoreUseCase: DataStoreUseCase,
+    private val roomUseCase: RoomUseCase
 ) : ViewModel() {
     var userId = 0
     private val _chatListState = MutableStateFlow<ChatListState>(

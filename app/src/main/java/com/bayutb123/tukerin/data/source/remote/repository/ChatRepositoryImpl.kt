@@ -1,8 +1,9 @@
 package com.bayutb123.tukerin.data.source.remote.repository
 
-import android.util.Log
 import com.bayutb123.tukerin.data.DataMapper
+import com.bayutb123.tukerin.data.EntityMapper
 import com.bayutb123.tukerin.data.NetworkResult
+import com.bayutb123.tukerin.data.source.local.dao.TukerInDao
 import com.bayutb123.tukerin.data.source.remote.service.ChatService
 import com.bayutb123.tukerin.domain.model.Chat
 import com.bayutb123.tukerin.domain.model.Message
@@ -10,7 +11,8 @@ import com.bayutb123.tukerin.domain.repository.ChatRepository
 import javax.inject.Inject
 
 class ChatRepositoryImpl @Inject constructor(
-    private val chatService: ChatService
+    private val chatService: ChatService,
+    private val tukerInDao: TukerInDao
 ) : ChatRepository {
     override suspend fun getAllChats(userId: Int): NetworkResult<List<Chat>> {
         return try {
@@ -19,7 +21,9 @@ class ChatRepositoryImpl @Inject constructor(
                 when (result.code()) {
                     200 -> {
                         val body = result.body()
-                        NetworkResult.Success(DataMapper.mapChatResponseToChat(body!!))
+                        val chatList = DataMapper.mapChatResponseToChat(body!!)
+                        tukerInDao.insertAllChat(EntityMapper.mapChatDomainToEntity(chatList))
+                        NetworkResult.Success(DataMapper.mapChatResponseToChat(body))
                     }
                     else -> {
                         NetworkResult.Error(result.code())
@@ -40,7 +44,9 @@ class ChatRepositoryImpl @Inject constructor(
                 when (result.code()) {
                     200 -> {
                         val body = result.body()
-                        NetworkResult.Success(DataMapper.mapMessageResponseToMessage(body!!))
+                        val messageList = DataMapper.mapMessageResponseToMessage(body!!)
+                        tukerInDao.insertAllMessage(EntityMapper.mapMessageDomainToEntity(messageList))
+                        NetworkResult.Success(DataMapper.mapMessageResponseToMessage(body))
                     }
                     else -> {
                         NetworkResult.Error(result.code())

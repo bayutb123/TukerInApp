@@ -1,5 +1,6 @@
 package com.bayutb123.tukerin.di
 
+import com.bayutb123.tukerin.data.source.local.dao.TukerInDao
 import com.bayutb123.tukerin.data.source.remote.repository.ChatRepositoryImpl
 import com.bayutb123.tukerin.data.source.remote.service.ChatService
 import com.bayutb123.tukerin.domain.repository.ChatRepository
@@ -19,8 +20,8 @@ object ChatModule {
     }
 
     @Provides
-    fun provideChatRepository(chatService: ChatService) : ChatRepository {
-        return ChatRepositoryImpl(chatService)
+    fun provideChatRepository(chatService: ChatService, tukerInDao: TukerInDao) : ChatRepository {
+        return ChatRepositoryImpl(chatService, tukerInDao)
     }
 
     @Provides
