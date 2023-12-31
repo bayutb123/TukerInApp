@@ -52,7 +52,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
     packaging {
         resources {
@@ -91,8 +91,8 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.4.0")
 
     // Dependency Injection
-    implementation("com.google.dagger:hilt-android:2.48")
-    ksp("com.google.dagger:hilt-android-compiler:2.48")
+    implementation("com.google.dagger:hilt-android:2.48.1")
+    ksp("com.google.dagger:hilt-android-compiler:2.48.1")
     // compiler v 1.0.0
     ksp
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
@@ -114,5 +114,10 @@ dependencies {
 
     // Lottie
     implementation("com.airbnb.android:lottie-compose:6.1.0")
+
+    // ROOM
+    implementation("androidx.room:room-runtime:2.6.0")
+    ksp("androidx.room:room-compiler:2.6.0")
+    implementation("androidx.room:room-ktx:2.6.0")
 
 }
