@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -34,8 +35,7 @@ import com.bayutb123.tukerin.ui.screen.home.profile.ProfileScreen
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    onNavigationRequested: (route: String) -> Unit,
-    onAuthenticated: (route: String) -> Unit
+    onNavigationRequested: (route: String) -> Unit
 ) {
     val homeNavController = rememberNavController()
     val navItem = NavItem.items
@@ -71,28 +71,29 @@ fun HomeScreen(
                 NavigationBar {
                     val navBackStackEntry by homeNavController.currentBackStackEntryAsState()
                     val currentDestination = navBackStackEntry?.destination
+
+                    fun isSelected(item: NavItem): Boolean {
+                        return currentDestination?.hierarchy?.any { it.route == item.route } == true
+                    }
+
                     navItem.forEach { item ->
+                        val selected = isSelected(item)
+
                         NavigationBarItem(
                             icon = {
-                                if (currentDestination?.hierarchy?.any { it.route == item.route } == true) {
+                                if (selected) {
                                     Icon(imageVector = item.iconSelected, contentDescription = null)
                                 } else {
                                     Icon(imageVector = item.icon, contentDescription = null)
                                 }
                             },
-                            selected = currentDestination?.hierarchy?.any { it.route == item.route } == true,
+                            selected = selected,
                             onClick = {
                                 homeNavController.navigate(item.route) {
-                                    // Pop up to the start destination of the graph to
-                                    // avoid building up a large stack of destinations
-                                    // on the back stack as users select items
                                     popUpTo(homeNavController.graph.findStartDestination().id) {
                                         saveState = true
                                     }
-                                    // Avoid multiple copies of the same destination when
-                                    // reselecting the same item
                                     launchSingleTop = true
-                                    // Restore state when reselecting a previously selected item
                                     restoreState = true
                                 }
                             }
@@ -107,34 +108,49 @@ fun HomeScreen(
             navController = homeNavController,
             startDestination = Screen.Dashboard.route
         ) {
-            composable(route = Screen.Dashboard.route) {
-                DashboardScreen(
-                    onNavigationRequested = {
-                        onNavigationRequested(it)
-                    },
-                )
-            }
-            composable(route = Screen.ChatList.route) {
-                ChatListScreen {
-                    onNavigationRequested(it)
-                }
-            }
-            composable(route = Screen.MyAds.route) {
-                MyAdsScreen(
-                    onNavigationRequested = {
-                        onNavigationRequested(it)
-                    }
-                )
-            }
-            composable(route = Screen.Profile.route) {
-                ProfileScreen(
-                    onLogout = {
-                        // for test only
-                        onAuthenticated(Screen.Login.route)
-                    }
-                )
-            }
-
+            addDashboard(onNavigationRequested = onNavigationRequested)
+            addChatList(onNavigationRequested = onNavigationRequested)
+            addMyAds(onNavigationRequested = onNavigationRequested)
+            addProfile(onNavigationRequested = onNavigationRequested)
         }
+    }
+}
+
+private fun NavGraphBuilder.addDashboard(onNavigationRequested: (String) -> Unit) {
+    composable(route = Screen.Dashboard.route) {
+        DashboardScreen(
+            onNavigationRequested = { destination ->
+                onNavigationRequested(destination)
+            },
+        )
+    }
+}
+
+private fun NavGraphBuilder.addChatList(onNavigationRequested: (String) -> Unit) {
+    composable(route = Screen.ChatList.route) {
+        ChatListScreen {
+            onNavigationRequested(it)
+        }
+    }
+}
+
+private fun NavGraphBuilder.addMyAds(onNavigationRequested: (String) -> Unit) {
+    composable(route = Screen.MyAds.route) {
+        MyAdsScreen(
+            onNavigationRequested = { destination ->
+                onNavigationRequested(destination)
+            }
+        )
+    }
+}
+
+private fun NavGraphBuilder.addProfile(onNavigationRequested: (String) -> Unit) {
+    composable(route = Screen.Profile.route) {
+        ProfileScreen(
+            onLogout = {
+                // for test only
+                onNavigationRequested(Screen.Login.route)
+            }
+        )
     }
 }
