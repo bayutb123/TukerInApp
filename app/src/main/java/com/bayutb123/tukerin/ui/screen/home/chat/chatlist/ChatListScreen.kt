@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
@@ -22,7 +24,9 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.bayutb123.tukerin.R
 import com.bayutb123.tukerin.ui.components.view.ChatList
 import com.bayutb123.tukerin.ui.screen.Screen
+import timber.log.Timber
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatListScreen(
     onNavigationRequested: (String) -> Unit
@@ -39,7 +43,11 @@ fun ChatListScreen(
     }
     val chatListState by chatViewModel.chatListState.collectAsState()
 
-    Scaffold { paddingValues ->
+    Scaffold(
+        topBar = {
+            TopAppBar(title = { Text(text = "Messages") })
+        }
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -79,6 +87,7 @@ fun ChatListScreen(
                     }
 
                     else -> {
+                        Timber.d("state: $state")
                         Text(text = (state as ChatListState.Failed).message)
                     }
                 }
