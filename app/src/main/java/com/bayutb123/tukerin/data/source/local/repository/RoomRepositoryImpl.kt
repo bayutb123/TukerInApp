@@ -10,20 +10,20 @@ import javax.inject.Inject
 class RoomRepositoryImpl @Inject constructor(
     private val dao: TukerInDao
 ) : RoomRepository {
-    override suspend fun insertAllChat(chat: List<Chat>) {
-        dao.insertAllChat(
-            EntityMapper.mapChatDomainToEntity(chat)
+    override suspend fun insertChat(chat: Chat, userId: Int) {
+        dao.insertChat(
+            EntityMapper.mapChatDomainToEntity(chat, userId)
         )
     }
 
-    override suspend fun insertAllMessage(message: List<Message>) {
-        dao.insertAllMessage(
+    override suspend fun insertMessage(message: Message) {
+        dao.insertMessage(
             EntityMapper.mapMessageDomainToEntity(message)
         )
     }
 
     override suspend fun getAllChats(userId: Int): List<Chat> {
-        return EntityMapper.mapChatEntityToDomain(
+        return EntityMapper.mapListChatEntityToListDomain(
             dao.getAllChats(userId)
         )
     }

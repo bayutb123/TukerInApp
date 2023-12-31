@@ -9,16 +9,16 @@ class RoomUseCase @Inject constructor(
     private val roomRepository: RoomRepository
 ) {
 
-    suspend fun insertAllChat(chat: List<Chat>) {
-        roomRepository.insertAllChat(chat)
+    suspend fun insertChat(chat: Chat, userId: Int) {
+        roomRepository.insertChat(chat, userId)
     }
 
-    suspend fun insertAllMessage(message: List<Message>) {
-        roomRepository.insertAllMessage(message)
+    suspend fun insertMessage(message: Message) {
+        roomRepository.insertMessage(message)
     }
 
     suspend fun getAllChats(userId: Int): List<Chat> {
-        return roomRepository.getAllChats(userId)
+        return roomRepository.getAllChats(userId).sortedBy { it.lastMessageId }.reversed()
     }
 
     suspend fun getAllMessage(chatId: Int): List<Message> {

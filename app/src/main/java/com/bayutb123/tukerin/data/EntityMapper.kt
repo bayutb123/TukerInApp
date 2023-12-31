@@ -25,14 +25,15 @@ class EntityMapper {
             return messageList
         }
 
-        fun mapChatEntityToDomain(chatEntity: List<ChatEntity>) : List<Chat> {
+        fun mapListChatEntityToListDomain(chatEntity: List<ChatEntity>) : List<Chat> {
             val chatList = ArrayList<Chat>()
             chatEntity.map {
                 val chat = Chat(
                     id = it.id,
-                    userId = it.userId,
-                    receiver = it.receiverId,
+                    userId = it.ownerId,
+                    receiver = it.awayId,
                     context = it.context,
+                    lastMessageId = it.lastMessageId,
                     lastMessage = it.lastMessage,
                     createdAt = it.createdAt
                 )
@@ -41,7 +42,7 @@ class EntityMapper {
             return chatList
         }
 
-        fun mapMessageDomainToEntity(message: List<Message>) : List<MessageEntity> {
+        fun mapListMessageDomainToListEntity(message: List<Message>) : List<MessageEntity> {
             val messageList = ArrayList<MessageEntity>()
             message.map {
                 val messageEntity = MessageEntity(
@@ -59,20 +60,46 @@ class EntityMapper {
             return messageList
         }
 
-        fun mapChatDomainToEntity(chat: List<Chat>) : List<ChatEntity> {
+        fun mapChatDomainToEntity(chat: List<Chat>, userId: Int) : List<ChatEntity> {
             val chatList = ArrayList<ChatEntity>()
             chat.map {
                 val chatEntity = ChatEntity(
                     id = it.id,
-                    userId = it.userId,
-                    receiverId = it.receiver,
+                    ownerId = userId,
+                    awayId = it.receiver,
                     context = it.context,
+                    lastMessageId = it.lastMessageId,
                     lastMessage = it.lastMessage,
                     createdAt = it.createdAt
                 )
                 chatList.add(chatEntity)
             }
             return chatList
+        }
+
+        fun mapChatDomainToEntity(chat: Chat, userId: Int) : ChatEntity {
+            return ChatEntity(
+                id = chat.id,
+                ownerId = userId,
+                awayId = chat.receiver,
+                context = chat.context,
+                lastMessageId = chat.lastMessageId,
+                lastMessage = chat.lastMessage,
+                createdAt = chat.createdAt
+            )
+        }
+
+        fun mapMessageDomainToEntity(message: Message) : MessageEntity {
+            return MessageEntity(
+                id = message.id,
+                chatId = message.chatId,
+                senderId = message.senderId,
+                receiverId = message.receiverId,
+                message = message.message,
+                attachment = message.attachment?.get(0),
+                isRead = message.isRead,
+                createdAt = message.createdAt
+            )
         }
     }
 }

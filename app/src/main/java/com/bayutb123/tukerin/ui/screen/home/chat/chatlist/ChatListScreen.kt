@@ -74,10 +74,12 @@ fun ChatListScreen(
                         }
                     }
 
+                    is ChatListState.Empty -> {
+                        Text(text = state.message)
+                    }
+
                     else -> {
-
                         Text(text = (state as ChatListState.Failed).message)
-
                     }
                 }
             }

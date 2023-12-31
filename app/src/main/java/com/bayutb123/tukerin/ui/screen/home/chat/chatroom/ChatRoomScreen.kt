@@ -83,6 +83,10 @@ fun ChatRoomScreen(
 
                 }
 
+                is ChatRoomState.Empty -> {
+                    Text(text = "Empty")
+                }
+
                 else -> {
                     Text(text = (state as ChatRoomState.Failed).message)
                 }

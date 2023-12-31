@@ -10,8 +10,8 @@ import com.bayutb123.tukerin.data.source.local.entity.MessageEntity
 
 @Dao
 interface TukerInDao {
-    @Query("SELECT * FROM chat WHERE userId = :userId")
-    fun getAllChats(userId: Int): List<ChatEntity>
+    @Query("SELECT * FROM chat where ownerId = :ownerId")
+    fun getAllChats(ownerId: Int): List<ChatEntity>
 
     @Query("SELECT * FROM message WHERE chatId = :chatId")
     fun getAllMessage(chatId: Int): List<MessageEntity>

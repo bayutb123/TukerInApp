@@ -8,6 +8,7 @@ import com.bayutb123.tukerin.data.source.remote.service.ChatService
 import com.bayutb123.tukerin.domain.model.Chat
 import com.bayutb123.tukerin.domain.model.Message
 import com.bayutb123.tukerin.domain.repository.ChatRepository
+import timber.log.Timber
 import javax.inject.Inject
 
 class ChatRepositoryImpl @Inject constructor(
@@ -22,7 +23,10 @@ class ChatRepositoryImpl @Inject constructor(
                     200 -> {
                         val body = result.body()
                         val chatList = DataMapper.mapChatResponseToChat(body!!)
-                        tukerInDao.insertAllChat(EntityMapper.mapChatDomainToEntity(chatList))
+                        Timber.d("chatList: $chatList")
+                        tukerInDao.insertAllChat(
+                            EntityMapper.mapChatDomainToEntity(chatList, userId)
+                        )
                         NetworkResult.Success(DataMapper.mapChatResponseToChat(body))
                     }
                     else -> {
@@ -45,7 +49,7 @@ class ChatRepositoryImpl @Inject constructor(
                     200 -> {
                         val body = result.body()
                         val messageList = DataMapper.mapMessageResponseToMessage(body!!)
-                        tukerInDao.insertAllMessage(EntityMapper.mapMessageDomainToEntity(messageList))
+                        tukerInDao.insertAllMessage(EntityMapper.mapListMessageDomainToListEntity(messageList))
                         NetworkResult.Success(DataMapper.mapMessageResponseToMessage(body))
                     }
                     else -> {

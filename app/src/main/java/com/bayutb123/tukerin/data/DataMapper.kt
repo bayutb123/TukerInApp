@@ -70,7 +70,6 @@ class DataMapper {
 
         fun mapChatResponseToChat(chatsResponse: AllChatsResponse) : List<Chat> {
             val result = mutableListOf<Chat>()
-
             chatsResponse.data.forEach { dataItem ->
                 result.add(Chat(
                     id = dataItem.id,
@@ -78,7 +77,8 @@ class DataMapper {
                     receiver = dataItem.receiverId,
                     context = dataItem.context,
                     createdAt = dataItem.createdAt,
-                    lastMessage = dataItem.lastMessage.message
+                    lastMessage = dataItem.lastMessage.message,
+                    lastMessageId = dataItem.lastMessage.id
                 ))
             }
             return result
