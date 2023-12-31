@@ -1,6 +1,5 @@
 package com.bayutb123.tukerin.data.source.remote.repository
 
-import android.util.Log
 import com.bayutb123.tukerin.data.DataMapper
 import com.bayutb123.tukerin.data.NetworkResult
 import com.bayutb123.tukerin.data.source.remote.service.AuthService
@@ -28,7 +27,6 @@ class AuthRepositoryImpl @Inject constructor(
                 NetworkResult.Error(result.code())
             }
         } catch (e: Exception) {
-            Log.e("AuthRepositoryImpl", "login: ${e.message}", e)
             NetworkResult.Error(e.hashCode())
         }
     }
@@ -50,7 +48,6 @@ class AuthRepositoryImpl @Inject constructor(
                 NetworkResult.Error(result.code())
             }
         } catch (e: Exception) {
-            Log.e("AuthRepositoryImpl", "register: ${e.message}", e)
             NetworkResult.Error(e.hashCode())
         }
     }

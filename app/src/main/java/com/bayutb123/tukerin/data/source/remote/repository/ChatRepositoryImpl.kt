@@ -15,6 +15,7 @@ class ChatRepositoryImpl @Inject constructor(
     private val chatService: ChatService,
     private val tukerInDao: TukerInDao
 ) : ChatRepository {
+
     override suspend fun getAllChats(userId: Int): NetworkResult<List<Chat>> {
         return try {
             val result = chatService.getChats(userId)
@@ -24,14 +25,13 @@ class ChatRepositoryImpl @Inject constructor(
                         val body = result.body()
                         val chatList = DataMapper.mapChatResponseToChat(body!!)
                         Timber.d("chatList: $chatList")
-                        tukerInDao.insertAllChat(
-                            EntityMapper.mapChatDomainToEntity(chatList, userId)
-                        )
-                        NetworkResult.Success(DataMapper.mapChatResponseToChat(body))
+
+                        // Simpan data ke Room
+                        tukerInDao.insertAllChat(EntityMapper.mapChatDomainToEntity(chatList, userId))
+
+                        NetworkResult.Success(chatList)
                     }
-                    else -> {
-                        NetworkResult.Error(result.code())
-                    }
+                    else -> NetworkResult.Error(result.code())
                 }
             } else {
                 NetworkResult.Error(result.code())
@@ -49,12 +49,13 @@ class ChatRepositoryImpl @Inject constructor(
                     200 -> {
                         val body = result.body()
                         val messageList = DataMapper.mapMessageResponseToMessage(body!!)
+
+                        // Simpan data ke Room
                         tukerInDao.insertAllMessage(EntityMapper.mapListMessageDomainToListEntity(messageList))
-                        NetworkResult.Success(DataMapper.mapMessageResponseToMessage(body))
+
+                        NetworkResult.Success(messageList)
                     }
-                    else -> {
-                        NetworkResult.Error(result.code())
-                    }
+                    else -> NetworkResult.Error(result.code())
                 }
             } else {
                 NetworkResult.Error(result.code())
@@ -63,5 +64,4 @@ class ChatRepositoryImpl @Inject constructor(
             NetworkResult.Error(e.hashCode())
         }
     }
-
 }

@@ -1,6 +1,5 @@
 package com.bayutb123.tukerin.data.source.remote.repository
 
-import android.util.Log
 import com.bayutb123.tukerin.data.DataMapper
 import com.bayutb123.tukerin.data.NetworkResult
 import com.bayutb123.tukerin.data.source.remote.service.PostService
@@ -11,17 +10,17 @@ import javax.inject.Inject
 class PostRepositoryImpl @Inject constructor(
     private val postService: PostService
 ) : PostRepository {
+
     override suspend fun getAllPosts(userId: Int, page: Int): NetworkResult<List<Post>> {
         return try {
             val response = postService.getAllPosts(userId, page)
             if (response.isSuccessful) {
-                val result = DataMapper.mapPostResponseToPost(response.body()!!.posts)
-                NetworkResult.Success(result)
+                val posts = response.body()?.posts.orEmpty()
+                NetworkResult.Success(DataMapper.mapPostResponseToPost(posts))
             } else {
                 NetworkResult.Error(response.code())
             }
         } catch (e: Exception) {
-            Log.d("Error", e.toString())
             NetworkResult.Error(e.hashCode())
         }
     }
@@ -30,7 +29,8 @@ class PostRepositoryImpl @Inject constructor(
         return try {
             val response = postService.searchPost(query, userId)
             if (response.isSuccessful) {
-                NetworkResult.Success(DataMapper.mapPostResponseToPost(response.body()!!.posts))
+                val posts = response.body()?.posts.orEmpty()
+                NetworkResult.Success(DataMapper.mapPostResponseToPost(posts))
             } else {
                 NetworkResult.Error(response.code())
             }
@@ -43,9 +43,8 @@ class PostRepositoryImpl @Inject constructor(
         return try {
             val response = postService.getSuggestions(query, userId)
             if (response.isSuccessful) {
-                NetworkResult.Success(response.body()!!.suggestions.map {
-                    it.title
-                })
+                val suggestions = response.body()?.suggestions.orEmpty().map { it.title }
+                NetworkResult.Success(suggestions)
             } else {
                 NetworkResult.Error(response.code())
             }
@@ -58,7 +57,8 @@ class PostRepositoryImpl @Inject constructor(
         return try {
             val response = postService.getPost(postId)
             if (response.isSuccessful) {
-                NetworkResult.Success(DataMapper.mapPostDetailResponseToPost(response.body()!!.post))
+                val post = response.body()!!.post
+                NetworkResult.Success(DataMapper.mapPostDetailResponseToPost(post))
             } else {
                 NetworkResult.Error(response.code())
             }
@@ -66,5 +66,4 @@ class PostRepositoryImpl @Inject constructor(
             NetworkResult.Error(e.hashCode())
         }
     }
-
 }

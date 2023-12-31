@@ -27,7 +27,6 @@ import com.bayutb123.tukerin.ui.theme.TukerInTheme
 fun ChatBubble(
     modifier: Modifier = Modifier,
     message: Message,
-    time: String = "12:00",
     userId: Int
 ) {
     val isSender = message.senderId == userId
@@ -70,7 +69,7 @@ fun ChatBubble(
             ) {
                 Text(text = message.message, color = MaterialTheme.colorScheme.onPrimary)
                 Text(
-                    text = time,
+                    text = "12:00 PM",
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
