@@ -27,7 +27,7 @@ class ChatRepositoryImpl @Inject constructor(
                         Timber.d("chatList: $chatList")
 
                         // Simpan data ke Room
-                        tukerInDao.insertAllChat(EntityMapper.mapChatDomainToEntity(chatList, userId))
+                        tukerInDao.insertChat(EntityMapper.mapChatDomainToEntity(chatList, userId))
 
                         NetworkResult.Success(chatList)
                     }
@@ -51,7 +51,7 @@ class ChatRepositoryImpl @Inject constructor(
                         val messageList = DataMapper.mapMessageResponseToMessage(body!!)
 
                         // Simpan data ke Room
-                        tukerInDao.insertAllMessage(EntityMapper.mapListMessageDomainToListEntity(messageList))
+                        tukerInDao.insertMessage(EntityMapper.mapListMessageDomainToListEntity(messageList))
 
                         NetworkResult.Success(messageList)
                     }
