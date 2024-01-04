@@ -27,7 +27,10 @@ class RoomRepositoryImpl @Inject constructor(
     override suspend fun getAllChats(userId: Int): Flow<List<Chat>> {
         Timber.d("userId: $userId COLLECTING CHATS")
         return dao.getAllChats(userId)
-            .map { it.toChatList() }
+            .map {
+                it.toChatList()
+            }
+
     }
 
     override suspend fun getAllMessage(chatId: Int): Flow<List<Message>> {

@@ -7,10 +7,9 @@ import com.bayutb123.tukerin.domain.usecase.DataStoreUseCase
 import com.bayutb123.tukerin.domain.usecase.RoomUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,31 +24,39 @@ class ChatViewModel @Inject constructor(
             emptyList()
         )
     )
-    val chatListState = _chatListState.asStateFlow()
+    val chatListState : StateFlow<ChatListState> = _chatListState
 
     init {
         viewModelScope.launch {
             userId = dataStoreUseCase.getUserId()!!
-            chatUseCase.getAllChats(userId)
+        }
+    }
 
+
+    fun getChatList() {
+        viewModelScope.launch {
+            chatUseCase.getAllChats(userId)
             getAllChats()
         }
     }
 
-    fun getAllChats() {
+    private fun getAllChats() {
         viewModelScope.launch {
             roomUseCase.getAllChats(userId).collect { result ->
                 if (result.isNotEmpty()) {
-                    _chatListState.value = ChatListState.Success(result)
+                    Timber.d("Chat list: $result")
+                    _chatListState.emit(ChatListState.Success(result))
                     result.forEach {
                         refreshAllMessages(it.id)
                     }
                 } else {
-                    _chatListState.value = ChatListState.Empty("No chats")
+                    _chatListState.emit(ChatListState.Empty("No chats found"))
                 }
             }
         }
     }
+
+
 
     private fun refreshAllMessages(chatId: Int) {
         viewModelScope.launch {

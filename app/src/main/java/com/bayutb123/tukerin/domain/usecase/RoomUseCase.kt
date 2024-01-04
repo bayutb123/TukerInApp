@@ -20,9 +20,12 @@ class RoomUseCase @Inject constructor(
     }
 
     suspend fun getAllChats(userId: Int): Flow<List<Chat>> {
-        return roomRepository.getAllChats(userId).map { chatList ->
-            chatList.sortedBy { it.lastMessageId }.reversed()
-        }
+        return roomRepository.getAllChats(userId)
+            .map {
+                it.sortedByDescending { message ->
+                    message.lastMessageId
+                }
+            }
     }
 
     suspend fun getAllMessage(chatId: Int): Flow<List<Message>> {

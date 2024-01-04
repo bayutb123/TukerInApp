@@ -128,9 +128,11 @@ private fun NavGraphBuilder.addDashboard(onNavigationRequested: (String) -> Unit
 
 private fun NavGraphBuilder.addChatList(onNavigationRequested: (String) -> Unit) {
     composable(route = Screen.ChatList.route) {
-        ChatListScreen {
-            onNavigationRequested(it)
-        }
+        ChatListScreen(
+            onNavigationRequested = { destination ->
+                onNavigationRequested(destination)
+            }
+        )
     }
 }
 

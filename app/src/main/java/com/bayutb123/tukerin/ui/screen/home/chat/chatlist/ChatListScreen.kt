@@ -1,11 +1,16 @@
 package com.bayutb123.tukerin.ui.screen.home.chat.chatlist
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -29,17 +34,28 @@ import timber.log.Timber
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatListScreen(
-    onNavigationRequested: (String) -> Unit
+    onNavigationRequested: (String) -> Unit,
+    chatViewModel: ChatViewModel = hiltViewModel<ChatViewModel>()
 ) {
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.chat_skeleton)
     )
-    val chatViewModel = hiltViewModel<ChatViewModel>()
     val chatListState by chatViewModel.chatListState.collectAsState()
+
+    DisposableEffect(Unit) {
+        chatViewModel.getChatList()
+        onDispose {
+            Timber.d("ChatListScreen disposed")
+        }
+    }
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text(text = "Messages") })
+            TopAppBar(title = { Text(text = "Messages") }, actions = {
+                IconButton(onClick = { chatViewModel.getChatList() }) {
+                    Icon(imageVector = Icons.Outlined.Refresh, contentDescription = "Refresh")
+                }
+            })
         }
     ) { paddingValues ->
         Column(
@@ -77,7 +93,12 @@ fun ChatListScreen(
                     }
 
                     is ChatListState.Empty -> {
-                        Text(text = state.message)
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            Text(
+                                text = "No chats yet",
+                                modifier = Modifier.align(Alignment.Center)
+                            )
+                        }
                     }
 
                     else -> {
