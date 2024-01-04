@@ -1,4 +1,4 @@
-package com.bayutb123.tukerin.data.source.local.entity
+package com.bayutb123.tukerin.data.source.local.entity.chat
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

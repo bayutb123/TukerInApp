@@ -1,4 +1,4 @@
-package com.bayutb123.tukerin.data.source.remote.response.auth
+package com.bayutb123.tukerin.data.source.remote.response.auth.login
 
 import com.google.gson.annotations.SerializedName
 

@@ -9,6 +9,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,43 +21,18 @@ class ChatRoomViewModel @Inject constructor(
 ) : ViewModel() {
     private val _state = MutableStateFlow<ChatRoomState>(ChatRoomState.Loading)
     val state = _state.asStateFlow()
+
     fun getAllMessages(chatId: Int) {
         _state.value = ChatRoomState.Loading
-        viewModelScope.launch {
-            when (val result = chatUseCase.getChatMessages(chatId)) {
-                is NetworkResult.Success -> {
-                    if (result.data!!.isNotEmpty()) {
-                        _state.value = ChatRoomState.Success(result.data)
-                    } else {
-                        _state.value = ChatRoomState.Empty
-                    }
-                }
-
-                is NetworkResult.Error -> {
-                    getAllLocalMessages(chatId)
-                    if (_state.value is ChatRoomState.Empty) {
-                        _state.value = ChatRoomState.Failed("Failed to retrieve messages from server")
-                    }
-                }
-
-                else -> {
-                    getAllLocalMessages(chatId)
-                    if (_state.value is ChatRoomState.Empty) {
-                        _state.value = ChatRoomState.Empty
-                    }
-                }
-            }
-        }
-    }
-
-    private fun getAllLocalMessages(chatId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = roomUseCase.getAllMessage(chatId)
-            if (result.isNotEmpty()) {
-                _state.value = ChatRoomState.Success(result)
-            } else {
-                _state.value = ChatRoomState.Empty
+            roomUseCase.getAllMessage(chatId).collectLatest { result ->
+                if (result.isNotEmpty()) {
+                    _state.value = ChatRoomState.Success(result)
+                } else {
+                    _state.value = ChatRoomState.Empty
+                }
             }
+            chatUseCase.getChatMessages(chatId)
         }
     }
 }

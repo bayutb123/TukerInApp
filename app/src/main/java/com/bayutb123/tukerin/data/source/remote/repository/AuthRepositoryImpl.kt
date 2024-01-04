@@ -1,7 +1,8 @@
 package com.bayutb123.tukerin.data.source.remote.repository
 
-import com.bayutb123.tukerin.data.DataMapper
 import com.bayutb123.tukerin.data.NetworkResult
+import com.bayutb123.tukerin.data.source.remote.response.auth.login.toDomain
+import com.bayutb123.tukerin.data.source.remote.response.auth.register.toDomain
 import com.bayutb123.tukerin.data.source.remote.service.AuthService
 import com.bayutb123.tukerin.domain.model.User
 import com.bayutb123.tukerin.domain.repository.AuthRepository
@@ -17,7 +18,7 @@ class AuthRepositoryImpl @Inject constructor(
                 when (result.code()) {
                     200 -> {
                         val body = result.body()
-                        NetworkResult.Success(DataMapper.mapLoginUserToUser(body?.user!!))
+                        NetworkResult.Success(body?.toDomain()!!)
                     }
                     else -> {
                         NetworkResult.Error(result.code())
@@ -37,8 +38,8 @@ class AuthRepositoryImpl @Inject constructor(
             if (result.isSuccessful) {
                 when (result.code()) {
                     201 -> {
-                        // success
-                        NetworkResult.Success(DataMapper.mapRegisterUserToUser(result.body()?.user!!))
+                        val body = result.body()
+                        NetworkResult.Success(body?.toDomain()!!)
                     }
                     else -> {
                         NetworkResult.Error(result.code())

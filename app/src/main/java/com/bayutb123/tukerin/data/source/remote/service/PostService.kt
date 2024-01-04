@@ -1,8 +1,8 @@
 package com.bayutb123.tukerin.data.source.remote.service
 
 import com.bayutb123.tukerin.data.source.remote.response.detail.DetailPostResponse
-import com.bayutb123.tukerin.data.source.remote.response.home.GetAllPostResponse
-import com.bayutb123.tukerin.data.source.remote.response.home.SuggestionsResponse
+import com.bayutb123.tukerin.data.source.remote.response.home.posts.GetAllPostResponse
+import com.bayutb123.tukerin.data.source.remote.response.home.suggestions.SuggestionsResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path

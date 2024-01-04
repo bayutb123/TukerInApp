@@ -5,7 +5,7 @@ import com.bayutb123.tukerin.domain.model.Chat
 import com.bayutb123.tukerin.domain.model.Message
 
 interface ChatRepository {
-    suspend fun getAllChats(userId: Int) : NetworkResult<List<Chat>>
-    suspend fun getAllMessage(chatId: Int) : NetworkResult<List<Message>>
+    suspend fun getAllChats(userId: Int)
+    suspend fun getAllMessage(chatId: Int)
 
 }

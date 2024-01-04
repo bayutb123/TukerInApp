@@ -1,5 +1,6 @@
 package com.bayutb123.tukerin.ui.screen.home.chat.chatlist
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bayutb123.tukerin.data.NetworkResult
@@ -10,7 +11,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,46 +33,31 @@ class ChatViewModel @Inject constructor(
     val chatListState = _chatListState.asStateFlow()
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             userId = dataStoreUseCase.getUserId()!!
+            chatUseCase.getAllChats(userId)
         }
     }
 
     fun getAllChats() {
-        _chatListState.value = ChatListState.Loading(emptyList())
-        viewModelScope.launch {
-            when (val result = chatUseCase.getAllChats(userId)) {
-                is NetworkResult.Success -> {
-                    if (result.data?.isNotEmpty() == true) {
-                        _chatListState.value = ChatListState.Success(result.data)
-                    } else {
-                        _chatListState.value = ChatListState.Empty("No chats")
+        viewModelScope.launch(Dispatchers.IO) {
+            roomUseCase.getAllChats(userId).collectIndexed { _, result ->
+                if (result.isNotEmpty()) {
+                    _chatListState.value = ChatListState.Success(result)
+                    result.forEach {
+                        refreshAllMessages(it.id)
                     }
-                }
-                is NetworkResult.Error -> {
-                    getAllLocalChats()
-                    if (_chatListState.value is ChatListState.Empty) {
-                        _chatListState.value = ChatListState.Failed("Failed to get chats")
-                    }
-                }
-                else -> {
-                    getAllLocalChats()
-                    if (_chatListState.value is ChatListState.Empty) {
-                        _chatListState.value = ChatListState.Empty("No chats")
-                    }
+                } else {
+                    _chatListState.value = ChatListState.Empty("No chats")
                 }
             }
         }
     }
 
-    private fun getAllLocalChats() {
+    private fun refreshAllMessages(chatId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = roomUseCase.getAllChats(userId)
-            if (result.isNotEmpty()) {
-                _chatListState.value = ChatListState.Success(result)
-            } else {
-                _chatListState.value = ChatListState.Empty("No chats")
-            }
+            chatUseCase.getChatMessages(chatId)
         }
     }
+
 }

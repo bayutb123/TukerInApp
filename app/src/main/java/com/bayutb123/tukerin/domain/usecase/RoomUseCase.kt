@@ -3,6 +3,8 @@ package com.bayutb123.tukerin.domain.usecase
 import com.bayutb123.tukerin.domain.model.Chat
 import com.bayutb123.tukerin.domain.model.Message
 import com.bayutb123.tukerin.domain.repository.RoomRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class RoomUseCase @Inject constructor(
@@ -17,11 +19,13 @@ class RoomUseCase @Inject constructor(
         roomRepository.insertMessage(message)
     }
 
-    suspend fun getAllChats(userId: Int): List<Chat> {
-        return roomRepository.getAllChats(userId).sortedBy { it.lastMessageId }.reversed()
+    suspend fun getAllChats(userId: Int): Flow<List<Chat>> {
+        return roomRepository.getAllChats(userId).map { chatList ->
+            chatList.sortedBy { it.lastMessageId }.reversed()
+        }
     }
 
-    suspend fun getAllMessage(chatId: Int): List<Message> {
+    suspend fun getAllMessage(chatId: Int): Flow<List<Message>> {
         return roomRepository.getAllMessage(chatId)
     }
 

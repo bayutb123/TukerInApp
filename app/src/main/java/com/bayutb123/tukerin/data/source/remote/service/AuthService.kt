@@ -1,7 +1,7 @@
 package com.bayutb123.tukerin.data.source.remote.service
 
-import com.bayutb123.tukerin.data.source.remote.response.auth.LoginResponse
-import com.bayutb123.tukerin.data.source.remote.response.auth.RegisterResponse
+import com.bayutb123.tukerin.data.source.remote.response.auth.login.LoginResponse
+import com.bayutb123.tukerin.data.source.remote.response.auth.register.RegisterResponse
 import retrofit2.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
