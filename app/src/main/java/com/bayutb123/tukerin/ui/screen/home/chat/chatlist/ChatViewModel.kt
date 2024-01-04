@@ -31,6 +31,8 @@ class ChatViewModel @Inject constructor(
         viewModelScope.launch {
             userId = dataStoreUseCase.getUserId()!!
             chatUseCase.getAllChats(userId)
+
+            getAllChats()
         }
     }
 

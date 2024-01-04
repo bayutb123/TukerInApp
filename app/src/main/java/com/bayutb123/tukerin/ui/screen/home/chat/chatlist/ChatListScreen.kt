@@ -35,12 +35,6 @@ fun ChatListScreen(
         LottieCompositionSpec.RawRes(R.raw.chat_skeleton)
     )
     val chatViewModel = hiltViewModel<ChatViewModel>()
-    DisposableEffect(Unit) {
-        chatViewModel.getAllChats()
-        onDispose {
-
-        }
-    }
     val chatListState by chatViewModel.chatListState.collectAsState()
 
     Scaffold(
