@@ -22,7 +22,7 @@ fun Message.toMessageEntity() : MessageEntity {
         senderId = this.senderId,
         receiverId = this.receiverId,
         message = this.message,
-        attachment = this.attachment?.get(0),
+        attachment = "", // temporary
         isRead = this.isRead,
         createdAt = this.createdAt
     )
@@ -51,7 +51,7 @@ fun List<Message>.toMessageEntityList() : List<MessageEntity> {
             senderId = message.senderId,
             receiverId = message.receiverId,
             message = message.message,
-            attachment = message.attachment?.get(0),
+            attachment = "", // temporary
             isRead = message.isRead,
             createdAt = message.createdAt
         )

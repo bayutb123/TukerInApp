@@ -24,8 +24,8 @@ class ChatRoomViewModel @Inject constructor(
 
     fun getAllMessages(chatId: Int) {
         _state.value = ChatRoomState.Loading
-        viewModelScope.launch(Dispatchers.IO) {
-            roomUseCase.getAllMessage(chatId).collectLatest { result ->
+        viewModelScope.launch {
+            roomUseCase.getAllMessage(chatId).collect { result ->
                 if (result.isNotEmpty()) {
                     _state.value = ChatRoomState.Success(result)
                 } else {

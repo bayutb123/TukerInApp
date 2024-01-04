@@ -46,8 +46,8 @@ class ChatRepositoryImpl @Inject constructor(
                     200 -> {
                         val body = result.body()
                         val messageList = body!!.toMessageList()
+                        // wait for body to be not null
                         tukerInDao.insertMessage(messageList.toMessageEntityList())
-                        Timber.d("Message list: $messageList")
                     }
                     else -> {
                         Timber.d(result.code().toString())

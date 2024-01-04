@@ -10,6 +10,7 @@ import com.bayutb123.tukerin.domain.model.Message
 import com.bayutb123.tukerin.domain.repository.RoomRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 import javax.inject.Inject
 
 class RoomRepositoryImpl @Inject constructor(
@@ -24,6 +25,7 @@ class RoomRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAllChats(userId: Int): Flow<List<Chat>> {
+        Timber.d("userId: $userId COLLECTING CHATS")
         return dao.getAllChats(userId)
             .map { it.toChatList() }
     }
