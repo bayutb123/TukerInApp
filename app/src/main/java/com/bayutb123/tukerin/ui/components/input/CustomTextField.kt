@@ -13,7 +13,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +32,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
+import com.bayutb123.tukerin.ui.utils.Currency
 
 @Composable
 fun CustomTextField(
@@ -42,27 +42,37 @@ fun CustomTextField(
     trailingIcon: @Composable (() -> Unit)? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
     singleLine: Boolean = true,
+    minLines: Int = 1,
     maxLines: Int = 1,
     containerColor: Color = MaterialTheme.colorScheme.primaryContainer,
     contentColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
     placeholder: String?,
     isHidden: Boolean = false,
     isError: Boolean = false,
-    errorMsg: String = ""
+    errorMsg: String = "",
+    isCurrency: Boolean = false,
+    isEnabled: Boolean = true,
+    isHasDefault: Boolean = false,
+    defaultText: String = ""
 ) {
     var text by remember {
-        mutableStateOf("")
+        mutableStateOf(if (isHasDefault) defaultText else "")
     }
     Column {
         TextField(
             modifier = modifier.fillMaxWidth(),
             value = text,
             onValueChange = {
-                text = it
+                text = if (isCurrency) {
+                    Currency.displayLongAsRupiah(it)
+                } else {
+                    it
+                }
                 onTextChanged(it)
             },
             isError = isError,
             singleLine = singleLine,
+            minLines = minLines,
             maxLines = maxLines,
             shape = RoundedCornerShape(MaterialTheme.shapes.large.topStart),
             colors = TextFieldDefaults.colors(
@@ -70,11 +80,14 @@ fun CustomTextField(
                 unfocusedTextColor = contentColor,
                 focusedContainerColor = containerColor,
                 unfocusedContainerColor = containerColor,
-                disabledContainerColor = containerColor,
+                disabledContainerColor = Color.Gray,
                 cursorColor = contentColor,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
-                errorIndicatorColor = Color.Transparent
+                errorIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+                disabledTextColor = Color.White,
+                disabledPlaceholderColor = Color.White
             ),
             leadingIcon = leadingIcon,
             trailingIcon = trailingIcon,
@@ -88,7 +101,8 @@ fun CustomTextField(
                 PasswordVisualTransformation()
             } else {
                 VisualTransformation.None
-            }
+            },
+            enabled = isEnabled
         )
         AnimatedVisibility(visible = isError && text.isNotEmpty()) {
             Text(
