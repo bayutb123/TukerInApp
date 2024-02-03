@@ -49,7 +49,7 @@ fun HomeScreen(
             ) {
                 ExtendedFloatingActionButton(
                     onClick = {
-                        /* do something */
+                        onNavigationRequested(Screen.CreateAds.route)
                     }
                 ) {
                     Icon(

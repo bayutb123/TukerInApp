@@ -1,6 +1,7 @@
 package com.bayutb123.tukerin.ui.screen.post.newpost
 
 import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -28,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,12 +46,13 @@ import coil.compose.AsyncImage
 import com.bayutb123.tukerin.ui.components.input.CustomTextField
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 import com.bayutb123.tukerin.ui.utils.Currency
+import com.bayutb123.tukerin.ui.utils.PermissionManager
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewPostScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var title by remember {
         mutableStateOf("")
@@ -81,7 +84,12 @@ fun NewPostScreen(
             Log.d("NewPostScreen", "onResult: $it")
         }
     )
-    val imageUri = listOf("Test", "Test", "Test", "Test")
+    val managedActivityResultLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestMultiplePermissions()) {
+        // TODO: LOGIC
+    }
+    LaunchedEffect(key1 = managedActivityResultLauncher) {
+        requestGalleryPermission(managedActivityResultLauncher)
+    }
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -179,19 +187,36 @@ fun NewPostScreen(
 
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Column(modifier = Modifier.weight(0.5f)) {
-                        CustomTextField(onTextChanged = {
-                            lat = it
-                        }, placeholder = "lat", isEnabled = false, isHasDefault = true, defaultText = "321")
+                        CustomTextField(
+                            onTextChanged = {
+                                lat = it
+                            },
+                            placeholder = "lat",
+                            isEnabled = false,
+                            isHasDefault = true,
+                            defaultText = "321"
+                        )
                     }
                     Column(modifier = Modifier.weight(0.5f)) {
-                        CustomTextField(onTextChanged = {
-                            long = it
-                        }, placeholder = "long", isEnabled = false, isHasDefault = true, defaultText = "123")
+                        CustomTextField(
+                            onTextChanged = {
+                                long = it
+                            },
+                            placeholder = "long",
+                            isEnabled = false,
+                            isHasDefault = true,
+                            defaultText = "123"
+                        )
                     }
                 }
             }
         }
     }
+}
+
+private fun requestGalleryPermission(requestPermission: ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>>) {
+    val permissions = PermissionManager.getGalleryPermissions()
+    PermissionManager.requestPermission(permissions, requestPermission)
 }
 
 @Composable

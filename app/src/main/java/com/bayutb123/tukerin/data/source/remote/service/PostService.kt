@@ -1,10 +1,15 @@
 package com.bayutb123.tukerin.data.source.remote.service
 
 import com.bayutb123.tukerin.data.source.remote.response.detail.DetailPostResponse
+import com.bayutb123.tukerin.data.source.remote.response.home.posts.CreatePostResponse
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.GetAllPostResponse
 import com.bayutb123.tukerin.data.source.remote.response.home.suggestions.SuggestionsResponse
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Multipart
+import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -31,5 +36,17 @@ interface PostService {
     suspend fun getPost(
         @Path("post_id") postId: Int
     ) : Response<DetailPostResponse>
+
+    @Multipart
+    @POST("post/create")
+    suspend fun createPost(
+        @Part("user_id") userId: Int,
+        @Part("title") title: String,
+        @Part("content") description: String,
+        @Part images: List<MultipartBody.Part>,
+        @Part("latitude") lat: Long,
+        @Part("longitude") long: Long,
+        @Part("price") price: Long
+    ) : Response<CreatePostResponse>
 
 }

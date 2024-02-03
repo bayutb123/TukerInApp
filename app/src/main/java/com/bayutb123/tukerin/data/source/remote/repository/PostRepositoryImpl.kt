@@ -1,10 +1,12 @@
 package com.bayutb123.tukerin.data.source.remote.repository
 
 import com.bayutb123.tukerin.data.NetworkResult
+import com.bayutb123.tukerin.data.source.remote.request.CreatePostRequest
 import com.bayutb123.tukerin.data.source.remote.response.detail.toPost
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.toPostList
 import com.bayutb123.tukerin.data.source.remote.response.home.suggestions.toSuggestionsList
 import com.bayutb123.tukerin.data.source.remote.service.PostService
+import com.bayutb123.tukerin.data.utils.MediaUtils
 import com.bayutb123.tukerin.domain.model.Post
 import com.bayutb123.tukerin.domain.repository.PostRepository
 import javax.inject.Inject
@@ -66,6 +68,31 @@ class PostRepositoryImpl @Inject constructor(
             }
         } catch (e: Exception) {
             NetworkResult.Error(e.hashCode())
+        }
+    }
+
+    override suspend fun createPost(createPostRequest: CreatePostRequest): NetworkResult<Int> {
+        return try {
+            val listOfImages = createPostRequest.images
+            val images = MediaUtils.preparePart(listOfImages)
+
+            val request = postService.createPost(
+                createPostRequest.userId,
+                createPostRequest.title,
+                createPostRequest.description,
+                images,
+                createPostRequest.lat,
+                createPostRequest.long,
+                createPostRequest.price
+            )
+
+            if (request.isSuccessful) {
+                NetworkResult.Success(200)
+            } else {
+                NetworkResult.Error(404)
+            }
+        } catch (e: Exception) {
+            NetworkResult.Error(999)
         }
     }
 }

@@ -14,6 +14,7 @@ import com.bayutb123.tukerin.ui.screen.auth.register.RegisterScreen
 import com.bayutb123.tukerin.ui.screen.detail.DetailScreen
 import com.bayutb123.tukerin.ui.screen.home.HomeScreen
 import com.bayutb123.tukerin.ui.screen.home.chat.chatroom.ChatRoomScreen
+import com.bayutb123.tukerin.ui.screen.post.newpost.NewPostScreen
 import com.bayutb123.tukerin.ui.screen.splash.SplashScreen
 
 @Composable
@@ -104,6 +105,9 @@ fun App(
             ChatRoomScreen(
                 chatId = it.arguments?.getInt("chatId") ?: 0,
             )
+        }
+        composable(route = Screen.CreateAds.route) {
+            NewPostScreen()
         }
     }
 }
