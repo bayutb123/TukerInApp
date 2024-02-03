@@ -1,5 +1,8 @@
 package com.bayutb123.tukerin.ui.screen.post.newpost
 
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -51,6 +54,9 @@ fun NewPostScreen(
     var title by remember {
         mutableStateOf("")
     }
+    var imageUris by remember {
+        mutableStateOf(listOf<String>())
+    }
     var description by remember {
         mutableStateOf("")
     }
@@ -66,6 +72,15 @@ fun NewPostScreen(
     var long by remember {
         mutableStateOf("")
     }
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = {
+            val tempList = imageUris.toMutableList()
+            tempList.add(it.toString())
+            imageUris = tempList
+            Log.d("NewPostScreen", "onResult: $it")
+        }
+    )
     val imageUri = listOf("Test", "Test", "Test", "Test")
     Scaffold(
         topBar = {
@@ -106,7 +121,7 @@ fun NewPostScreen(
                                     shape = RoundedCornerShape(4.dp)
                                 )
                                 .clickable {
-                                    // TODO: OPEN GALLERY
+                                    launcher.launch("image/*")
                                 },
                             contentAlignment = Alignment.Center
                         ) {
@@ -119,7 +134,7 @@ fun NewPostScreen(
                             }
                         }
                     }
-                    items(imageUri) {
+                    items(imageUris) {
                         Box(
                             modifier = Modifier
                                 .size(100.dp)
@@ -130,7 +145,7 @@ fun NewPostScreen(
                             contentAlignment = Alignment.Center
                         ) {
                             AsyncImage(
-                                model = "https://cdn.pixabay.com/photo/2015/04/19/08/32/rose-729509_640.jpg",
+                                model = it,
                                 contentDescription = "",
                                 contentScale = ContentScale.Crop,
                             )
