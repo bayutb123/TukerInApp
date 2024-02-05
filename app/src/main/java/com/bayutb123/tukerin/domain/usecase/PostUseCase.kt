@@ -1,6 +1,8 @@
 package com.bayutb123.tukerin.domain.usecase
 
+import android.content.Context
 import com.bayutb123.tukerin.data.NetworkResult
+import com.bayutb123.tukerin.data.source.remote.request.CreatePostRequest
 import com.bayutb123.tukerin.domain.model.Post
 import com.bayutb123.tukerin.domain.repository.PostRepository
 import javax.inject.Inject
@@ -15,4 +17,5 @@ class PostUseCase @Inject constructor(
     suspend fun getSuggestions(query: String, userId: Int) : NetworkResult<List<String>> = postRepository.getSuggestions(query, userId)
 
     suspend fun getPost(postId: Int) : NetworkResult<Post> = postRepository.getPost(postId)
+    suspend fun createPost(createPostRequest: CreatePostRequest, context: Context) = postRepository.createPost(createPostRequest, context)
 }

@@ -43,9 +43,9 @@ interface PostService {
         @Part("user_id") userId: Int,
         @Part("title") title: String,
         @Part("content") description: String,
-        @Part images: List<MultipartBody.Part>,
-        @Part("latitude") lat: Long,
-        @Part("longitude") long: Long,
+        @Part image: List<MultipartBody.Part>,
+        @Part("latitude") lat: Double,
+        @Part("longitude") long: Double,
         @Part("price") price: Long
     ) : Response<CreatePostResponse>
 

@@ -1,5 +1,6 @@
 package com.bayutb123.tukerin.ui.screen.post.newpost
 
+import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -31,6 +32,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,10 +41,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.bayutb123.tukerin.ui.components.input.CustomTextField
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
@@ -53,40 +58,45 @@ import com.bayutb123.tukerin.ui.utils.PermissionManager
 @Composable
 fun NewPostScreen(
     modifier: Modifier = Modifier,
+    newPostViewModel: NewPostViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     var title by remember {
         mutableStateOf("")
     }
     var imageUris by remember {
-        mutableStateOf(listOf<String>())
+        mutableStateOf(listOf<Uri>())
     }
     var description by remember {
         mutableStateOf("")
     }
-    var price by remember {
-        mutableStateOf("")
+    var price: Long by remember {
+        mutableLongStateOf(0)
     }
     var priceToDisplayed by remember {
         mutableStateOf("")
     }
-    var lat by remember {
-        mutableStateOf("")
+    var lat: Double by remember {
+        mutableDoubleStateOf(-6.159783)
     }
-    var long by remember {
-        mutableStateOf("")
+    var long: Double by remember {
+        mutableDoubleStateOf(106.647673)
     }
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = {
             val tempList = imageUris.toMutableList()
-            tempList.add(it.toString())
+            if (it != null) {
+                tempList.add(it)
+            }
             imageUris = tempList
             Log.d("NewPostScreen", "onResult: $it")
         }
     )
-    val managedActivityResultLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestMultiplePermissions()) {
-        // TODO: LOGIC
-    }
+    val managedActivityResultLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestMultiplePermissions()) {
+            // TODO: LOGIC
+        }
     LaunchedEffect(key1 = managedActivityResultLauncher) {
         requestGalleryPermission(managedActivityResultLauncher)
     }
@@ -105,7 +115,17 @@ fun NewPostScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = {
+                        newPostViewModel.createPost(
+                            title,
+                            description,
+                            imageUris,
+                            lat,
+                            long,
+                            price,
+                            context
+                        )
+                    }) {
                         Icon(imageVector = Icons.Filled.Done, contentDescription = "Post")
                     }
                 }
@@ -177,7 +197,7 @@ fun NewPostScreen(
                 )
                 CustomTextField(
                     onTextChanged = {
-                        price = it
+                        price = it.toLong()
                         priceToDisplayed = Currency.displayLongAsRupiah(it)
                     },
                     isCurrency = false,
@@ -189,7 +209,7 @@ fun NewPostScreen(
                     Column(modifier = Modifier.weight(0.5f)) {
                         CustomTextField(
                             onTextChanged = {
-                                lat = it
+                                lat = it.toDouble()
                             },
                             placeholder = "lat",
                             isEnabled = false,
@@ -200,7 +220,7 @@ fun NewPostScreen(
                     Column(modifier = Modifier.weight(0.5f)) {
                         CustomTextField(
                             onTextChanged = {
-                                long = it
+                                long = it.toDouble()
                             },
                             placeholder = "long",
                             isEnabled = false,
