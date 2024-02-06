@@ -28,7 +28,7 @@ android {
     }
 
     buildTypes {
-        getByName("debug") {
+        debug {
             buildConfigField("String", "apiUrl", apiUrl)
             buildConfigField("String", "pathUrl", pathUrl)
         }
