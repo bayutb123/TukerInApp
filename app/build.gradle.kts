@@ -62,6 +62,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core"))
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
@@ -90,11 +91,7 @@ dependencies {
     // Coil
     implementation("io.coil-kt:coil-compose:2.4.0")
 
-    // Dependency Injection
-    implementation("com.google.dagger:hilt-android:2.48.1")
-    ksp("com.google.dagger:hilt-android-compiler:2.48.1")
     // compiler v 1.0.0
-    ksp
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
     // Lifecycle
@@ -102,15 +99,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycleVersion")
-
-
-    // Retrofit
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
-
-    // DataStore
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
 
     // Lottie
     implementation("com.airbnb.android:lottie-compose:6.1.0")
@@ -124,4 +112,7 @@ dependencies {
     // timber
     implementation("com.jakewharton.timber:timber:5.0.1")
 
+    // Dependency Injection
+    implementation("com.google.dagger:hilt-android:2.48.1")
+    ksp("com.google.dagger:hilt-android-compiler:2.48.1")
 }

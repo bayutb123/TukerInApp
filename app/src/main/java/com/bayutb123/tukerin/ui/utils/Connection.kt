@@ -10,6 +10,6 @@ class Connection(
 
     fun isConnected(): Boolean {
         // check if the device is connected to the internet
-        return cm.activeNetworkInfo != null && cm.activeNetworkInfo!!.isConnected
+        return cm.activeNetwork != null
     }
 }
