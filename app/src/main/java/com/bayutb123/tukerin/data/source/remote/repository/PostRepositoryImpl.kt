@@ -10,6 +10,7 @@ import com.bayutb123.tukerin.data.source.remote.service.PostService
 import com.bayutb123.tukerin.data.utils.MediaUtils
 import com.bayutb123.tukerin.domain.model.Post
 import com.bayutb123.tukerin.domain.repository.PostRepository
+import okio.IOException
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -20,7 +21,6 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun getAllPosts(userId: Int, page: Int): NetworkResult<List<Post>> {
         return try {
             val response = postService.getAllPosts(userId, page)
-            Timber.d(response.body().toString())
             if (response.isSuccessful) {
                 val posts = response.body()?.toPostList().orEmpty()
                 NetworkResult.Success(posts)
@@ -76,10 +76,9 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override suspend fun createPost(createPostRequest: CreatePostRequest, context: Context): NetworkResult<Int> {
-//        return try {
-            val listOfImages = createPostRequest.images
-            val images = MediaUtils.preparePart(listOfImages, context)
+        val images = MediaUtils.preparePart(createPostRequest.images, context)
 
+        try {
             val request = postService.createPost(
                 createPostRequest.userId,
                 createPostRequest.title,
@@ -91,13 +90,19 @@ class PostRepositoryImpl @Inject constructor(
             )
 
             return if (request.isSuccessful) {
-                NetworkResult.Success(200)
+                Timber.d(request.body().toString())
+                NetworkResult.Success(request.code())
             } else {
+                Timber.e("Request failed with code: ${request.code()}")
                 NetworkResult.Error(request.code())
             }
-//        } catch (e: Exception) {
-//            Timber.d(e.toString())
-//            NetworkResult.Error(999)
-//        }
+        } catch (e: IOException) {
+            Timber.e(e, "Network error occurred")
+            return NetworkResult.Error(999)
+        } catch (e: Exception) {
+            Timber.e(e, "Unexpected error occurred")
+            return NetworkResult.Error(999)
+        }
     }
+
 }

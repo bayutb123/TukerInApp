@@ -29,7 +29,7 @@ class NewPostViewModel @Inject constructor(
             }
             when (val request = requestBody?.let { postUseCase.createPost(it, context) }) {
                 is NetworkResult.Success -> {
-                    Timber.tag("Result").d(request.message.toString())
+                    Timber.tag("Result").d(request.toString())
                 }
                 is NetworkResult.Error -> {
                     Timber.tag("Result").d(request.message.toString())
