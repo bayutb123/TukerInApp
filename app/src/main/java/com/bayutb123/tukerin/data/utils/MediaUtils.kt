@@ -5,50 +5,48 @@ import android.net.Uri
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 
 
 object MediaUtils {
     fun preparePart(uris: List<Uri>, context: Context): Array<MultipartBody.Part> {
+        val cacheDirectory = File(context.cacheDir, "image_cache")
+        cacheDirectory.mkdirs()
         val parts = mutableListOf<MultipartBody.Part>()
-        uris.forEachIndexed { index, it ->
-            val file = File(getRealPathFromUri(it, context))
-            val requestFile = file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
-            val tag = "image[$index]"
-            parts.add(MultipartBody.Part.createFormData(tag, file.name, requestFile))
+        val images = mutableListOf<File>()
+        uris.forEachIndexed { _, it ->
+            val file = saveImageToCache(it, context, cacheDirectory.path) ?: return arrayOf()
+            images.add(file)
+        }
+        images.forEachIndexed { index, it ->
+            Timber.d("File[$index] - Name: ${it.name}, Path: ${it.path}")
+            val requestFile = it.asRequestBody("multipart/form-data".toMediaTypeOrNull())
+            val body = MultipartBody.Part.createFormData("image[$index]", it.name, requestFile)
+            parts.add(body)
+        }
+        // Delete all images from cache
+        images.forEach {
+            it.delete()
         }
         return parts.toTypedArray()
     }
 
-    private fun getRealPathFromUri(uri: Uri, context: Context): String {
-        val contentResolver = context.contentResolver
-
-        // Create a temporary file to store the content
-        val tempFile = File(context.cacheDir, "temp_file")
-
+    private fun saveImageToCache(uri: Uri, context: Context, cacheDirectory:String): File? {
         try {
-            // Open an input stream from the content resolver
-            contentResolver.openInputStream(uri)?.use { inputStream ->
-                // Use a FileOutputStream to write the content to the temporary file
-                FileOutputStream(tempFile).use { outputStream ->
-                    inputStream.copyTo(outputStream)
-                }
+            val inputStream = context.contentResolver.openInputStream(uri)
+            val fileName = "${System.currentTimeMillis()}_${uri.lastPathSegment}"
+            val file = File(cacheDirectory, fileName)
+            FileOutputStream(file).use { outputStream ->
+                inputStream?.copyTo(outputStream)
+                inputStream?.close()
             }
-
-            // Return the absolute path of the temporary file
-            return tempFile.absolutePath
+            return file
         } catch (e: Exception) {
-            // Handle exceptions, log errors, or return null
             e.printStackTrace()
-            return ""
         }
-    }
-
-    fun createPartFromFile(part: MultipartBody.Part) {
-        val file = File(part.body.toString())
-        val requestFile = file.asRequestBody("multipart/form-data".toMediaTypeOrNull())
-        MultipartBody.Part.createFormData("image", file.name, requestFile)
+        return null
     }
 
 }
