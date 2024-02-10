@@ -102,6 +102,9 @@ class PostRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Timber.e(e, "Unexpected error occurred")
             return NetworkResult.Error(999)
+        } finally {
+            Timber.d("Clearing local cache")
+            MediaUtils.clearLocalCache(context)
         }
     }
 

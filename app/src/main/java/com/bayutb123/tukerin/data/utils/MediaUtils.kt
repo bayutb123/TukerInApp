@@ -26,10 +26,6 @@ object MediaUtils {
             val body = MultipartBody.Part.createFormData("image[$index]", it.name, requestFile)
             parts.add(body)
         }
-        // Delete all images from cache
-        images.forEach {
-            it.delete()
-        }
         return parts.toTypedArray()
     }
 
@@ -47,6 +43,12 @@ object MediaUtils {
             e.printStackTrace()
         }
         return null
+    }
+
+    fun clearLocalCache(context: Context) {
+        val cacheDirectory = File(context.cacheDir, "image_cache")
+        val files = cacheDirectory.listFiles()
+        files?.forEach { it.delete() }
     }
 
 }
