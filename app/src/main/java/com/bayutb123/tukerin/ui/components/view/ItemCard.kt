@@ -35,10 +35,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.bayutb123.tukerin.BuildConfig
+import com.bayutb123.tukerin.core.utils.Currency
+import com.bayutb123.tukerin.core.utils.Date
 import com.bayutb123.tukerin.domain.model.Post
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
-import com.bayutb123.tukerin.ui.utils.Currency
-import com.bayutb123.tukerin.ui.utils.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -151,7 +151,7 @@ fun ItemList(
                         .weight(1f)
                         .fillMaxHeight(),
                 ) {
-                    Text(text = Date().formatStringDate(item.createdAt),
+                    Text(text = Date.formatStringDate(item.createdAt),
                         fontSize = MaterialTheme.typography.bodySmall.fontSize)
                     Text(
                         text = item.title,

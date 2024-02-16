@@ -81,8 +81,8 @@ class PostRepositoryImpl @Inject constructor(
         try {
             val request = postService.createPost(
                 createPostRequest.userId,
-                createPostRequest.title,
-                createPostRequest.content,
+                createPostRequest.title.replace("\"", ""),
+                createPostRequest.content.replace("\"", ""),
                 images,
                 createPostRequest.lat,
                 createPostRequest.long,

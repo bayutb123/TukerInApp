@@ -38,7 +38,7 @@ import com.bayutb123.tukerin.ui.components.input.FullWidthButton
 import com.bayutb123.tukerin.ui.components.view.CustomAlertDialog
 import com.bayutb123.tukerin.ui.screen.Screen
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
-import com.bayutb123.tukerin.ui.utils.InputValidation
+import com.bayutb123.tukerin.core.utils.InputValidation
 
 @Composable
 fun RegisterScreen(

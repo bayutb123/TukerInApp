@@ -1,7 +1,8 @@
 package com.bayutb123.tukerin.ui.screen.post.newpost
 
+import android.content.Context
+import android.location.LocationManager
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -36,6 +37,7 @@ import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,10 +50,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import com.bayutb123.tukerin.core.utils.Currency
 import com.bayutb123.tukerin.ui.components.input.CustomTextField
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
-import com.bayutb123.tukerin.ui.utils.Currency
 import com.bayutb123.tukerin.ui.utils.PermissionManager
+import timber.log.Timber
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,11 +79,16 @@ fun NewPostScreen(
     var priceToDisplayed by remember {
         mutableStateOf("")
     }
-    var lat: Double by remember {
-        mutableDoubleStateOf(-6.159783)
+    var lat: Double by rememberSaveable {
+        mutableDoubleStateOf(0.0)
     }
-    var long: Double by remember {
-        mutableDoubleStateOf(106.647673)
+    var long: Double by rememberSaveable {
+        mutableDoubleStateOf(0.0)
+    }
+    getUserLocation(context) { latResult, longResult ->
+        lat = latResult
+        long = longResult
+        Timber.tag("Location").d("Lat: $lat, Long: $long")
     }
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
@@ -90,7 +98,6 @@ fun NewPostScreen(
                 tempList.add(it)
             }
             imageUris = tempList
-            Log.d("NewPostScreen", "onResult: $it")
         }
     )
     val managedActivityResultLauncher =
@@ -98,8 +105,9 @@ fun NewPostScreen(
             // TODO: LOGIC
         }
     LaunchedEffect(key1 = managedActivityResultLauncher) {
-        requestGalleryPermission(managedActivityResultLauncher)
+        requestPermissions(managedActivityResultLauncher)
     }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -214,7 +222,7 @@ fun NewPostScreen(
                             placeholder = "lat",
                             isEnabled = false,
                             isHasDefault = true,
-                            defaultText = "321"
+                            defaultText = lat.toString()
                         )
                     }
                     Column(modifier = Modifier.weight(0.5f)) {
@@ -225,7 +233,7 @@ fun NewPostScreen(
                             placeholder = "long",
                             isEnabled = false,
                             isHasDefault = true,
-                            defaultText = "123"
+                            defaultText = long.toString()
                         )
                     }
                 }
@@ -234,8 +242,22 @@ fun NewPostScreen(
     }
 }
 
-private fun requestGalleryPermission(requestPermission: ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>>) {
-    val permissions = PermissionManager.getGalleryPermissions()
+private fun getUserLocation(context: Context, onLocationObtained: (Double, Double) -> Unit = { _, _ -> }) {
+    val locationManager: LocationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    try {
+        val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        if (location != null) {
+            onLocationObtained(location.latitude, location.longitude)
+        }
+    } catch (e: SecurityException) {
+        e.printStackTrace()
+    }
+}
+
+private fun requestPermissions(requestPermission: ManagedActivityResultLauncher<Array<String>, Map<String, Boolean>>) {
+    val galleryPermission = PermissionManager.getPermissions(PermissionManager.Type.GALLERY)
+    val locationPermissions = PermissionManager.getPermissions(PermissionManager.Type.LOCATION)
+    val permissions = galleryPermission + locationPermissions
     PermissionManager.requestPermission(permissions, requestPermission)
 }
 

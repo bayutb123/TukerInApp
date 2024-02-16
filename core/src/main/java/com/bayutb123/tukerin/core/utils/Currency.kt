@@ -1,4 +1,4 @@
-package com.bayutb123.tukerin.ui.utils
+package com.bayutb123.tukerin.core.utils
 
 object Currency {
     fun convertIntToRupiah(price: Long): String {

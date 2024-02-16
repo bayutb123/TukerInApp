@@ -1,13 +1,12 @@
 package com.bayutb123.tukerin.core.di
 
-import android.app.Application
 import android.content.Context
 import com.bayutb123.tukerin.core.BuildConfig
+import com.bayutb123.tukerin.core.okhttp.interceptor.ContentTypeInterceptor
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Cache
 import okhttp3.OkHttpClient
@@ -37,13 +36,9 @@ object NetworkModule {
                 )
                 .callTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
+                .addInterceptor(ContentTypeInterceptor())
                 .addInterceptor(interceptor)
-                .addInterceptor { chain ->
-                    val request = chain.request().newBuilder()
-                        .addHeader("Content-Type", "application/json")
-                        .build()
-                    chain.proceed(request)
-                }.build()
+                .build()
         } else OkHttpClient.Builder()
             .cache(
                 Cache(
@@ -51,12 +46,8 @@ object NetworkModule {
                     maxSize = 10L * 1024L * 1024L // 10 MiB
                 )
             )
-            .addInterceptor { chain ->
-                val request = chain.request().newBuilder()
-                    .addHeader("Content-Type", "application/json")
-                    .build()
-                chain.proceed(request)
-            }.build()
+            .addInterceptor(ContentTypeInterceptor())
+            .build()
     }
 
     @Provides

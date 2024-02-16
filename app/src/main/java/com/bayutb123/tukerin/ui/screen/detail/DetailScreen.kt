@@ -33,10 +33,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.bayutb123.tukerin.BuildConfig
+import com.bayutb123.tukerin.core.utils.Currency
+import com.bayutb123.tukerin.core.utils.Date
 import com.bayutb123.tukerin.ui.components.view.SellerCard
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
-import com.bayutb123.tukerin.ui.utils.Currency
-import com.bayutb123.tukerin.ui.utils.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,7 +81,7 @@ fun DetailScreen(
                 post.value.let {
                     it?.let {
                         it.images?.let { it1 -> ImagesView(images = it1) }
-                        Date().formatStringDate(it.createdAt)
+                        Date.formatStringDate(it.createdAt)
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -94,7 +94,7 @@ fun DetailScreen(
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold
                             )
-                            Text(text = Date().formatStringDate(it.createdAt))
+                            Text(text = Date.formatStringDate(it.createdAt))
                             Spacer(modifier = Modifier.height(8.dp))
                             SellerCard(
                                 sellerName = it.ownerName,
