@@ -107,7 +107,9 @@ fun App(
             )
         }
         composable(route = Screen.CreateAds.route) {
-            NewPostScreen()
+            NewPostScreen {
+                navController.popBackStack(Screen.Home.route, false)
+            }
         }
     }
 }

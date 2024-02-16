@@ -90,17 +90,13 @@ class PostRepositoryImpl @Inject constructor(
             )
 
             return if (request.isSuccessful) {
-                Timber.d(request.body().toString())
                 NetworkResult.Success(request.code())
             } else {
-                Timber.e("Request failed with code: ${request.code()}")
                 NetworkResult.Error(request.code())
             }
         } catch (e: IOException) {
-            Timber.e(e, "Network error occurred")
             return NetworkResult.Error(999)
         } catch (e: Exception) {
-            Timber.e(e, "Unexpected error occurred")
             return NetworkResult.Error(999)
         } finally {
             Timber.d("Clearing local cache")

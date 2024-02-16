@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,6 +33,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -52,6 +54,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.bayutb123.tukerin.core.utils.Currency
 import com.bayutb123.tukerin.ui.components.input.CustomTextField
+import com.bayutb123.tukerin.ui.components.view.CustomAlertDialog
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 import com.bayutb123.tukerin.ui.utils.PermissionManager
 import timber.log.Timber
@@ -61,7 +64,8 @@ import timber.log.Timber
 @Composable
 fun NewPostScreen(
     modifier: Modifier = Modifier,
-    newPostViewModel: NewPostViewModel = hiltViewModel()
+    newPostViewModel: NewPostViewModel = hiltViewModel(),
+    onPostSuccess: () -> Unit
 ) {
     val context = LocalContext.current
     var title by remember {
@@ -85,6 +89,10 @@ fun NewPostScreen(
     var long: Double by rememberSaveable {
         mutableDoubleStateOf(0.0)
     }
+    var isLoading by remember {
+        mutableStateOf(false)
+    }
+    var isSuccess by remember { mutableStateOf(false) }
     getUserLocation(context) { latResult, longResult ->
         lat = latResult
         long = longResult
@@ -107,6 +115,7 @@ fun NewPostScreen(
     LaunchedEffect(key1 = managedActivityResultLauncher) {
         requestPermissions(managedActivityResultLauncher)
     }
+    val state by newPostViewModel.state.collectAsState()
 
     Scaffold(
         topBar = {
@@ -143,6 +152,14 @@ fun NewPostScreen(
         Box(
             modifier = modifier.padding(paddingValues)
         ) {
+            AnimatedVisibility(visible = isSuccess) {
+                CustomAlertDialog(
+                    title = "Success",
+                    message = "Post created successfully",
+                    dismissEnabled = false,
+                    onConfirm = { onPostSuccess() }
+                )
+            }
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -157,7 +174,9 @@ fun NewPostScreen(
                                     shape = RoundedCornerShape(4.dp)
                                 )
                                 .clickable {
-                                    launcher.launch("image/*")
+                                    if (!isLoading) {
+                                        launcher.launch("image/*")
+                                    }
                                 },
                             contentAlignment = Alignment.Center
                         ) {
@@ -192,12 +211,14 @@ fun NewPostScreen(
                     onTextChanged = {
                         title = it
                     },
+                    isEnabled = !isLoading,
                     placeholder = "Title"
                 )
                 CustomTextField(
                     onTextChanged = {
                         description = it
                     },
+                    isEnabled = !isLoading,
                     placeholder = "Description",
                     minLines = 3,
                     maxLines = 10,
@@ -209,6 +230,7 @@ fun NewPostScreen(
                         priceToDisplayed = Currency.displayLongAsRupiah(it)
                     },
                     isCurrency = false,
+                    isEnabled = !isLoading,
                     placeholder = "Price",
                     keyboardType = KeyboardType.Number
                 )
@@ -237,7 +259,33 @@ fun NewPostScreen(
                         )
                     }
                 }
+
+                ObserveState(
+                    state,
+                    onPostSuccess = {
+                        isSuccess = true
+                    },
+                    onLoading = {
+                        isLoading = it
+                    }
+                )
             }
+        }
+    }
+}
+
+@Composable
+fun ObserveState(newPostState: NewPostState, onPostSuccess: () -> Unit, onLoading : (Boolean) -> Unit) {
+    when (newPostState) {
+        is NewPostState.Success -> {
+            onPostSuccess()
+            onLoading(false)
+        }
+        is NewPostState.Loading -> {
+            onLoading(true)
+        }
+        else -> {
+            onLoading(false)
         }
     }
 }
@@ -265,6 +313,6 @@ private fun requestPermissions(requestPermission: ManagedActivityResultLauncher<
 @Preview(showBackground = true, device = Devices.PIXEL_4)
 fun NewPostScreenPreview() {
     TukerInTheme {
-        NewPostScreen()
+        NewPostScreen( onPostSuccess = { /*TODO*/ })
     }
 }
