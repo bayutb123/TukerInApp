@@ -1,4 +1,4 @@
-package com.bayutb123.tukerin.data
+package com.bayutb123.tukerin.core.data
 
 sealed class NetworkResult <T> (
     val data: T? = null,

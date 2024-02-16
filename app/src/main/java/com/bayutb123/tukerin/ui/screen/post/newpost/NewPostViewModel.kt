@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bayutb123.tukerin.data.NetworkResult
+import com.bayutb123.tukerin.core.data.NetworkResult
 import com.bayutb123.tukerin.data.source.remote.request.CreatePostRequest
 import com.bayutb123.tukerin.domain.usecase.DataStoreUseCase
 import com.bayutb123.tukerin.domain.usecase.PostUseCase

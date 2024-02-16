@@ -4,12 +4,12 @@ import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bayutb123.tukerin.data.NetworkResult
+import com.bayutb123.tukerin.core.data.NetworkResult
+import com.bayutb123.tukerin.domain.model.Post
 import com.bayutb123.tukerin.domain.usecase.DataStoreUseCase
 import com.bayutb123.tukerin.domain.usecase.PostUseCase
 import com.bayutb123.tukerin.ui.utils.Connection
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -45,14 +45,13 @@ class DashboardViewModel @Inject constructor(
         }
         viewModelScope.launch {
             _fetchState.value = true
-            delay(2000)
             when (val result = postUseCase.getAllPosts(dataStoreUseCase.getUserId()!!, currentPage++)) {
                 is NetworkResult.Success -> {
                     if (result.data?.isNotEmpty() == true) {
                         if (oldData is DashboardState.Success) {
-                            _state.value = DashboardState.Success(oldData.data + result.data)
+                            _state.value = DashboardState.Success(oldData.data + (result.data as List<Post>))
                         } else {
-                            _state.value = DashboardState.Success(result.data)
+                            _state.value = DashboardState.Success(result.data as List<Post>)
                         }
                     } else {
                         Toast.makeText(

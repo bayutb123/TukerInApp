@@ -2,6 +2,7 @@ package com.bayutb123.tukerin.ui.screen.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bayutb123.tukerin.core.data.NetworkResult
 import com.bayutb123.tukerin.domain.model.Post
 import com.bayutb123.tukerin.domain.usecase.PostUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,10 +21,10 @@ class DetailViewModel @Inject constructor(
     fun getPost(postId: Int) {
         viewModelScope.launch {
             when (val result = postUseCase.getPost(postId)) {
-                is com.bayutb123.tukerin.data.NetworkResult.Success -> {
+                is NetworkResult.Success -> {
                     _post.value = result.data
                 }
-                is com.bayutb123.tukerin.data.NetworkResult.Error -> {
+                is NetworkResult.Error -> {
                     _post.value = null
                 }
 

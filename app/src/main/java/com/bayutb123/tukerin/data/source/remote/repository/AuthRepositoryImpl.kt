@@ -1,6 +1,6 @@
 package com.bayutb123.tukerin.data.source.remote.repository
 
-import com.bayutb123.tukerin.data.NetworkResult
+import com.bayutb123.tukerin.core.data.NetworkResult
 import com.bayutb123.tukerin.data.source.remote.response.auth.login.toDomain
 import com.bayutb123.tukerin.data.source.remote.response.auth.register.toDomain
 import com.bayutb123.tukerin.data.source.remote.service.AuthService
