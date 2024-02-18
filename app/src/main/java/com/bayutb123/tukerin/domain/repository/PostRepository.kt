@@ -11,4 +11,5 @@ interface PostRepository {
     suspend fun getSuggestions(query: String, userId: Int) : NetworkResult<List<String>>
     suspend fun getPost(postId: Int) : NetworkResult<Post>
     suspend fun createPost(createPostRequest: CreatePostRequest, context: Context) : NetworkResult<Int>
+    suspend fun getMyPosts(userId: Int, page: Int) : NetworkResult<List<Post>>
 }

@@ -9,14 +9,14 @@ fun GetAllPostResponse.toPostList() : List<Post> {
             title = post.title,
             description = post.content,
             price = post.price,
-            createdAt = post.createdAt,
+            createdAt = post.created_at,
             address = post.city,
-            thumbnailImage = post.thumbnail.imageName,
-            images = listOf(post.thumbnail.imageName),
-            ownerId = post.userId,
+            thumbnailImage = post.thumnail?.image_name,
+            images = if (post.thumnail != null) listOf(post.thumnail.image_name) else emptyList(),
+            ownerId = post.user_id,
             ownerName = post.author.name,
             active = post.status == 1,
-            premium = post.isPremium == 1,
+            premium = post.is_premium == 1,
         )
     }
 }

@@ -29,6 +29,7 @@ class PostRepositoryImpl @Inject constructor(
                 NetworkResult.Error(response.code())
             }
         } catch (e: Exception) {
+            Timber.d(e.toString())
             NetworkResult.Error(e.hashCode())
         }
     }
@@ -43,6 +44,7 @@ class PostRepositoryImpl @Inject constructor(
                 NetworkResult.Error(response.code())
             }
         } catch (e: Exception) {
+            Timber.d(e.toString())
             NetworkResult.Error(e.hashCode())
         }
     }
@@ -92,6 +94,7 @@ class PostRepositoryImpl @Inject constructor(
             return if (request.isSuccessful) {
                 NetworkResult.Success(request.code())
             } else {
+                Timber.d(request.message())
                 NetworkResult.Error(request.code())
             }
         } catch (e: IOException) {
@@ -101,6 +104,25 @@ class PostRepositoryImpl @Inject constructor(
         } finally {
             Timber.d("Clearing local cache")
             MediaUtils.clearLocalCache(context)
+        }
+    }
+
+    override suspend fun getMyPosts(userId: Int, page: Int): NetworkResult<List<Post>> {
+        return try {
+            Timber.d("Getting my posts")
+            val response = postService.getMyPosts(userId, page)
+            Timber.d(response.toString())
+            if (response.isSuccessful) {
+                val posts = response.body()?.toPostList().orEmpty()
+                Timber.d(posts.toString())
+                NetworkResult.Success(posts)
+            } else {
+                Timber.d(response.code().toString())
+                NetworkResult.Error(response.code())
+            }
+        } catch (e: Exception) {
+            Timber.d(e.toString())
+            NetworkResult.Error(e.hashCode())
         }
     }
 

@@ -49,4 +49,10 @@ interface PostService {
         @Part("price") price: Long
     ) : Response<CreatePostResponse>
 
+    @GET("my/post/all/{userId}")
+    suspend fun getMyPosts(
+        @Path("userId") userId: Int,
+        @Query("page") page: Int
+    ) : Response<GetAllPostResponse>
+
 }

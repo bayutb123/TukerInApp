@@ -13,10 +13,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.bayutb123.tukerin.domain.model.Post
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bayutb123.tukerin.ui.components.input.ChipItem
 import com.bayutb123.tukerin.ui.components.view.ItemList
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
@@ -27,17 +29,14 @@ import com.bayutb123.tukerin.ui.theme.TukerInTheme
 fun MyAdsScreen(
     modifier: Modifier = Modifier,
     onNavigationRequested: (String) -> Unit,
+    viewModel: MyAdsViewModel = hiltViewModel()
 ) {
-    // initialize dummy list of strings
-    val list = mutableListOf<String>()
-    // add some dummy data to the list
-    repeat(20) {
-        list.add("Item ${it + 1}")
-    }
+    viewModel.getMyAds()
+    val state by viewModel.state.collectAsState()
     Scaffold(
         topBar = { TopAppBar(title = { Text(text = "My Ads") }) }
     ) { it ->
-        Column(Modifier.padding(it)) {
+        Column(modifier.padding(it)) {
             LazyRow(
                 contentPadding = PaddingValues(vertical = 8.dp , horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -46,30 +45,23 @@ fun MyAdsScreen(
                     ChipItem(text = "Category $it")
                 }
             }
-            LazyColumn(
-                modifier = Modifier,
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(items = list, key = { item ->
-                    item
-                }) {
-                    ItemList(
-                        onClick = {}, item = Post(
-                            id = 1,
-                            title = "Title",
-                            description = "Description",
-                            price = 1000000,
-                            thumbnailImage = "https://assets.jenius.com/assets/2020/08/15022111/Jenius-Features-.jpg",
-                            ownerId = 1,
-                            ownerName = "John Doe",
-                            active = true,
-                            premium = true,
-                            createdAt = "2023-12-23T07:12:57.000000Z",
-                            images = listOf(),
-                            address = "Jakarta Pusat"
-                        )
-                    )
+            when (state) {
+                is MyAdsState.Loading -> {
+                    Text(text = "Loading")
+                }
+                is MyAdsState.Success -> {
+                    val data = (state as MyAdsState.Success).data
+                    LazyColumn {
+                        items(data) { item ->
+                            ItemList(
+                                item = item,
+                                onClick = { onNavigationRequested("detail/${item.id}") }
+                            )
+                        }
+                    }
+                }
+                is MyAdsState.Error -> {
+                    Text(text = "Error: ${(state as MyAdsState.Error).msg}")
                 }
             }
         }

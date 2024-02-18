@@ -33,6 +33,8 @@ android {
             buildConfigField("String", "pathUrl", pathUrl)
         }
         release {
+            buildConfigField("String", "apiUrl", apiUrl)
+            buildConfigField("String", "pathUrl", pathUrl)
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

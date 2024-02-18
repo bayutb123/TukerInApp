@@ -1,5 +1,6 @@
 package com.bayutb123.tukerin.ui.screen.home.dashboard
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -58,6 +59,7 @@ import com.bayutb123.tukerin.ui.screen.Screen
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 import kotlinx.coroutines.delay
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun DashboardScreen(
     modifier: Modifier = Modifier,
@@ -76,8 +78,12 @@ fun DashboardScreen(
 
     val lazyGridState = rememberLazyGridState()
     val isLastItemVisible by derivedStateOf {
-        lazyGridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index == lazyGridState.layoutInfo.totalItemsCount - 1
+        val lastVisibleItemIndex = lazyGridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+        val totalItemCount = lazyGridState.layoutInfo.totalItemsCount - 1
+
+        lastVisibleItemIndex == totalItemCount
     }
+
 
     DisposableEffect(Unit) {
         if (viewModel.checkConnection(context) && !isInitiated) {
