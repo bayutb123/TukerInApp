@@ -109,12 +109,9 @@ class PostRepositoryImpl @Inject constructor(
 
     override suspend fun getMyPosts(userId: Int, page: Int): NetworkResult<List<Post>> {
         return try {
-            Timber.d("Getting my posts")
             val response = postService.getMyPosts(userId, page)
-            Timber.d(response.toString())
             if (response.isSuccessful) {
                 val posts = response.body()?.toPostList().orEmpty()
-                Timber.d(posts.toString())
                 NetworkResult.Success(posts)
             } else {
                 Timber.d(response.code().toString())

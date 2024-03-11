@@ -51,7 +51,10 @@ fun MyAdsScreen(
                 }
                 is MyAdsState.Success -> {
                     val data = (state as MyAdsState.Success).data
-                    LazyColumn {
+                    LazyColumn(
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
                         items(data) { item ->
                             ItemList(
                                 item = item,

@@ -141,7 +141,7 @@ fun ItemList(
                     .padding(16.dp)
             ) {
                 AsyncImage(
-                    model = item.thumbnailImage,
+                    model = BuildConfig.apiUrl + "/images/" + item.thumbnailImage,
                     contentDescription = item.title,
                     modifier = modifier.size(92.dp),
                     contentScale = ContentScale.Crop
@@ -159,7 +159,7 @@ fun ItemList(
                             .fillMaxWidth()
                             .weight(1f),
                         fontWeight = FontWeight.ExtraBold,
-                        fontSize = MaterialTheme.typography.titleLarge.fontSize
+                        fontSize = MaterialTheme.typography.titleMedium.fontSize
                     )
                     if (item.premium) {
                         Text(
