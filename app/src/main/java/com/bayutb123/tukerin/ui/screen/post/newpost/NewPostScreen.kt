@@ -1,7 +1,5 @@
 package com.bayutb123.tukerin.ui.screen.post.newpost
 
-import android.content.Context
-import android.location.LocationManager
 import android.net.Uri
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -57,12 +55,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.bayutb123.tukerin.core.utils.Currency
-import com.bayutb123.tukerin.data.source.remote.response.ResponseCode.BAD_REQUEST
+import com.bayutb123.tukerin.core.utils.PermissionManager
+import com.bayutb123.tukerin.core.utils.SystemUtils
 import com.bayutb123.tukerin.ui.components.input.CustomDropDown
 import com.bayutb123.tukerin.ui.components.input.CustomTextField
 import com.bayutb123.tukerin.ui.components.view.CustomAlertDialog
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
-import com.bayutb123.tukerin.ui.utils.PermissionManager
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -102,8 +100,8 @@ fun NewPostScreen(
         mutableStateOf(false)
     }
     var isSuccess by remember { mutableStateOf(false) }
-    val isFailed by remember { mutableStateOf(newPostViewModel.state.value.statusCode == BAD_REQUEST) }
-    getUserLocation(context) { latResult, longResult ->
+    var isFailed by remember { mutableStateOf(false) }
+    SystemUtils.getUserLocation(context) { latResult, longResult ->
         isLoading = true
         lat = latResult
         long = longResult
@@ -130,7 +128,18 @@ fun NewPostScreen(
         requestPermissions(managedActivityResultLauncher)
     }
     val state by newPostViewModel.state.collectAsState()
-
+    ObserveState(
+        state,
+        onPostSuccess = {
+            isSuccess = true
+        },
+        onLoading = {
+            isLoading = it
+        },
+        onError = {
+            isFailed = true
+        }
+    )
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -166,12 +175,25 @@ fun NewPostScreen(
         Box(
             modifier = modifier.padding(paddingValues)
         ) {
-            AnimatedVisibility(visible = isSuccess || isFailed, enter = fadeIn(), exit = fadeOut()) {
+            AnimatedVisibility(visible = isSuccess, enter = fadeIn(), exit = fadeOut()) {
+                    CustomAlertDialog(
+                        title = "Success",
+                        message = "Post has been created",
+                        onConfirm = {
+                            isSuccess = false
+                            onBackRequested()
+                        },
+                        dismissEnabled = false
+                    )
+            }
+            AnimatedVisibility(visible = isFailed , enter = fadeIn(), exit = fadeOut()) {
                 CustomAlertDialog(
-                    title = if (isSuccess) "Success" else "Failed",
-                    message = if (isSuccess) "Post created successfully" else "Failed to create post",
-                    dismissEnabled = false,
-                    onConfirm = { if (isSuccess) onBackRequested() }
+                    title = "Failed",
+                    message = "Post failed to create",
+                    onConfirm = {
+                        isFailed = false
+                    },
+                    dismissEnabled = false
                 )
             }
 
@@ -282,15 +304,7 @@ fun NewPostScreen(
                     }
                 }
 
-                ObserveState(
-                    state,
-                    onPostSuccess = {
-                        isSuccess = true
-                    },
-                    onLoading = {
-                        isLoading = it
-                    }
-                )
+
             }
             AnimatedVisibility(visible = isLoading, enter = fadeIn(), exit = fadeOut()) {
                 Box(
@@ -305,7 +319,7 @@ fun NewPostScreen(
 }
 
 @Composable
-fun ObserveState(newPostState: NewPostState, onPostSuccess: () -> Unit, onLoading : (Boolean) -> Unit) {
+fun ObserveState(newPostState: NewPostState, onPostSuccess: () -> Unit, onLoading : (Boolean) -> Unit, onError : () -> Unit = {}) {
     when (newPostState) {
         is NewPostState.Success -> {
             onPostSuccess()
@@ -314,21 +328,13 @@ fun ObserveState(newPostState: NewPostState, onPostSuccess: () -> Unit, onLoadin
         is NewPostState.Loading -> {
             onLoading(true)
         }
+        is NewPostState.Failed -> {
+            onError()
+            onLoading(false)
+        }
         else -> {
             onLoading(false)
         }
-    }
-}
-
-private fun getUserLocation(context: Context, onLocationObtained: (Double, Double) -> Unit = { _, _ -> }) {
-    val locationManager: LocationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-    try {
-        val location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-        if (location != null) {
-            onLocationObtained(location.latitude, location.longitude)
-        }
-    } catch (e: SecurityException) {
-        e.printStackTrace()
     }
 }
 

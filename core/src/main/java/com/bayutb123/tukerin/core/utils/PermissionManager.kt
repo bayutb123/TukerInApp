@@ -1,4 +1,4 @@
-package com.bayutb123.tukerin.ui.utils
+package com.bayutb123.tukerin.core.utils
 
 import android.Manifest
 import android.os.Build
