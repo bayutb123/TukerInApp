@@ -11,3 +11,7 @@ data class CreatePostRequest(
     val long: Double,
     val price: Long
 )
+
+fun CreatePostRequest.validate() : Boolean {
+    return title.isNotEmpty() && content.isNotEmpty() && images.isNotEmpty() && price > 0
+}

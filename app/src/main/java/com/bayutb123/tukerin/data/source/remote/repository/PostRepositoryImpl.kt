@@ -3,6 +3,7 @@ package com.bayutb123.tukerin.data.source.remote.repository
 import android.content.Context
 import com.bayutb123.tukerin.core.data.NetworkResult
 import com.bayutb123.tukerin.data.source.remote.request.CreatePostRequest
+import com.bayutb123.tukerin.data.source.remote.request.validate
 import com.bayutb123.tukerin.data.source.remote.response.detail.toPost
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.toPostList
 import com.bayutb123.tukerin.data.source.remote.response.home.suggestions.toSuggestionsList
@@ -78,6 +79,9 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override suspend fun createPost(createPostRequest: CreatePostRequest, context: Context): NetworkResult<Int> {
+        if (!createPostRequest.validate()) {
+            return NetworkResult.Error(400)
+        }
         val images = MediaUtils.preparePart(createPostRequest.images, context)
 
         try {

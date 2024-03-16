@@ -53,7 +53,9 @@ fun CustomTextField(
     isCurrency: Boolean = false,
     isEnabled: Boolean = true,
     isHasDefault: Boolean = false,
-    defaultText: String = ""
+    defaultText: String = "",
+    readOnly : Boolean = false,
+    readOnlyText: String? = null
 ) {
     var text by remember {
         mutableStateOf(if (isHasDefault) defaultText else "")
@@ -61,7 +63,7 @@ fun CustomTextField(
     Column {
         TextField(
             modifier = modifier.fillMaxWidth(),
-            value = text,
+            value = if (readOnly) readOnlyText ?: text else text,
             onValueChange = {
                 text = if (isCurrency) {
                     Currency.displayLongAsRupiah(it)
@@ -102,7 +104,8 @@ fun CustomTextField(
             } else {
                 VisualTransformation.None
             },
-            enabled = isEnabled
+            enabled = isEnabled,
+            readOnly = readOnly
         )
         AnimatedVisibility(visible = isError && text.isNotEmpty()) {
             Text(

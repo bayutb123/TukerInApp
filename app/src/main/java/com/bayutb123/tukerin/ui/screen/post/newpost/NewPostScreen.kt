@@ -57,11 +57,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.bayutb123.tukerin.core.utils.Currency
+import com.bayutb123.tukerin.data.source.remote.response.ResponseCode.BAD_REQUEST
+import com.bayutb123.tukerin.ui.components.input.CustomDropDown
 import com.bayutb123.tukerin.ui.components.input.CustomTextField
 import com.bayutb123.tukerin.ui.components.view.CustomAlertDialog
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 import com.bayutb123.tukerin.ui.utils.PermissionManager
-import timber.log.Timber
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -69,8 +70,9 @@ import timber.log.Timber
 fun NewPostScreen(
     modifier: Modifier = Modifier,
     newPostViewModel: NewPostViewModel = hiltViewModel(),
-    onPostSuccess: () -> Unit
+    onBackRequested: () -> Unit,
 ) {
+    val categories = listOf("Item 1", "Item 2", "Item 3")
     val context = LocalContext.current
     var title by remember {
         mutableStateOf("")
@@ -87,6 +89,9 @@ fun NewPostScreen(
     var priceToDisplayed by remember {
         mutableStateOf("")
     }
+    var selectedCategory by remember {
+        mutableStateOf(categories[0])
+    }
     var lat: Double by rememberSaveable {
         mutableDoubleStateOf(0.0)
     }
@@ -97,10 +102,12 @@ fun NewPostScreen(
         mutableStateOf(false)
     }
     var isSuccess by remember { mutableStateOf(false) }
+    val isFailed by remember { mutableStateOf(newPostViewModel.state.value.statusCode == BAD_REQUEST) }
     getUserLocation(context) { latResult, longResult ->
+        isLoading = true
         lat = latResult
         long = longResult
-        Timber.tag("Location").d("Lat: $lat, Long: $long")
+        isLoading = false
     }
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
@@ -113,8 +120,11 @@ fun NewPostScreen(
         }
     )
     val managedActivityResultLauncher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestMultiplePermissions()) {
-            // TODO: LOGIC
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestMultiplePermissions()) { map ->
+            val isGranted = map.values.all { it }
+            if (!isGranted) {
+                onBackRequested()
+            }
         }
     LaunchedEffect(key1 = managedActivityResultLauncher) {
         requestPermissions(managedActivityResultLauncher)
@@ -128,7 +138,7 @@ fun NewPostScreen(
                     Text(text = "New Post")
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /*TODO*/ }) {
+                    IconButton(onClick = onBackRequested) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back"
@@ -156,14 +166,15 @@ fun NewPostScreen(
         Box(
             modifier = modifier.padding(paddingValues)
         ) {
-            AnimatedVisibility(visible = isSuccess) {
+            AnimatedVisibility(visible = isSuccess || isFailed, enter = fadeIn(), exit = fadeOut()) {
                 CustomAlertDialog(
-                    title = "Success",
-                    message = "Post created successfully",
+                    title = if (isSuccess) "Success" else "Failed",
+                    message = if (isSuccess) "Post created successfully" else "Failed to create post",
                     dismissEnabled = false,
-                    onConfirm = { onPostSuccess() }
+                    onConfirm = { if (isSuccess) onBackRequested() }
                 )
             }
+
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -211,6 +222,7 @@ fun NewPostScreen(
                         }
                     }
                 }
+
                 CustomTextField(
                     onTextChanged = {
                         title = it
@@ -218,6 +230,7 @@ fun NewPostScreen(
                     isEnabled = !isLoading,
                     placeholder = "Title"
                 )
+
                 CustomTextField(
                     onTextChanged = {
                         description = it
@@ -228,6 +241,7 @@ fun NewPostScreen(
                     maxLines = 10,
                     singleLine = false
                 )
+
                 CustomTextField(
                     onTextChanged = {
                         price = it.toLong()
@@ -238,6 +252,10 @@ fun NewPostScreen(
                     placeholder = "Price",
                     keyboardType = KeyboardType.Number
                 )
+
+                CustomDropDown(items = categories, selectedItem = selectedCategory) {
+                    selectedCategory = it
+                }
 
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Column(modifier = Modifier.weight(0.5f)) {
@@ -325,6 +343,6 @@ private fun requestPermissions(requestPermission: ManagedActivityResultLauncher<
 @Preview(showBackground = true, device = Devices.PIXEL_4)
 fun NewPostScreenPreview() {
     TukerInTheme {
-        NewPostScreen( onPostSuccess = { /*TODO*/ })
+        NewPostScreen( onBackRequested = { /*TODO*/ })
     }
 }

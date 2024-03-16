@@ -22,9 +22,17 @@ class NewPostViewModel @Inject constructor(
     private val dataStoreUseCase: DataStoreUseCase
 ) : ViewModel() {
 
-    private val _state : MutableStateFlow<NewPostState> = MutableStateFlow(NewPostState.Idle)
-    val state : StateFlow<NewPostState> = _state.asStateFlow()
-    fun createPost(title: String, description: String, uris: List<Uri>, lat: Double, long: Double, price: Long, context: Context) {
+    private val _state: MutableStateFlow<NewPostState> = MutableStateFlow(NewPostState.Idle)
+    val state: StateFlow<NewPostState> = _state.asStateFlow()
+    fun createPost(
+        title: String,
+        description: String,
+        uris: List<Uri>,
+        lat: Double,
+        long: Double,
+        price: Long,
+        context: Context
+    ) {
         viewModelScope.launch {
             _state.value = NewPostState.Loading
             val userId = dataStoreUseCase.getUserId()
