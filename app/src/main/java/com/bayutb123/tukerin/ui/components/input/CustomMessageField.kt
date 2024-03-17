@@ -2,8 +2,8 @@ package com.bayutb123.tukerin.ui.components.input
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
@@ -20,8 +20,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 
 @Composable
 fun CustomMessageField(
@@ -35,7 +35,9 @@ fun CustomMessageField(
     contentColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
     placeholder: String?,
     isError: Boolean = false,
-    onSend: (String) -> Unit
+    onSend: (String) -> Unit,
+    imeAction: ImeAction = ImeAction.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default
 ) {
     var text by remember {
         mutableStateOf("")
@@ -72,7 +74,8 @@ fun CustomMessageField(
                     Icon(imageVector = Icons.AutoMirrored.Default.Send, contentDescription = "Send")
                 }
             },
-            keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
+            keyboardActions = keyboardActions,
+            keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
             placeholder = {
                 if (placeholder != null) {
                     Text(text = placeholder, color = Color.Gray)
