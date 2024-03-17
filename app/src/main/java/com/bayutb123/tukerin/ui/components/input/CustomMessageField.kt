@@ -1,6 +1,5 @@
 package com.bayutb123.tukerin.ui.components.input
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -22,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun CustomMessageField(
@@ -42,46 +42,44 @@ fun CustomMessageField(
     var text by remember {
         mutableStateOf("")
     }
-    Column {
-        TextField(
-            modifier = modifier.fillMaxWidth(),
-            value = text,
-            onValueChange = {
-                text = it
-                onTextChanged(it)
-            },
-            isError = isError,
-            singleLine = singleLine,
-            maxLines = maxLines,
-            shape = RoundedCornerShape(50),
-            colors = TextFieldDefaults.colors(
-                focusedTextColor = contentColor,
-                unfocusedTextColor = contentColor,
-                focusedContainerColor = containerColor,
-                unfocusedContainerColor = containerColor,
-                disabledContainerColor = containerColor,
-                cursorColor = contentColor,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                errorIndicatorColor = Color.Transparent
-            ),
-            leadingIcon = leadingIcon,
-            trailingIcon = {
-                IconButton(onClick = {
-                    onSend(text)
-                    text = ""
-                }, enabled = text != "") {
-                    Icon(imageVector = Icons.AutoMirrored.Default.Send, contentDescription = "Send")
-                }
-            },
-            keyboardActions = keyboardActions,
-            keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
-            placeholder = {
-                if (placeholder != null) {
-                    Text(text = placeholder, color = Color.Gray)
-                }
+    TextField(
+        modifier = modifier.fillMaxWidth(),
+        value = text,
+        onValueChange = {
+            text = it
+            onTextChanged(it)
+        },
+        isError = isError,
+        singleLine = singleLine,
+        maxLines = maxLines,
+        shape = RoundedCornerShape(28.dp),
+        colors = TextFieldDefaults.colors(
+            focusedTextColor = contentColor,
+            unfocusedTextColor = contentColor,
+            focusedContainerColor = containerColor,
+            unfocusedContainerColor = containerColor,
+            disabledContainerColor = containerColor,
+            cursorColor = contentColor,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            errorIndicatorColor = Color.Transparent
+        ),
+        leadingIcon = leadingIcon,
+        trailingIcon = {
+            IconButton(onClick = {
+                onSend(text)
+                text = ""
+            }, enabled = text != "") {
+                Icon(imageVector = Icons.AutoMirrored.Default.Send, contentDescription = "Send")
             }
-        )
-    }
+        },
+        keyboardActions = keyboardActions,
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
+        placeholder = {
+            if (placeholder != null) {
+                Text(text = placeholder, color = Color.Gray)
+            }
+        }
+    )
 }
 
