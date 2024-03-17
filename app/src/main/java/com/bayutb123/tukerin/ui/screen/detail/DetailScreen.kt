@@ -1,5 +1,7 @@
 package com.bayutb123.tukerin.ui.screen.detail
 
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +16,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Chat
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -44,9 +51,11 @@ fun DetailScreen(
     modifier: Modifier = Modifier,
     onBackRequested: () -> Unit,
     onNavigationRequested: (route: String) -> Unit,
+    onChatRequested: (Int) -> Unit,
     postId: Int
 ) {
     // create scrollstate
+    val scrollState = rememberScrollState()
 
     val viewModel = hiltViewModel<DetailViewModel>()
     val post = viewModel.post.collectAsStateWithLifecycle()
@@ -67,12 +76,41 @@ fun DetailScreen(
                     }
                 }
             )
+        },
+        bottomBar = {
+            BottomAppBar(actions = {
+                IconButton(onClick = { post.value?.let { onChatRequested(it.ownerId) } }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.Chat,
+                        contentDescription = "Chat"
+                    )
+                }
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(
+                        imageVector = if (post.value?.isSaved == true) {
+                            Icons.Filled.Favorite
+                        } else {
+                            Icons.Filled.FavoriteBorder
+                        },
+                        contentDescription = "Save"
+                    )
+                }
+                IconButton(onClick = { /*TODO*/ }) {
+                    Icon(
+                        imageVector = Icons.Filled.Share,
+                        contentDescription = "Share"
+                    )
+                }
+            })
         }
     ) { paddingValues ->
         Box(
             modifier = modifier
                 .padding(paddingValues = paddingValues)
-
+                .scrollable(
+                    scrollState,
+                    orientation = Orientation.Vertical
+                )
         ) {
             Column(
                 modifier = modifier
@@ -99,7 +137,7 @@ fun DetailScreen(
                             SellerCard(
                                 sellerName = it.ownerName,
                                 sellerLocation = it.address,
-                                sellerImage = "https://media.licdn.com/dms/image/D5603AQEQqJu4ohbltA/profile-displayphoto-shrink_200_200/0/1679033845873?e=1705536000&v=beta&t=w4rpjT0ZRRd1eo49L3TURJGqpXXmFVH7MXlJzLseg8I"
+                                sellerImage = "https://cdn-icons-png.flaticon.com/512/2919/2919906.png"
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                                 Text(text = it.description)
@@ -144,7 +182,8 @@ fun DetailScreenPreview() {
         DetailScreen(
             onBackRequested = {},
             onNavigationRequested = {},
-            postId = 4
+            postId = 4,
+            onChatRequested = {}
         )
     }
 }

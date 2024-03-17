@@ -1,6 +1,7 @@
 package com.bayutb123.tukerin.ui.screen.home.dashboard
 
 import android.annotation.SuppressLint
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -83,7 +84,6 @@ fun DashboardScreen(
 
         lastVisibleItemIndex == totalItemCount
     }
-
 
     DisposableEffect(Unit) {
         if (viewModel.checkConnection(context) && !isInitiated) {
@@ -181,6 +181,11 @@ fun DashboardScreen(
                 }
             }
         }
+        BackHandler {
+            if (isSearching) {
+                isSearching = false
+            }
+        }
     }
 }
 
@@ -245,7 +250,6 @@ private fun DashboardContent(dashboardState: DashboardState.Success, onNavigatio
                 )
             }
         }
-
     }
 }
 
