@@ -31,7 +31,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.bayutb123.tukerin.core.utils.Currency
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 
 @Composable
@@ -66,7 +65,7 @@ fun CustomTextField(
             value = if (readOnly) readOnlyText ?: text else text,
             onValueChange = {
                 text = if (isCurrency) {
-                    Currency.displayLongAsRupiah(it)
+                    it.replace(Regex("[^0-9]"), "")
                 } else {
                     it
                 }
@@ -76,7 +75,7 @@ fun CustomTextField(
             singleLine = singleLine,
             minLines = minLines,
             maxLines = maxLines,
-            shape = RoundedCornerShape(MaterialTheme.shapes.large.topStart),
+            shape = RoundedCornerShape(MaterialTheme.shapes.medium.topStart),
             colors = TextFieldDefaults.colors(
                 focusedTextColor = contentColor,
                 unfocusedTextColor = contentColor,

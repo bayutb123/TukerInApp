@@ -54,7 +54,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.bayutb123.tukerin.core.utils.Currency
 import com.bayutb123.tukerin.core.utils.PermissionManager
 import com.bayutb123.tukerin.core.utils.SystemUtils
 import com.bayutb123.tukerin.ui.components.input.CustomDropDown
@@ -70,7 +69,7 @@ fun NewPostScreen(
     newPostViewModel: NewPostViewModel = hiltViewModel(),
     onBackRequested: () -> Unit,
 ) {
-    val categories = listOf("Item 1", "Item 2", "Item 3")
+    val categories = listOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6", "Item 7", "Item 8")
     val context = LocalContext.current
     var title by remember {
         mutableStateOf("")
@@ -83,9 +82,6 @@ fun NewPostScreen(
     }
     var price: Long by remember {
         mutableLongStateOf(0)
-    }
-    var priceToDisplayed by remember {
-        mutableStateOf("")
     }
     var selectedCategory by remember {
         mutableStateOf(categories[0])
@@ -266,10 +262,13 @@ fun NewPostScreen(
 
                 CustomTextField(
                     onTextChanged = {
-                        price = it.toLong()
-                        priceToDisplayed = Currency.displayLongAsRupiah(it)
+                        if (it.isNotEmpty()) {
+                            // replace all except 0 - 9
+                            val regex = Regex("[^0-9]")
+                            price = it.replace(regex, "").toLong()
+                        }
                     },
-                    isCurrency = false,
+                    isCurrency = true,
                     isEnabled = !isLoading,
                     placeholder = "Price",
                     keyboardType = KeyboardType.Number
