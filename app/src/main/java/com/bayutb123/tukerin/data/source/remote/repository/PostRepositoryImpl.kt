@@ -2,13 +2,13 @@ package com.bayutb123.tukerin.data.source.remote.repository
 
 import android.content.Context
 import com.bayutb123.tukerin.core.data.NetworkResult
+import com.bayutb123.tukerin.core.utils.MediaUtils
 import com.bayutb123.tukerin.data.source.remote.request.CreatePostRequest
 import com.bayutb123.tukerin.data.source.remote.request.validate
 import com.bayutb123.tukerin.data.source.remote.response.detail.toPost
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.toPostList
 import com.bayutb123.tukerin.data.source.remote.response.home.suggestions.toSuggestionsList
 import com.bayutb123.tukerin.data.source.remote.service.PostService
-import com.bayutb123.tukerin.data.utils.MediaUtils
 import com.bayutb123.tukerin.domain.model.Post
 import com.bayutb123.tukerin.domain.repository.PostRepository
 import okio.IOException

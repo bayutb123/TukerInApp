@@ -1,17 +1,17 @@
-package com.bayutb123.tukerin.data.utils
+package com.bayutb123.tukerin.core.utils
 
 import android.content.Context
 import android.net.Uri
+import id.zelory.compressor.Compressor
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 
 
 object MediaUtils {
-    fun preparePart(uris: List<Uri>, context: Context): Array<MultipartBody.Part> {
+    suspend fun preparePart(uris: List<Uri>, context: Context): Array<MultipartBody.Part> {
         val cacheDirectory = File(context.cacheDir, "image_cache")
         cacheDirectory.mkdirs()
         val parts = mutableListOf<MultipartBody.Part>()
@@ -21,8 +21,8 @@ object MediaUtils {
             images.add(file)
         }
         images.forEachIndexed { index, it ->
-            Timber.d("File[$index] - Name: ${it.name}, Path: ${it.path}")
-            val requestFile = it.asRequestBody("multipart/form-data".toMediaTypeOrNull())
+            val compressedImage = Compressor.compress(context, it)
+            val requestFile = compressedImage.asRequestBody("multipart/form-data".toMediaTypeOrNull())
             val body = MultipartBody.Part.createFormData("image[$index]", it.name, requestFile)
             parts.add(body)
         }

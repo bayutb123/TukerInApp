@@ -71,4 +71,7 @@ dependencies {
 
     // DataStore
     api("androidx.datastore:datastore-preferences:1.0.0")
+
+    // image compression
+    implementation("id.zelory:compressor:3.0.1")
 }
