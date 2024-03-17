@@ -1,5 +1,7 @@
 package com.bayutb123.tukerin.ui.screen.detail
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +32,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -42,6 +48,7 @@ import coil.compose.AsyncImage
 import com.bayutb123.tukerin.BuildConfig
 import com.bayutb123.tukerin.core.utils.Currency
 import com.bayutb123.tukerin.core.utils.Date
+import com.bayutb123.tukerin.ui.components.view.FullImageView
 import com.bayutb123.tukerin.ui.components.view.SellerCard
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 
@@ -59,6 +66,8 @@ fun DetailScreen(
 
     val viewModel = hiltViewModel<DetailViewModel>()
     val post = viewModel.post.collectAsStateWithLifecycle()
+    var isFullImageVisible by remember { mutableStateOf(false) }
+    var imageUrlForFullImage by remember { mutableStateOf("") }
 
     LaunchedEffect(key1 = postId) {
         viewModel.getPost(postId)
@@ -112,13 +121,21 @@ fun DetailScreen(
                     orientation = Orientation.Vertical
                 )
         ) {
+            AnimatedVisibility(visible = isFullImageVisible) {
+                FullImageView(imageUrl = imageUrlForFullImage) {
+                    isFullImageVisible = false
+                }
+            }
             Column(
                 modifier = modifier
                     .verticalScroll(rememberScrollState())
             ) {
                 post.value.let {
                     it?.let {
-                        it.images?.let { it1 -> ImagesView(images = it1) }
+                        it.images?.let { it1 -> ImagesView(images = it1, onClickImage = { url ->
+                            imageUrlForFullImage = url
+                            isFullImageVisible = true
+                        }) }
                         Date.formatStringDate(it.createdAt)
                         Column(
                             modifier = Modifier
@@ -151,8 +168,8 @@ fun DetailScreen(
 
 @Composable
 fun ImagesView(
-    modifier: Modifier = Modifier,
-    images: List<String>
+    images: List<String>,
+    onClickImage: (String) -> Unit
 ) {
     LazyRow(
         modifier = Modifier
@@ -167,6 +184,9 @@ fun ImagesView(
                 model = imageUrl, contentDescription = index.toString(),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.size(250.dp)
+                    .clickable {
+                        onClickImage(imageUrl)
+                    }
             )
         }
     }
