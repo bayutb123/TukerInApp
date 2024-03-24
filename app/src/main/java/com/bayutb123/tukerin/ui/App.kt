@@ -83,9 +83,6 @@ fun App(
                     navController.popBackStack()
                 },
                 postId = backStackEntry.arguments?.getInt("postId") ?: 0,
-                onChatRequested = { ownerId ->
-                    navController.navigate(Screen.ChatRoom.route + "/$ownerId")
-                }
             )
         }
         composable(route = Screen.Forgot.route) {

@@ -36,6 +36,7 @@ android {
             buildConfigField("String", "apiUrl", apiUrl)
             buildConfigField("String", "pathUrl", pathUrl)
             isMinifyEnabled = false
+            isDebuggable = true // Change to false for production
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
