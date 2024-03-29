@@ -1,6 +1,7 @@
 package com.bayutb123.tukerin.ui.components.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,15 +20,18 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.FilterQuality
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -130,10 +134,27 @@ fun ItemGrid(
 fun ItemList(
     modifier: Modifier = Modifier,
     onClick: (Int) -> Unit,
+    onLongClick: (Int) -> Unit,
     item: Post
 ) {
-    Card(onClick = { onClick(item.id) }, shape = RoundedCornerShape(8.dp)) {
-        Box(modifier = modifier.fillMaxWidth()) {
+    Card(shape = RoundedCornerShape(8.dp), modifier = Modifier.pointerInput(Unit) {
+        detectTapGestures(
+            onLongPress = {
+                onLongClick(item.id)
+            },
+            onTap = {
+                onClick(item.id)
+            }
+        )
+    }) {
+        Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
+            IconButton(onClick = { onLongClick(item.id) }) {
+                Icon(
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = null,
+                    modifier = modifier.size(24.dp),
+                )
+            }
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = modifier
@@ -232,7 +253,8 @@ fun PreviewItemList() {
                         createdAt = "2023-12-23T07:12:57.000000Z",
                         images = listOf(),
                         address = "Jakarta Pusat"
-                    )
+                    ),
+                    onLongClick = { }
                 )
             }
         }
