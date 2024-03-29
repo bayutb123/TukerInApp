@@ -7,8 +7,8 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
-val apiUrl : String = gradleLocalProperties(rootDir).getProperty("apiUrl")
-val pathUrl : String = gradleLocalProperties(rootDir).getProperty("pathUrl")
+val apiUrl : String = gradleLocalProperties(rootDir, providers).getProperty("apiUrl")
+val pathUrl : String = gradleLocalProperties(rootDir, providers).getProperty("pathUrl")
 
 android {
     namespace = "com.bayutb123.tukerin.core"
