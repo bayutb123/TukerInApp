@@ -35,7 +35,7 @@ import com.bayutb123.tukerin.ui.screen.home.profile.ProfileScreen
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    onNavigationRequested: (route: String) -> Unit
+    onNavigationRequested: (route: String, isFinish: Boolean) -> Unit
 ) {
     val homeNavController = rememberNavController()
     val navItem = NavItem.items
@@ -49,7 +49,7 @@ fun HomeScreen(
             ) {
                 ExtendedFloatingActionButton(
                     onClick = {
-                        onNavigationRequested(Screen.CreateAds.route)
+                        onNavigationRequested(Screen.CreateAds.route, false)
                     }
                 ) {
                     Icon(
@@ -116,42 +116,42 @@ fun HomeScreen(
     }
 }
 
-private fun NavGraphBuilder.addDashboard(onNavigationRequested: (String) -> Unit) {
+private fun NavGraphBuilder.addDashboard(onNavigationRequested: (String, Boolean) -> Unit) {
     composable(route = Screen.Dashboard.route) {
         DashboardScreen(
             onNavigationRequested = { destination ->
-                onNavigationRequested(destination)
+                onNavigationRequested(destination, false)
             },
         )
     }
 }
 
-private fun NavGraphBuilder.addChatList(onNavigationRequested: (String) -> Unit) {
+private fun NavGraphBuilder.addChatList(onNavigationRequested: (String, Boolean) -> Unit) {
     composable(route = Screen.ChatList.route) {
         ChatListScreen(
             onNavigationRequested = { destination ->
-                onNavigationRequested(destination)
+                onNavigationRequested(destination, false)
             }
         )
     }
 }
 
-private fun NavGraphBuilder.addMyAds(onNavigationRequested: (String) -> Unit) {
+private fun NavGraphBuilder.addMyAds(onNavigationRequested: (String, Boolean) -> Unit) {
     composable(route = Screen.MyAds.route) {
         MyAdsScreen(
             onNavigationRequested = { destination ->
-                onNavigationRequested(destination)
+                onNavigationRequested(destination, false)
             }
         )
     }
 }
 
-private fun NavGraphBuilder.addProfile(onNavigationRequested: (String) -> Unit) {
+private fun NavGraphBuilder.addProfile(onNavigationRequested: (String, Boolean) -> Unit) {
     composable(route = Screen.Profile.route) {
         ProfileScreen(
             onLogout = {
                 // for test only
-                onNavigationRequested(Screen.Login.route)
+                onNavigationRequested(Screen.Login.route, true)
             }
         )
     }

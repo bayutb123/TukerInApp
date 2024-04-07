@@ -26,8 +26,15 @@ fun App(
 
     NavHost(navController = navController, startDestination = Screen.Splash.route ) {
         composable(route = Screen.Home.route) {
-            HomeScreen {
-                navController.navigate(it)
+            HomeScreen { route, isFinish ->
+                navController.navigate(route) {
+                    if (isFinish) {
+                        popUpTo(navController.graph.id) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
+                }
             }
         }
         composable(route = Screen.Splash.route) {
