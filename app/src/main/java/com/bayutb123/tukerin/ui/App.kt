@@ -66,8 +66,13 @@ fun App(
         }
         composable(route = Screen.Register.route) {
             RegisterScreen(
-                onNavigationRequested = {
-                    navController.navigate(it)
+                onRegisterSuccess = {
+                    navController.navigate(it) {
+                        popUpTo(navController.graph.id) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
                 },
                 onBackRequested = {
                     navController.popBackStack()

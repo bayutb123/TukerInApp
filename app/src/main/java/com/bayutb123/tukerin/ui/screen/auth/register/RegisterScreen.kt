@@ -41,7 +41,7 @@ import com.bayutb123.tukerin.ui.theme.TukerInTheme
 @Composable
 fun RegisterScreen(
     modifier: Modifier = Modifier,
-    onNavigationRequested: (route: String) -> Unit,
+    onRegisterSuccess: (route: String) -> Unit,
     onBackRequested: () -> Unit
 ) {
     val viewModel: RegisterViewModel = hiltViewModel()
@@ -67,7 +67,7 @@ fun RegisterScreen(
                 dismissEnabled = false,
                 onConfirm = {
                     if (state.value is RegisterState.Success) {
-                        onNavigationRequested(Screen.Login.route)
+                        onRegisterSuccess(Screen.Login.route)
                     } else {
                         viewModel.resetState()
                     }
@@ -180,7 +180,7 @@ fun RegisterScreen(
 fun RegisterScreenPreview() {
     TukerInTheme {
         RegisterScreen(
-            onNavigationRequested = {},
+            onRegisterSuccess = {},
             onBackRequested = {}
         )
     }
