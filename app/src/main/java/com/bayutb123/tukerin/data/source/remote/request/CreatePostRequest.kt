@@ -9,7 +9,9 @@ data class CreatePostRequest(
     val images: List<Uri>,
     val lat: Double,
     val long: Double,
-    val price: Long
+    val price: Long,
+    val type: String,
+    val canTrade: Boolean
 )
 
 fun CreatePostRequest.validate() : Boolean {

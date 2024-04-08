@@ -2,6 +2,8 @@ package com.bayutb123.tukerin.data.source.remote.repository
 
 import android.content.Context
 import com.bayutb123.tukerin.core.data.NetworkResult
+import com.bayutb123.tukerin.core.utils.InputConverter.convertToInt
+import com.bayutb123.tukerin.core.utils.InputConverter.removeDoubleQuotes
 import com.bayutb123.tukerin.core.utils.MediaUtils
 import com.bayutb123.tukerin.data.source.remote.request.CreatePostRequest
 import com.bayutb123.tukerin.data.source.remote.request.validate
@@ -87,12 +89,14 @@ class PostRepositoryImpl @Inject constructor(
         try {
             val request = postService.createPost(
                 createPostRequest.userId,
-                createPostRequest.title.replace("\"", ""),
-                createPostRequest.content.replace("\"", ""),
+                createPostRequest.title.removeDoubleQuotes(),
+                createPostRequest.content.removeDoubleQuotes(),
                 images,
                 createPostRequest.lat,
                 createPostRequest.long,
-                createPostRequest.price
+                createPostRequest.price,
+                createPostRequest.type.removeDoubleQuotes(),
+                createPostRequest.canTrade.convertToInt()
             )
 
             return if (request.isSuccessful) {
