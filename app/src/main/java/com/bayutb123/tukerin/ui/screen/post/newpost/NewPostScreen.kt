@@ -95,6 +95,9 @@ fun NewPostScreen(
     var isLoading by remember {
         mutableStateOf(false)
     }
+    var canTrade: Boolean by rememberSaveable {
+        mutableStateOf(false)
+    }
     var isSuccess by remember { mutableStateOf(false) }
     var isFailed by remember { mutableStateOf(false) }
     SystemUtils.getUserLocation(context) { latResult, longResult ->
@@ -159,6 +162,8 @@ fun NewPostScreen(
                             lat,
                             long,
                             price,
+                            selectedCategory,
+                            canTrade,
                             context
                         )
                     }) {

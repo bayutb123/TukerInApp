@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bayutb123.tukerin.core.data.NetworkResult
+import com.bayutb123.tukerin.core.utils.InputConverter.convertToInt
 import com.bayutb123.tukerin.data.source.remote.request.CreatePostRequest
 import com.bayutb123.tukerin.data.source.remote.response.ResponseCode
 import com.bayutb123.tukerin.domain.usecase.DataStoreUseCase
@@ -31,6 +32,8 @@ class NewPostViewModel @Inject constructor(
         lat: Double,
         long: Double,
         price: Long,
+        type: String,
+        canTrade: Boolean,
         context: Context
     ) {
         viewModelScope.launch {
@@ -38,7 +41,7 @@ class NewPostViewModel @Inject constructor(
             val userId = dataStoreUseCase.getUserId()
             val requestBody = userId?.let {
                 CreatePostRequest(
-                    it, title, description, uris, lat, long, price
+                    it, title, description, uris, lat, long, price, type, canTrade
                 )
             }
             when (val request = requestBody?.let { postUseCase.createPost(it, context) }) {

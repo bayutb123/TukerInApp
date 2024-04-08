@@ -46,7 +46,9 @@ interface PostService {
         @Part image: Array<MultipartBody.Part>,
         @Part("latitude") lat: Double,
         @Part("longitude") long: Double,
-        @Part("price") price: Long
+        @Part("price") price: Long,
+        @Part("type") type: String,
+        @Part("can_trade_in") canTrade: Int
     ) : Response<CreatePostResponse>
 
     @GET("my/post/all/{userId}")
