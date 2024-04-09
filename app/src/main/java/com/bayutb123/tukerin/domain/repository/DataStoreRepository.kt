@@ -8,5 +8,6 @@ interface DataStoreRepository {
     suspend fun clearUser()
     suspend fun getToken(): String?
     suspend fun getUserId(): Int?
+    suspend fun getUser(): User?
 
 }

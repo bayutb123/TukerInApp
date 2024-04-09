@@ -23,4 +23,8 @@ class DataStoreUseCase @Inject constructor(
             return dataStoreRepository.getUserId()
         }
 
+        suspend fun getUser(): User? {
+            return dataStoreRepository.getUser()
+        }
+
 }

@@ -1,17 +1,17 @@
-package com.bayutb123.tukerin.data.source.remote.response.auth.login
+package com.bayutb123.tukerin.data.source.remote.response.user
 
 import com.google.gson.annotations.SerializedName
 
-data class LoginResponse(
+data class UserProfileResponse(
 
 	@field:SerializedName("message")
 	val message: String,
 
 	@field:SerializedName("user")
-	val user: LoginUser? = null
+	val user: User
 )
 
-data class LoginUser(
+data class User(
 
 	@field:SerializedName("trx_points")
 	val trxPoints: Int,

@@ -5,5 +5,7 @@ data class User(
     val name: String,
     val email: String,
     val token: String,
-    val isPremium: Boolean
+    val isPremium: Boolean,
+    val rating: Int,
+    val trxPoints: Int,
 )
