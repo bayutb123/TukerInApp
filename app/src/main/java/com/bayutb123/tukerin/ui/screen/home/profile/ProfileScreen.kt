@@ -1,5 +1,6 @@
 package com.bayutb123.tukerin.ui.screen.home.profile
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -20,6 +21,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -39,6 +44,12 @@ fun ProfileScreen(
     onLogout: () -> Unit,
 ) {
     val viewModel: ProfileViewModel = hiltViewModel()
+    viewModel.updateUserData()
+    val state = viewModel.userState.collectAsStateWithLifecycle()
+
+    val isLoading by remember {
+        mutableStateOf(state.value is ProfileState.Loading)
+    }
 
     Scaffold { paddingValues ->
         Box(
@@ -48,41 +59,49 @@ fun ProfileScreen(
                 .background(color = MaterialTheme.colorScheme.primary),
             contentAlignment = Alignment.BottomCenter
         ) {
-            Column {
-                ProfileContent(
-                    userName = "Bayu Tantra Bramandhita",
-                    transactionPoint = 1000,
-                    rating = 5,
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            color = MaterialTheme.colorScheme.surface,
-                            shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
-                        )
-                        .padding(16.dp)
-                ) {
+            when (state.value) {
+                is ProfileState.Success -> {
                     Column {
-                        ListItem(
-                            headlineContent = { Text(text = "Edit profile") },
-                            supportingContent = { Text(text = "Edit your profile") })
-                        HorizontalDivider()
-                        ListItem(
-                            headlineContent = { Text(text = "Settings") },
-                            supportingContent = { Text(text = "TukerIn app settings") })
-                        HorizontalDivider()
-                        ListItem(
-                            headlineContent = { Text(text = "Logout") },
-                            supportingContent = { Text(text = "Logout from user Bayu Tri") },
-                            modifier = Modifier.clickable {
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    viewModel.logout()
-                                }
-                                onLogout()
-                            })
-                        Spacer(modifier = Modifier.weight(1f))
+                        ProfileContent(
+                            userName = state.value.user?.name ?: "",
+                            transactionPoint = state.value.user?.trxPoints ?: 0,
+                            rating = state.value.user?.rating ?: 0,
+                            isLoading = isLoading
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(
+                                    color = MaterialTheme.colorScheme.surface,
+                                    shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
+                                )
+                                .padding(16.dp)
+                        ) {
+                            Column {
+                                ListItem(
+                                    headlineContent = { Text(text = "Edit profile") },
+                                    supportingContent = { Text(text = "Edit your profile") })
+                                HorizontalDivider()
+                                ListItem(
+                                    headlineContent = { Text(text = "Settings") },
+                                    supportingContent = { Text(text = "TukerIn app settings") })
+                                HorizontalDivider()
+                                ListItem(
+                                    headlineContent = { Text(text = "Logout") },
+                                    supportingContent = { Text(text = "Logout from user ${state.value.user?.name}") },
+                                    modifier = Modifier.clickable {
+                                        CoroutineScope(Dispatchers.IO).launch {
+                                            viewModel.logout()
+                                        }
+                                        onLogout()
+                                    })
+                                Spacer(modifier = Modifier.weight(1f))
+                            }
+                        }
                     }
+                }
+                else -> {
+                    Text(text = "Error", color = MaterialTheme.colorScheme.onPrimary)
                 }
             }
         }
@@ -94,6 +113,7 @@ fun ProfileContent(
     userName: String,
     transactionPoint: Int,
     rating: Int,
+    isLoading: Boolean,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary
 ) {
     Column(
@@ -114,11 +134,20 @@ fun ProfileContent(
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
-        Text(
-            text = "Transaction point: $transactionPoint",
-            color = contentColor,
-            style = MaterialTheme.typography.bodyMedium
-        )
+        Row {
+            Text(
+                text = "Transaction point: ",
+                color = contentColor,
+                style = MaterialTheme.typography.bodyMedium
+            )
+            AnimatedVisibility(visible = !isLoading) {
+                Text(
+                    text = transactionPoint.toString(),
+                    color = contentColor,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.weight(1f))
 
@@ -129,12 +158,20 @@ fun ProfileContent(
             Text(text = "Rating", color = contentColor, style = MaterialTheme.typography.bodyMedium)
             Row() {
                 // Rating stars
-                repeat(rating) {
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = "star",
-                        tint = Color.Yellow
-                    )
+                repeat(5) {
+                    if (it < rating) {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = null,
+                            tint = contentColor
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Star,
+                            contentDescription = null,
+                            tint = Color.Gray
+                        )
+                    }
                 }
             }
         }
