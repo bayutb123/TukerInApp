@@ -7,11 +7,11 @@ import com.bayutb123.tukerin.domain.model.Post
 import com.bayutb123.tukerin.domain.usecase.DataStoreUseCase
 import com.bayutb123.tukerin.domain.usecase.PostUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,8 +24,9 @@ class MyAdsViewModel @Inject constructor(
 
     fun getMyAds() {
         viewModelScope.launch {
+            _state.value = MyAdsState.Loading
+            delay(500)
             val id = dataStoreUseCase.getUserId()
-            Timber.d("getMyAds called with id: $id")
             if (id != null) {
                 when (val result = postUseCase.getMyPosts(id, 1) ){
                     is NetworkResult.Success -> {
