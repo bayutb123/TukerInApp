@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.bayutb123.tukerin.ui.components.view.CustomAlertDialog
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -50,6 +52,7 @@ fun ProfileScreen(
     val isLoading by remember {
         mutableStateOf(state.value is ProfileState.Loading)
     }
+    var isAlertVisible by remember { mutableStateOf(false) }
 
     Scaffold { paddingValues ->
         Box(
@@ -61,6 +64,22 @@ fun ProfileScreen(
         ) {
             when (state.value) {
                 is ProfileState.Success -> {
+                    AnimatedVisibility(visible = isAlertVisible) {
+                        CustomAlertDialog(
+                            title = "Logout",
+                            message = "Are you sure you want to logout?",
+                            onDismiss = {
+                                isAlertVisible = false
+                            },
+                            onConfirm = {
+                                isAlertVisible = false
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    viewModel.logout()
+                                }
+                                onLogout()
+                            }
+                        )
+                    }
                     Column {
                         ProfileContent(
                             userName = state.value.user?.name ?: "",
@@ -90,16 +109,52 @@ fun ProfileScreen(
                                     headlineContent = { Text(text = "Logout") },
                                     supportingContent = { Text(text = "Logout from user ${state.value.user?.name}") },
                                     modifier = Modifier.clickable {
-                                        CoroutineScope(Dispatchers.IO).launch {
-                                            viewModel.logout()
-                                        }
-                                        onLogout()
+                                        isAlertVisible = true
                                     })
                                 Spacer(modifier = Modifier.weight(1f))
                             }
                         }
                     }
                 }
+
+                is ProfileState.Loading -> {
+                    Column {
+                        ProfileContent(
+                            userName = state.value.user?.name ?: "",
+                            transactionPoint = state.value.user?.trxPoints ?: 0,
+                            rating = state.value.user?.rating ?: 0,
+                            isLoading = isLoading
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(
+                                    color = MaterialTheme.colorScheme.surface,
+                                    shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
+                                )
+                                .padding(16.dp)
+                        ) {
+                            Column {
+                                ListItem(
+                                    headlineContent = { Text(text = "Edit profile") },
+                                    supportingContent = { Text(text = "Edit your profile") })
+                                HorizontalDivider()
+                                ListItem(
+                                    headlineContent = { Text(text = "Settings") },
+                                    supportingContent = { Text(text = "TukerIn app settings") })
+                                HorizontalDivider()
+                                ListItem(
+                                    headlineContent = { Text(text = "Logout") },
+                                    supportingContent = { Text(text = "Logout from user ${state.value.user?.name}") },
+                                    modifier = Modifier.clickable {
+                                        isAlertVisible = true
+                                    })
+                                Spacer(modifier = Modifier.weight(1f))
+                            }
+                        }
+                    }
+                }
+
                 else -> {
                     Text(text = "Error", color = MaterialTheme.colorScheme.onPrimary)
                 }
