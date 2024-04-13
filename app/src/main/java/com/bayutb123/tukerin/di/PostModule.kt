@@ -3,6 +3,7 @@ package com.bayutb123.tukerin.di
 import com.bayutb123.tukerin.data.source.remote.repository.PostRepositoryImpl
 import com.bayutb123.tukerin.data.source.remote.service.PostService
 import com.bayutb123.tukerin.domain.repository.PostRepository
+import com.bayutb123.tukerin.domain.usecase.PostCategoryUseCase
 import com.bayutb123.tukerin.domain.usecase.PostUseCase
 import dagger.Module
 import dagger.Provides
@@ -27,5 +28,10 @@ object PostModule {
     @Provides
     fun providePostUseCase(postRepository: PostRepository) : PostUseCase {
         return PostUseCase(postRepository)
+    }
+
+    @Provides
+    fun providePostCategoryUseCase(postRepository: PostRepository) : PostCategoryUseCase {
+        return PostCategoryUseCase(postRepository)
     }
 }
