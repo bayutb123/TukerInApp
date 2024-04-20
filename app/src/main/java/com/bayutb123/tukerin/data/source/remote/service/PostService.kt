@@ -2,10 +2,12 @@ package com.bayutb123.tukerin.data.source.remote.service
 
 import com.bayutb123.tukerin.data.source.remote.response.detail.DetailPostResponse
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.CreatePostResponse
+import com.bayutb123.tukerin.data.source.remote.response.home.posts.DeletePostResponse
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.GetAllPostResponse
 import com.bayutb123.tukerin.data.source.remote.response.home.suggestions.SuggestionsResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -56,5 +58,10 @@ interface PostService {
         @Path("userId") userId: Int,
         @Query("page") page: Int
     ) : Response<GetAllPostResponse>
+
+    @DELETE("post/delete/{post_id}")
+    suspend fun deletePost(
+        @Path("post_id") postId: Int
+    ) : Response<DeletePostResponse>
 
 }
