@@ -12,4 +12,5 @@ interface PostRepository {
     suspend fun getPost(postId: Int) : NetworkResult<Post>
     suspend fun createPost(createPostRequest: CreatePostRequest, context: Context) : NetworkResult<Int>
     suspend fun getMyPosts(userId: Int, page: Int) : NetworkResult<List<Post>>
+    suspend fun deletePost(postId: Int) : NetworkResult<Int>
 }

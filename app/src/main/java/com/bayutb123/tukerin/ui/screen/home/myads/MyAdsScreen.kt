@@ -41,6 +41,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.bayutb123.tukerin.ui.components.input.ChipItem
 import com.bayutb123.tukerin.ui.components.view.ItemList
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -54,7 +55,6 @@ fun MyAdsScreen(
 ) {
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
-    var showBottomSheet by remember { mutableStateOf(false) }
     LaunchedEffect(key1 = Unit) {
         viewModel.getMyAds()
     }
@@ -92,19 +92,19 @@ fun MyAdsScreen(
                                 onLongClick = {
                                     scope.launch {
                                         postId = it
-                                        showBottomSheet = true
+                                        viewModel.bottomSheet(BottomSheetState.SHOW)
                                         sheetState.show()
                                     }
                                 },
                             )
                         }
                     }
-                    if (showBottomSheet) {
+                    if (viewModel.bottomSheetState.collectAsState().value == BottomSheetState.SHOW) {
                         ModalBottomSheet(
                             onDismissRequest = {
                                 scope.launch {
                                     sheetState.hide()
-                                }.invokeOnCompletion { showBottomSheet = false }
+                                }.invokeOnCompletion { viewModel.bottomSheet(BottomSheetState.HIDE) }
                             }, sheetState = sheetState
                         ) {
                             Text(
@@ -135,7 +135,10 @@ fun MyAdsScreen(
                                         color = Color.Red,
                                     ) },
                                     modifier = Modifier.clickable {
-                                        Timber.d("Delete $postId")
+                                        CoroutineScope(scope.coroutineContext).launch {
+                                            sheetState.hide()
+                                            viewModel.deletePost(postId)
+                                        }
                                     })
                             }
                         }
