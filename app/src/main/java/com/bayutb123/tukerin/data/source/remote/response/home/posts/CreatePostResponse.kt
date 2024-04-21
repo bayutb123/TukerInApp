@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class CreatePostResponse(
 
 	@field:SerializedName("post")
-	val post: Post,
+	val post: CreatedPost,
 
 	@field:SerializedName("first_image")
 	val firstImage: FirstImage,
@@ -14,7 +14,7 @@ data class CreatePostResponse(
 	val message: String
 )
 
-data class Post(
+data class CreatedPost(
 
 	@field:SerializedName("is_premium")
 	val isPremium: Int,

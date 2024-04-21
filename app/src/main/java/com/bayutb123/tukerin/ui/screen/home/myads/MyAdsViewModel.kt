@@ -20,6 +20,8 @@ class MyAdsViewModel @Inject constructor(
     private val dataStoreUseCase: DataStoreUseCase
 ) : ViewModel() {
     private val _state: MutableStateFlow<MyAdsState> = MutableStateFlow(MyAdsState.Loading)
+    private val _bottomSheetState: MutableStateFlow<BottomSheetState> = MutableStateFlow(BottomSheetState.HIDE)
+    val bottomSheetState: StateFlow<BottomSheetState> = _bottomSheetState.asStateFlow()
     val state: StateFlow<MyAdsState> = _state.asStateFlow()
 
     fun getMyAds() {
@@ -47,4 +49,29 @@ class MyAdsViewModel @Inject constructor(
             }
         }
     }
+
+    fun deletePost(postId: Int) {
+        viewModelScope.launch {
+            _bottomSheetState.value = BottomSheetState.LOADING
+            delay(500)
+            when (val result = postUseCase.deletePost(postId)) {
+                is NetworkResult.Success -> {
+                    getMyAds()
+                }
+                is NetworkResult.Error -> {
+                    _bottomSheetState.value = BottomSheetState.HIDE
+                    _state.value = MyAdsState.Error("Error: ${result.message}")
+                }
+                else -> {
+                    _bottomSheetState.value = BottomSheetState.HIDE
+                    _state.value = MyAdsState.Error("App Error")
+                }
+            }
+        }
+    }
+
+    fun bottomSheet(state : BottomSheetState) {
+        _bottomSheetState.value = state
+    }
+
 }

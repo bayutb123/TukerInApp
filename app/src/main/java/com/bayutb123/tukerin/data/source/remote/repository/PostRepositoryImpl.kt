@@ -131,4 +131,17 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun deletePost(postId: Int): NetworkResult<Int> {
+        return try {
+            val response = postService.deletePost(postId)
+            if (response.isSuccessful) {
+                NetworkResult.Success(response.code())
+            } else {
+                NetworkResult.Error(response.code())
+            }
+        } catch (e: Exception) {
+            NetworkResult.Error(e.hashCode())
+        }
+    }
+
 }
