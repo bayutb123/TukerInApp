@@ -115,6 +115,7 @@ fun MyAdsScreen(
                             onDismissRequest = {
                                 scope.launch {
                                     sheetState.hide()
+                                    isAlertVisible = false
                                 }
                                     .invokeOnCompletion { viewModel.bottomSheet(BottomSheetState.HIDE) }
                             }, sheetState = sheetState
