@@ -4,6 +4,7 @@ import com.bayutb123.tukerin.data.source.remote.response.detail.DetailPostRespon
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.CreatePostResponse
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.DeletePostResponse
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.GetAllPostResponse
+import com.bayutb123.tukerin.data.source.remote.response.home.posts.GetPostCategoriesResponse
 import com.bayutb123.tukerin.data.source.remote.response.home.suggestions.SuggestionsResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -58,6 +59,14 @@ interface PostService {
         @Path("userId") userId: Int,
         @Query("page") page: Int
     ) : Response<GetAllPostResponse>
+
+    @GET("post/category/all")
+    suspend fun getPostCategories() : Response<GetPostCategoriesResponse>
+
+    @GET("post/category/{parent_id}")
+    suspend fun getPostSubCategory(
+        @Path("parent_id") parentId: Int
+    ) : Response<GetPostCategoriesResponse>
 
     @DELETE("post/delete/{post_id}")
     suspend fun deletePost(

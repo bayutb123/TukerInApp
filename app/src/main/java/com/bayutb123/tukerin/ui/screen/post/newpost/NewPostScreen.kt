@@ -53,6 +53,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.bayutb123.tukerin.core.utils.PermissionManager
 import com.bayutb123.tukerin.core.utils.SystemUtils
@@ -70,7 +71,12 @@ fun NewPostScreen(
     newPostViewModel: NewPostViewModel = hiltViewModel(),
     onBackRequested: () -> Unit,
 ) {
-    val categories = listOf("Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6", "Item 7", "Item 8")
+    LaunchedEffect(key1 = Unit) {
+        newPostViewModel.getPostCategories()
+    }
+    val categories by newPostViewModel.postCategories.collectAsStateWithLifecycle()
+    val subCategories by newPostViewModel.subCategories.collectAsStateWithLifecycle()
+    val isSubCategoryIsSelected = subCategories is SubCategoryState.Success
     val context = LocalContext.current
     var title by remember {
         mutableStateOf("")
@@ -85,7 +91,10 @@ fun NewPostScreen(
         mutableLongStateOf(0)
     }
     var selectedCategory by remember {
-        mutableStateOf(categories[0])
+        mutableStateOf("")
+    }
+    var selectedSubCategory by remember {
+        mutableStateOf("")
     }
     var lat: Double by rememberSaveable {
         mutableDoubleStateOf(0.0)
@@ -127,7 +136,7 @@ fun NewPostScreen(
     LaunchedEffect(key1 = managedActivityResultLauncher) {
         requestPermissions(managedActivityResultLauncher)
     }
-    val state by newPostViewModel.state.collectAsState()
+    val state by newPostViewModel.newPostState.collectAsState()
     ObserveState(
         state,
         onPostSuccess = {
@@ -156,6 +165,11 @@ fun NewPostScreen(
                 },
                 actions = {
                     IconButton(onClick = {
+                        val categoryResult = if (isSubCategoryIsSelected) {
+                            selectedSubCategory
+                        } else {
+                            selectedCategory
+                        }
                         newPostViewModel.createPost(
                             title,
                             description,
@@ -163,7 +177,7 @@ fun NewPostScreen(
                             lat,
                             long,
                             price,
-                            selectedCategory,
+                            categoryResult,
                             canTrade,
                             context
                         )
@@ -178,17 +192,17 @@ fun NewPostScreen(
             modifier = modifier.padding(paddingValues)
         ) {
             AnimatedVisibility(visible = isSuccess, enter = fadeIn(), exit = fadeOut()) {
-                    CustomAlertDialog(
-                        title = "Success",
-                        message = "Post has been created",
-                        onConfirm = {
-                            isSuccess = false
-                            onBackRequested()
-                        },
-                        dismissEnabled = false
-                    )
+                CustomAlertDialog(
+                    title = "Success",
+                    message = "Post has been created",
+                    onConfirm = {
+                        isSuccess = false
+                        onBackRequested()
+                    },
+                    dismissEnabled = false
+                )
             }
-            AnimatedVisibility(visible = isFailed , enter = fadeIn(), exit = fadeOut()) {
+            AnimatedVisibility(visible = isFailed, enter = fadeIn(), exit = fadeOut()) {
                 CustomAlertDialog(
                     title = "Failed",
                     message = "Post failed to create",
@@ -280,8 +294,34 @@ fun NewPostScreen(
                     keyboardType = KeyboardType.Number
                 )
 
-                CustomDropDown(items = categories, selectedItem = selectedCategory) {
-                    selectedCategory = it
+                if (categories.isNotEmpty()) {
+                    CustomDropDown(items = categories, selectedItem = categories[0].name) {
+                        selectedCategory = it.name
+                        newPostViewModel.getPostSubCategory(it.id)
+                    }
+                } else {
+                    CustomDropDown(items = categories, selectedItem = selectedCategory) {
+                        selectedCategory = it.name
+                        newPostViewModel.getPostSubCategory(it.id)
+                    }
+                }
+
+                AnimatedVisibility(
+                    visible = subCategories is SubCategoryState.Success,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    when (val subCategory = subCategories) {
+                        is SubCategoryState.Success -> {
+                            if (subCategory.data.isNotEmpty()) {
+                                CustomDropDown(items = subCategory.data, selectedItem = subCategory.data[0].name) {
+                                    selectedSubCategory = it.name
+                                }
+                            }
+                        }
+                        else -> {
+                        }
+                    }
                 }
 
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -324,19 +364,27 @@ fun NewPostScreen(
 }
 
 @Composable
-fun ObserveState(newPostState: NewPostState, onPostSuccess: () -> Unit, onLoading : (Boolean) -> Unit, onError : () -> Unit = {}) {
+fun ObserveState(
+    newPostState: NewPostState,
+    onPostSuccess: () -> Unit,
+    onLoading: (Boolean) -> Unit,
+    onError: () -> Unit = {}
+) {
     when (newPostState) {
         is NewPostState.Success -> {
             onPostSuccess()
             onLoading(false)
         }
+
         is NewPostState.Loading -> {
             onLoading(true)
         }
+
         is NewPostState.Failed -> {
             onError()
             onLoading(false)
         }
+
         else -> {
             onLoading(false)
         }
@@ -354,6 +402,6 @@ private fun requestPermissions(requestPermission: ManagedActivityResultLauncher<
 @Preview(showBackground = true, device = Devices.PIXEL_4)
 fun NewPostScreenPreview() {
     TukerInTheme {
-        NewPostScreen( onBackRequested = { /*TODO*/ })
+        NewPostScreen(onBackRequested = { /*TODO*/ })
     }
 }

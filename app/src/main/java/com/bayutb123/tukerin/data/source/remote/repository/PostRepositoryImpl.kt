@@ -8,10 +8,12 @@ import com.bayutb123.tukerin.core.utils.MediaUtils
 import com.bayutb123.tukerin.data.source.remote.request.CreatePostRequest
 import com.bayutb123.tukerin.data.source.remote.request.validate
 import com.bayutb123.tukerin.data.source.remote.response.detail.toPost
+import com.bayutb123.tukerin.data.source.remote.response.home.posts.toModel
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.toPostList
 import com.bayutb123.tukerin.data.source.remote.response.home.suggestions.toSuggestionsList
 import com.bayutb123.tukerin.data.source.remote.service.PostService
 import com.bayutb123.tukerin.domain.model.Post
+import com.bayutb123.tukerin.domain.model.PostCategory
 import com.bayutb123.tukerin.domain.repository.PostRepository
 import okio.IOException
 import timber.log.Timber
@@ -131,6 +133,34 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getPostCategories(): NetworkResult<List<PostCategory>> {
+        return try {
+            val response = postService.getPostCategories()
+            if (response.isSuccessful) {
+                val categories = response.body()?.toModel().orEmpty()
+                NetworkResult.Success(categories)
+            } else {
+                Timber.d(response.code().toString())
+                NetworkResult.Error(response.code())
+            }
+        } catch (e: Exception) {
+            Timber.d(e.toString())
+            NetworkResult.Error(e.hashCode())
+        }
+    }
+
+    override suspend fun getPostSubCategory(categoryId: Int): NetworkResult<List<PostCategory>> {
+        return try {
+            val response = postService.getPostSubCategory(categoryId)
+            if (response.isSuccessful) {
+                val category = response.body()?.toModel().orEmpty()
+                NetworkResult.Success(category)
+            } else {
+                Timber.d(response.code().toString())
+                NetworkResult.Error(response.code())
+            }
+        } catch (e: Exception) {
+            Timber.d(e.toString())
     override suspend fun deletePost(postId: Int): NetworkResult<Int> {
         return try {
             val response = postService.deletePost(postId)

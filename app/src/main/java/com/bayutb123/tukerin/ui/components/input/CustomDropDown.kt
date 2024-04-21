@@ -15,14 +15,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import com.bayutb123.tukerin.domain.model.PostCategory
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomDropDown(
-    items: List<String>,
+    items: List<PostCategory>,
     selectedItem: String,
-    onItemSelected: (String) -> Unit
+    onItemSelected: (PostCategory) -> Unit
 ) {
     var selectedText by remember { mutableStateOf(selectedItem) }
     var expanded by remember { mutableStateOf(false) }
@@ -55,9 +56,9 @@ fun CustomDropDown(
                 items.forEach { item ->
                     DropdownMenuItem(
                         modifier = Modifier.fillMaxWidth(),
-                        text = { Text(text = item) },
+                        text = { Text(text = item.name) },
                         onClick = {
-                            selectedText = item
+                            selectedText = item.name
                             expanded = false
                             onItemSelected(item)
                         }
@@ -74,7 +75,32 @@ fun CustomDropDown(
 fun CustomDropDownPreview() {
     TukerInTheme {
         CustomDropDown(
-            items = listOf("Item 1", "Item 2", "Item 3"),
+            items = listOf(
+                PostCategory(
+                    id = 1,
+                    parentId = 0,
+                    name = "Item 1",
+                    description = "Description 1",
+                    createdAt = "2021-08-01",
+                    updatedAt = "2021-08-01"
+                ),
+                PostCategory(
+                    id = 2,
+                    parentId = 0,
+                    name = "Item 2",
+                    description = "Description 2",
+                    createdAt = "2021-08-01",
+                    updatedAt = "2021-08-01"
+                ),
+                PostCategory(
+                    id = 3,
+                    parentId = 0,
+                    name = "Item 3",
+                    description = "Description 3",
+                    createdAt = "2021-08-01",
+                    updatedAt = "2021-08-01"
+                )
+            ),
             selectedItem = "Item 1",
             onItemSelected = {}
         )
