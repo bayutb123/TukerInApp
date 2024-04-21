@@ -161,6 +161,10 @@ class PostRepositoryImpl @Inject constructor(
             }
         } catch (e: Exception) {
             Timber.d(e.toString())
+            NetworkResult.Error(e.hashCode())
+        }
+    }
+
     override suspend fun deletePost(postId: Int): NetworkResult<Int> {
         return try {
             val response = postService.deletePost(postId)
@@ -173,5 +177,4 @@ class PostRepositoryImpl @Inject constructor(
             NetworkResult.Error(e.hashCode())
         }
     }
-
 }
