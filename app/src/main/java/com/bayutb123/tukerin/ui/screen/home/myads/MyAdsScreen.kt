@@ -1,7 +1,9 @@
 package com.bayutb123.tukerin.ui.screen.home.myads
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,9 +14,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemColors
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -33,15 +38,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bayutb123.tukerin.ui.components.input.ChipItem
+import com.bayutb123.tukerin.ui.components.input.FullWidthButton
+import com.bayutb123.tukerin.ui.components.view.CustomAlertDialog
 import com.bayutb123.tukerin.ui.components.view.ItemList
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -53,6 +62,7 @@ fun MyAdsScreen(
     onNavigationRequested: (String) -> Unit,
     viewModel: MyAdsViewModel = hiltViewModel()
 ) {
+    var isAlertVisible by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     LaunchedEffect(key1 = Unit) {
@@ -62,6 +72,7 @@ fun MyAdsScreen(
     var postId by remember {
         mutableIntStateOf(0)
     }
+    var isConfirmDelete by remember { mutableStateOf(false) }
     Scaffold(topBar = { TopAppBar(title = { Text(text = "My Ads") }) }) { it ->
         Column(modifier.padding(it)) {
             LazyRow(
@@ -104,7 +115,8 @@ fun MyAdsScreen(
                             onDismissRequest = {
                                 scope.launch {
                                     sheetState.hide()
-                                }.invokeOnCompletion { viewModel.bottomSheet(BottomSheetState.HIDE) }
+                                }
+                                    .invokeOnCompletion { viewModel.bottomSheet(BottomSheetState.HIDE) }
                             }, sheetState = sheetState
                         ) {
                             Text(
@@ -125,21 +137,51 @@ fun MyAdsScreen(
                                     modifier = Modifier.clickable {
                                         Timber.d("Unlist $postId")
                                     })
-                                ListItem(headlineContent = { Text(
-                                    text = "Delete",
-                                    color = Color.Red,
-                                    fontWeight = FontWeight.Bold
-                                ) },
-                                    supportingContent = { Text(
-                                        text = "Delete this ads",
+                                ListItem(headlineContent = {
+                                    Text(
+                                        text = "Delete",
                                         color = Color.Red,
-                                    ) },
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                },
+                                    supportingContent = {
+                                        Text(
+                                            text = "Delete this ads",
+                                            color = Color.Red,
+                                        )
+                                    },
                                     modifier = Modifier.clickable {
-                                        CoroutineScope(scope.coroutineContext).launch {
-                                            sheetState.hide()
-                                            viewModel.deletePost(postId)
+                                        scope.launch {
+                                            isAlertVisible = !isAlertVisible
                                         }
                                     })
+                                AnimatedVisibility(
+                                    visible = isAlertVisible
+                                ) {
+                                    ListItem(headlineContent = { Text(text = "Confirm delete") },
+                                        supportingContent = { Text(text = "Hold for to confirm") },
+                                        modifier = Modifier
+                                            .pointerInput(Unit) {
+                                                detectTapGestures(onLongPress = {
+                                                    isConfirmDelete = true
+                                                    scope.launch {
+                                                        if (isConfirmDelete) {
+                                                            scope.launch {
+                                                                sheetState.hide()
+                                                                isAlertVisible = false
+                                                                viewModel.deletePost(postId)
+                                                            }
+                                                        }
+                                                        isConfirmDelete = false
+                                                    }
+                                                })
+                                        }, colors = ListItemDefaults.colors(
+                                            containerColor = MaterialTheme.colorScheme.error,
+                                            headlineColor = MaterialTheme.colorScheme.onError,
+                                            supportingColor = MaterialTheme.colorScheme.onError
+                                        )
+                                    )
+                                }
                             }
                         }
                     }
