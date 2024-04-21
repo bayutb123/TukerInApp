@@ -4,10 +4,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
@@ -15,6 +18,7 @@ import com.bayutb123.tukerin.ui.components.input.FullWidthButton
 
 @Composable
 fun CustomAlertDialog(
+    modifier: Modifier = Modifier,
     title: String,
     message: String,
     onDismiss: () -> Unit = {},
@@ -22,14 +26,24 @@ fun CustomAlertDialog(
     confirmText: String = "OK",
     dismissEnabled: Boolean = true,
     confirmEnabled: Boolean = true,
-    onDismissRequest: () -> Unit = onDismiss,
-    modifier: Modifier = Modifier
+    isDangerConfirmation: Boolean = false,
+    onDismissRequest: () -> Unit = onDismiss
 ) {
+    val color = if (isDangerConfirmation) {
+        MaterialTheme.colorScheme.error
+    } else {
+        MaterialTheme.colorScheme.primary
+    }
     AlertDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
             if (confirmEnabled) {
-                FullWidthButton(onClick = onConfirm, text = confirmText)
+                FullWidthButton(onClick = onConfirm, text = confirmText, color = ButtonColors(
+                    containerColor = color,
+                    contentColor = Color.White,
+                    disabledContentColor = Color.White,
+                    disabledContainerColor = Color.Gray
+                ))
             }
         },
         dismissButton = {

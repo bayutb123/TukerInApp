@@ -15,4 +15,5 @@ interface PostRepository {
     suspend fun getMyPosts(userId: Int, page: Int) : NetworkResult<List<Post>>
     suspend fun getPostCategories() : NetworkResult<List<PostCategory>>
     suspend fun getPostSubCategory(categoryId: Int) : NetworkResult<List<PostCategory>>
+    suspend fun deletePost(postId: Int) : NetworkResult<Int>
 }
