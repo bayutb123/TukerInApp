@@ -113,21 +113,16 @@ fun AlertDialog(viewModel: ForgotViewModel, onNavigationRequested: (route: Strin
     var alertMsg by remember { mutableStateOf("") }
     var isAlertConfirmEnabled by remember { mutableStateOf(false) }
     var isAlertVisible by remember { mutableStateOf(false) }
-    AnimatedVisibility(
-        visible = isAlertVisible,
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
-        CustomAlertDialog(
-            title = alertTitle,
-            message = alertMsg,
-            dismissEnabled = false,
-            confirmEnabled = isAlertConfirmEnabled,
-            onConfirm = {
-                viewModel.setIdle()
-                onNavigationRequested(Screen.Login.route)
-            })
-    }
+    CustomAlertDialog(
+        title = alertTitle,
+        message = alertMsg,
+        isVisible = isAlertVisible,
+        dismissEnabled = false,
+        confirmEnabled = isAlertConfirmEnabled,
+        onConfirm = {
+            viewModel.setIdle()
+            onNavigationRequested(Screen.Login.route)
+        })
     when (state) {
         is ForgotState.Success -> {
             isAlertConfirmEnabled = true

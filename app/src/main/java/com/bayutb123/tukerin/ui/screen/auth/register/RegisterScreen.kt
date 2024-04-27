@@ -60,20 +60,19 @@ fun RegisterScreen(
     }
 
     RoundedRegisterScaffold {
-        AnimatedVisibility(visible = state.value is RegisterState.Error || state.value is RegisterState.Success) {
-            CustomAlertDialog(
-                title = "Notice",
-                message = errorMsg,
-                dismissEnabled = false,
-                onConfirm = {
-                    if (state.value is RegisterState.Success) {
-                        onRegisterSuccess(Screen.Login.route)
-                    } else {
-                        viewModel.resetState()
-                    }
+        CustomAlertDialog(
+            title = "Notice",
+            message = errorMsg,
+            isVisible = state.value is RegisterState.Success || state.value is RegisterState.Error,
+            dismissEnabled = false,
+            onConfirm = {
+                if (state.value is RegisterState.Success) {
+                    onRegisterSuccess(Screen.Login.route)
+                } else {
+                    viewModel.resetState()
                 }
-            )
-        }
+            }
+        )
         Column {
             Spacer(modifier = Modifier.height(16.dp))
             CustomTextField(

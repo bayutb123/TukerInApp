@@ -67,15 +67,14 @@ fun LoginScreen(
     RoundedLoginScaffold(
         appDescription = "Welcome back, login to continue",
     ) {
-        AnimatedVisibility(visible = state.value is LoginState.Error) {
-            CustomAlertDialog(
-                title = "Login Failed",
-                message = errorMsg,
-                dismissEnabled = false,
-                onDismiss = { viewModel.resetState() },
-                onConfirm = { viewModel.resetState() }
-            )
-        }
+        CustomAlertDialog(
+            title = "Login Failed",
+            message = errorMsg,
+            isVisible = state.value is LoginState.Error,
+            dismissEnabled = false,
+            onDismiss = { viewModel.resetState() },
+            onConfirm = { viewModel.resetState() }
+        )
 
         when (state.value) {
             is LoginState.Success -> {

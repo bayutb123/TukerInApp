@@ -64,22 +64,21 @@ fun ProfileScreen(
         ) {
             when (state.value) {
                 is ProfileState.Success -> {
-                    AnimatedVisibility(visible = isAlertVisible) {
-                        CustomAlertDialog(
-                            title = "Logout",
-                            message = "Are you sure you want to logout?",
-                            onDismiss = {
-                                isAlertVisible = false
-                            },
-                            onConfirm = {
-                                isAlertVisible = false
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    viewModel.logout()
-                                }
-                                onLogout()
+                    CustomAlertDialog(
+                        title = "Logout",
+                        message = "Are you sure you want to logout?",
+                        isVisible = isAlertVisible,
+                        onDismiss = {
+                            isAlertVisible = false
+                        },
+                        onConfirm = {
+                            isAlertVisible = false
+                            CoroutineScope(Dispatchers.IO).launch {
+                                viewModel.logout()
                             }
-                        )
-                    }
+                            onLogout()
+                        }
+                    )
                     Column {
                         ProfileContent(
                             userName = state.value.user?.name ?: "",

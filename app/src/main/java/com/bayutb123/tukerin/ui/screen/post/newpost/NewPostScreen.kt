@@ -191,27 +191,25 @@ fun NewPostScreen(
         Box(
             modifier = modifier.padding(paddingValues)
         ) {
-            AnimatedVisibility(visible = isSuccess, enter = fadeIn(), exit = fadeOut()) {
-                CustomAlertDialog(
-                    title = "Success",
-                    message = "Post has been created",
-                    onConfirm = {
-                        isSuccess = false
-                        onBackRequested()
-                    },
-                    dismissEnabled = false
-                )
-            }
-            AnimatedVisibility(visible = isFailed, enter = fadeIn(), exit = fadeOut()) {
-                CustomAlertDialog(
-                    title = "Failed",
-                    message = "Post failed to create",
-                    onConfirm = {
-                        isFailed = false
-                    },
-                    dismissEnabled = false
-                )
-            }
+            CustomAlertDialog(
+                title = "Success",
+                message = "Post has been created",
+                isVisible = isSuccess,
+                onConfirm = {
+                    isSuccess = false
+                    onBackRequested()
+                },
+                dismissEnabled = false
+            )
+            CustomAlertDialog(
+                title = "Failed",
+                message = "Post failed to create",
+                isVisible = isFailed,
+                onConfirm = {
+                    isFailed = false
+                },
+                dismissEnabled = false
+            )
 
             Column(
                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -314,11 +312,15 @@ fun NewPostScreen(
                     when (val subCategory = subCategories) {
                         is SubCategoryState.Success -> {
                             if (subCategory.data.isNotEmpty()) {
-                                CustomDropDown(items = subCategory.data, selectedItem = subCategory.data[0].name) {
+                                CustomDropDown(
+                                    items = subCategory.data,
+                                    selectedItem = subCategory.data[0].name
+                                ) {
                                     selectedSubCategory = it.name
                                 }
                             }
                         }
+
                         else -> {
                         }
                     }

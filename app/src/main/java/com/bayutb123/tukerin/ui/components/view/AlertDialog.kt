@@ -8,6 +8,7 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,6 +20,7 @@ import com.bayutb123.tukerin.ui.components.input.FullWidthButton
 @Composable
 fun CustomAlertDialog(
     modifier: Modifier = Modifier,
+    isVisible: Boolean,
     title: String,
     message: String,
     onDismiss: () -> Unit = {},
@@ -34,39 +36,40 @@ fun CustomAlertDialog(
     } else {
         MaterialTheme.colorScheme.primary
     }
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-        confirmButton = {
-            if (confirmEnabled) {
-                FullWidthButton(onClick = onConfirm, text = confirmText, color = ButtonColors(
-                    containerColor = color,
-                    contentColor = Color.White,
-                    disabledContentColor = Color.White,
-                    disabledContainerColor = Color.Gray
-                ))
-            }
-        },
-        dismissButton = {
-            if (dismissEnabled) {
-                FullWidthButton(onClick = onDismiss, text = "Cancel")
-            }
-        },
-        title = {
-            Text(text = title)
-        },
-        text = {
-            Text(text = message)
-        },
-        icon = {
-            Icon(imageVector = Icons.Default.Info, contentDescription = "Info")
-        },
-        tonalElevation = 8.dp,
-        properties = DialogProperties(
-            dismissOnBackPress = dismissEnabled,
-            dismissOnClickOutside = dismissEnabled
-        ),
-        modifier = modifier
-    )
+    if (isVisible) {
+        AlertDialog(
+            onDismissRequest = onDismissRequest,
+            confirmButton = {
+                if (confirmEnabled) {
+                    TextButton(onClick = onConfirm) {
+                        Text(text = confirmText, color = color)
+                    }
+                }
+            },
+            dismissButton = {
+                if (dismissEnabled) {
+                    TextButton(onClick = onDismiss) {
+                        Text(text = "Cancel")
+                    }
+                }
+            },
+            title = {
+                Text(text = title)
+            },
+            text = {
+                Text(text = message)
+            },
+            icon = {
+                Icon(imageVector = Icons.Default.Info, contentDescription = "Info")
+            },
+            tonalElevation = 8.dp,
+            properties = DialogProperties(
+                dismissOnBackPress = dismissEnabled,
+                dismissOnClickOutside = dismissEnabled
+            ),
+            modifier = modifier
+        )
+    }
 }
 
 @Preview
@@ -76,6 +79,7 @@ fun PreviewCustomAlertDialog() {
         CustomAlertDialog(
             title = "Invalid Credentials",
             message = "Please check your email and password",
+            isVisible = true,
             onDismiss = { /*TODO*/ },
             onConfirm = { /*TODO*/ })
     }

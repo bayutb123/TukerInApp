@@ -45,12 +45,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bayutb123.tukerin.ui.components.input.ChipItem
-import com.bayutb123.tukerin.ui.components.input.FullWidthButton
-import com.bayutb123.tukerin.ui.components.view.CustomAlertDialog
 import com.bayutb123.tukerin.ui.components.view.ItemList
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -116,8 +112,7 @@ fun MyAdsScreen(
                                 scope.launch {
                                     sheetState.hide()
                                     isAlertVisible = false
-                                }
-                                    .invokeOnCompletion { viewModel.bottomSheet(BottomSheetState.HIDE) }
+                                }.invokeOnCompletion { viewModel.bottomSheet(BottomSheetState.HIDE) }
                             }, sheetState = sheetState
                         ) {
                             Text(
