@@ -44,7 +44,6 @@ import com.bayutb123.tukerin.core.utils.Date
 import com.bayutb123.tukerin.domain.model.Post
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ItemGrid(
     modifier: Modifier = Modifier,
@@ -53,10 +52,9 @@ fun ItemGrid(
     item: Post
 ) {
     Card(
-        onClick = { onClick(0) },shape = RoundedCornerShape(8.dp)
+        onClick = { onClick(0) },shape = RoundedCornerShape(4.dp)
     ) {
         Box(modifier = modifier.fillMaxWidth()) {
-
             Column {
                 AsyncImage(
                     model = BuildConfig.apiUrl + "/images/" + item.thumbnailImage,
@@ -98,7 +96,7 @@ fun ItemGrid(
                             modifier = modifier.size(12.dp)
                         )
                         Spacer(modifier = modifier.width(2.dp))
-                        Text(text = item.address, style = MaterialTheme.typography.bodySmall)
+                        Text(text = item.address, style = MaterialTheme.typography.bodySmall, maxLines = 1)
                     }
                 }
             }
