@@ -15,5 +15,6 @@ data class PostResponse(
     val thumnail: Thumnail?,
     val title: String,
     val updated_at: String,
-    val user_id: Int
+    val user_id: Int,
+    val can_trade_in: Int
 )

@@ -17,6 +17,7 @@ fun GetAllPostResponse.toPostList() : List<Post> {
             ownerName = post.author.name,
             active = post.status == 1,
             premium = post.is_premium == 1,
+            canTradeIn = post.can_trade_in == 1
         )
     }
 }
