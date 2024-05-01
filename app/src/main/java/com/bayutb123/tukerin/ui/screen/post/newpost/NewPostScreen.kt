@@ -32,6 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -351,7 +352,15 @@ fun NewPostScreen(
                     }
                 }
 
-
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(text = "Bisa tukar tambah?")
+                        AnimatedVisibility(visible = canTrade) {
+                            Text(text = "Mantap! Barang yang dipost kini bisa ditukar tambah", fontSize = MaterialTheme.typography.bodySmall.fontSize)
+                        }
+                    }
+                    Switch(checked = canTrade, onCheckedChange = { canTrade = it })
+                }
             }
             AnimatedVisibility(visible = isLoading, enter = fadeIn(), exit = fadeOut()) {
                 Box(
