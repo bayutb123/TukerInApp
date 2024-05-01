@@ -13,7 +13,8 @@ data class Post(
     val premium: Boolean,
     val createdAt: String,
     val images: List<String>? = null,
-    val isSaved: Boolean = false
+    val isSaved: Boolean = false,
+    val canTradeIn: Boolean = false
 )
 
 

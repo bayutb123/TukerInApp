@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -48,14 +49,26 @@ import com.bayutb123.tukerin.ui.theme.TukerInTheme
 fun ItemGrid(
     modifier: Modifier = Modifier,
     onClick: (Int) -> Unit,
-    isPremium: Boolean = false,
     item: Post
 ) {
     Card(
-        onClick = { onClick(0) },shape = RoundedCornerShape(4.dp)
+        onClick = { onClick(0) }, shape = RoundedCornerShape(4.dp)
     ) {
-        Box(modifier = modifier.fillMaxWidth()) {
-            Column {
+        Column {
+            Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.BottomCenter) {
+                if (item.canTradeIn) {
+                    Text(
+                        text = "Tukar Tambah",
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.8f))
+                            .padding(2.dp),
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = MaterialTheme.typography.bodySmall.fontSize
+                    )
+                }
                 AsyncImage(
                     model = BuildConfig.apiUrl + "/images/" + item.thumbnailImage,
                     contentDescription = null,
@@ -65,61 +78,43 @@ fun ItemGrid(
                     contentScale = ContentScale.Crop,
                     filterQuality = FilterQuality.Medium
                 )
-                Column(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                ) {
-                    Text(
-                        text = Currency.convertIntToRupiah(item.price),
-                        style = MaterialTheme.typography.bodyLarge,
-                        modifier = modifier.fillMaxWidth(),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Text(
-                        text = item.title,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        modifier = modifier.fillMaxWidth(),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
 
-                    Row(
-                        modifier = modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.LocationOn,
-                            contentDescription = null,
-                            modifier = modifier.size(12.dp)
-                        )
-                        Spacer(modifier = modifier.width(2.dp))
-                        Text(text = item.address, style = MaterialTheme.typography.bodySmall, maxLines = 1)
-                    }
-                }
             }
-            if (isPremium) {
+            Column(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+            ) {
+                Text(
+                    text = Currency.convertIntToRupiah(item.price),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = modifier.fillMaxWidth(),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = item.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = modifier.fillMaxWidth(),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
                 Row(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.End
+                    modifier = modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = null,
+                        modifier = modifier.size(12.dp)
+                    )
+                    Spacer(modifier = modifier.width(2.dp))
                     Text(
-                        text = "Premium",
+                        text = item.address,
                         style = MaterialTheme.typography.bodySmall,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.surface,
-                        modifier = modifier
-                            .padding(4.dp)
-                            .background(
-                                MaterialTheme.colorScheme.secondary,
-                                MaterialTheme.shapes.small
-                            )
-                            .padding(4.dp)
+                        maxLines = 1
                     )
                 }
             }
@@ -159,19 +154,36 @@ fun ItemList(
                     .height(124.dp)
                     .padding(16.dp)
             ) {
-                AsyncImage(
-                    model = BuildConfig.apiUrl + "/images/" + item.thumbnailImage,
-                    contentDescription = item.title,
-                    modifier = modifier.size(92.dp),
-                    contentScale = ContentScale.Crop
-                )
+                Box(modifier = modifier.size(92.dp), contentAlignment = Alignment.BottomCenter) {
+                    AsyncImage(
+                        model = BuildConfig.apiUrl + "/images/" + item.thumbnailImage,
+                        contentDescription = item.title,
+                        modifier = modifier.size(92.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                    if (item.canTradeIn) {
+                        Text(
+                            text = "Tukar Tambah",
+                            modifier = modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.8f))
+                                .padding(1.dp),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = MaterialTheme.typography.labelSmall.fontSize
+                        )
+                    }
+                }
                 Column(
                     modifier = modifier
                         .weight(1f)
                         .fillMaxHeight(),
                 ) {
-                    Text(text = Date.formatStringDate(item.createdAt),
-                        fontSize = MaterialTheme.typography.bodySmall.fontSize)
+                    Text(
+                        text = Date.formatStringDate(item.createdAt),
+                        fontSize = MaterialTheme.typography.bodySmall.fontSize
+                    )
                     Text(
                         text = item.title,
                         modifier = modifier
@@ -216,14 +228,15 @@ fun PreviewItemGrid() {
                         title = "Title",
                         description = "Description",
                         price = 1000000,
-                        thumbnailImage = "https://assets.jenius.com/assets/2020/08/15022111/Jenius-Features-.jpg",
+                        thumbnailImage = "https://lh3.googleusercontent.com/SZKYREctLSyeGMbJCovzIxNnW6MmWxcHOhPG5h9UU_bw55iGqG3TBylOuinEBKdB6vW14Nu5CMAkhwQYgu1aRrj8ByEzPvVfn-AaqhKKukQ=s0",
                         ownerId = 1,
                         ownerName = "John Doe",
                         active = true,
                         premium = true,
                         createdAt = "2021-08-01",
                         images = listOf(),
-                        address = "Jakarta Pusat"
+                        address = "Jakarta Pusat",
+                        canTradeIn = true
                     )
                 )
             }
@@ -235,7 +248,10 @@ fun PreviewItemGrid() {
 @Composable
 fun PreviewItemList() {
     TukerInTheme {
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp), contentPadding = PaddingValues(16.dp)) {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(16.dp)
+        ) {
             items(20) {
                 ItemList(
                     onClick = {}, item = Post(
@@ -250,7 +266,8 @@ fun PreviewItemList() {
                         premium = true,
                         createdAt = "2023-12-23T07:12:57.000000Z",
                         images = listOf(),
-                        address = "Jakarta Pusat"
+                        address = "Jakarta Pusat",
+                        canTradeIn = true
                     ),
                     onLongClick = { }
                 )
