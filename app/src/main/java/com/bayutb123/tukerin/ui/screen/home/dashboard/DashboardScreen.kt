@@ -170,8 +170,6 @@ fun DashboardScreen(
 
             }
 
-            // ...
-
             state.let { dashboardState ->
                 when (dashboardState) {
                     is DashboardState.Loading -> LoadingContent()
