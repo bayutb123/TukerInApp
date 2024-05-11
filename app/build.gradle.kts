@@ -15,11 +15,11 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.bayutb123.tukerin"
+        applicationId = "com.test.tukerin"
         minSdk = 25
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "0.1.0-beta"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
