@@ -14,7 +14,8 @@ fun DetailPostResponse.toPost() : Post {
         images = this.post.images,
         ownerId = this.post.userId,
         ownerName = this.post.authorName,
-        active = this.post.status == 1,
+        status = this.post.status,
+        isPublished = this.post.isPublished == 1,
         premium = this.post.isPremium == 1,
     )
 }

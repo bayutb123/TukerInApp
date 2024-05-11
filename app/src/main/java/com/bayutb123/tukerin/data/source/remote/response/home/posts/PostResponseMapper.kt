@@ -15,7 +15,8 @@ fun GetAllPostResponse.toPostList() : List<Post> {
             images = if (post.thumnail != null) listOf(post.thumnail.image_name) else emptyList(),
             ownerId = post.user_id,
             ownerName = post.author.name,
-            active = post.status == 1,
+            status = post.status,
+            isPublished = post.is_published == 1,
             premium = post.is_premium == 1,
             canTradeIn = post.can_trade_in == 1
         )

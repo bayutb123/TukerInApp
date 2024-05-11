@@ -231,12 +231,13 @@ fun PreviewItemGrid() {
                         thumbnailImage = "https://lh3.googleusercontent.com/SZKYREctLSyeGMbJCovzIxNnW6MmWxcHOhPG5h9UU_bw55iGqG3TBylOuinEBKdB6vW14Nu5CMAkhwQYgu1aRrj8ByEzPvVfn-AaqhKKukQ=s0",
                         ownerId = 1,
                         ownerName = "John Doe",
-                        active = true,
+                        isPublished = true,
                         premium = true,
                         createdAt = "2021-08-01",
                         images = listOf(),
                         address = "Jakarta Pusat",
-                        canTradeIn = true
+                        canTradeIn = true,
+                        status = "active"
                     )
                 )
             }
@@ -262,12 +263,13 @@ fun PreviewItemList() {
                         thumbnailImage = "https://assets.jenius.com/assets/2020/08/15022111/Jenius-Features-.jpg",
                         ownerId = 1,
                         ownerName = "John Doe",
-                        active = true,
+                        isPublished = true,
                         premium = true,
                         createdAt = "2023-12-23T07:12:57.000000Z",
                         images = listOf(),
                         address = "Jakarta Pusat",
-                        canTradeIn = true
+                        canTradeIn = true,
+                        status = "active"
                     ),
                     onLongClick = { }
                 )

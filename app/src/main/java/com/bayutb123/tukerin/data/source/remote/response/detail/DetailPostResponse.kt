@@ -59,7 +59,10 @@ data class DetailPost(
 	val imageId: Int,
 
 	@field:SerializedName("status")
-	val status: Int,
+	val status: String,
+
+	@field:SerializedName("is_published")
+	val isPublished: Int,
 
 	@field:SerializedName("longitude")
 	val longitude: String

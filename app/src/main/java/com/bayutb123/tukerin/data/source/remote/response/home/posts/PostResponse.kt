@@ -11,10 +11,11 @@ data class PostResponse(
     val latitude: String,
     val longitude: String,
     val price: Long,
-    val status: Int,
+    val status: String,
+    val is_published: Int,
     val thumnail: Thumnail?,
     val title: String,
     val updated_at: String,
     val user_id: Int,
-    val can_trade_in: Int
+    val can_trade_in: Int,
 )
