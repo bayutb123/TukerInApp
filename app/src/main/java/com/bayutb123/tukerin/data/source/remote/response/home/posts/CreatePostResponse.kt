@@ -47,7 +47,7 @@ data class CreatedPost(
 	val content: String,
 
 	@field:SerializedName("status")
-	val status: Int,
+	val status: String,
 
 	@field:SerializedName("longitude")
 	val longitude: String
