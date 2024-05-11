@@ -145,7 +145,7 @@ fun DetailScreen(
                 )
         ) {
             AnimatedVisibility(visible = isFullImageVisible) {
-                FullImageView(imageUrl = imageUrlForFullImage) {
+                FullImageView(modifier = Modifier.fillMaxWidth(), imageUrl = imageUrlForFullImage) {
                     isFullImageVisible = false
                 }
             }
