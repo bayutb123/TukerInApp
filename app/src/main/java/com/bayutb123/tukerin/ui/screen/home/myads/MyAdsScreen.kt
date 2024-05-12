@@ -34,6 +34,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,7 +61,7 @@ fun MyAdsScreen(
     onNavigationRequested: (String) -> Unit,
     viewModel: MyAdsViewModel = hiltViewModel()
 ) {
-    var tabIndex by remember { mutableStateOf(TabIndex.MY_ADS) }
+    var tabIndex by rememberSaveable { mutableStateOf(TabIndex.MY_ADS) }
     val scope = rememberCoroutineScope()
     LaunchedEffect(key1 = Unit) {
         viewModel.getMyAds(TabIndex.MY_ADS)
