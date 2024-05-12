@@ -3,6 +3,7 @@ package com.bayutb123.tukerin.di
 import com.bayutb123.tukerin.data.source.remote.repository.UserRepositoryImpl
 import com.bayutb123.tukerin.data.source.remote.service.UserService
 import com.bayutb123.tukerin.domain.repository.UserRepository
+import com.bayutb123.tukerin.domain.usecase.UserRatingUseCase
 import com.bayutb123.tukerin.domain.usecase.UserUseCase
 import dagger.Module
 import dagger.Provides
@@ -25,6 +26,10 @@ object UserModule {
     @Provides
     fun provideUserUseCase(userRepository: UserRepository): UserUseCase {
         return UserUseCase(userRepository)
+    }
+    @Provides
+    fun provideUserRatingUseCase(userRepository: UserRepository): UserRatingUseCase {
+        return UserRatingUseCase(userRepository)
     }
 
 }

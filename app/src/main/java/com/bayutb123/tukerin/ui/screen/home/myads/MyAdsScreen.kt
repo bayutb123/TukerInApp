@@ -2,20 +2,28 @@ package com.bayutb123.tukerin.ui.screen.home.myads
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
@@ -45,8 +53,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.bayutb123.tukerin.core.utils.DoubleUtils.toInteger
 import com.bayutb123.tukerin.domain.model.Post
-import com.bayutb123.tukerin.ui.components.input.ChipItem
 import com.bayutb123.tukerin.ui.components.view.ItemList
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 import kotlinx.coroutines.CoroutineScope
@@ -68,26 +76,26 @@ fun MyAdsScreen(
     }
     val state by viewModel.state.collectAsState()
     val activePostState by viewModel.activePostState.collectAsState()
-    Scaffold(topBar = { TopAppBar(title = { Text(text = "My Ads") }) }) { it ->
+    Scaffold(topBar = { TopAppBar(title = { Text(text = "Iklan") }) }) { it ->
         Column(modifier.padding(it)) {
             TabRow(selectedTabIndex = tabIndex.ordinal) {
                 Tab(selected = tabIndex == TabIndex.MY_ADS, onClick = {
                     tabIndex = TabIndex.MY_ADS
                     viewModel.getMyAds(tabIndex)
-                }, text = { Text("My Ads") })
+                }, text = { Text("Iklan Saya") })
                 Tab(selected = tabIndex == TabIndex.ACTIVE_ADS, onClick = {
                     tabIndex = TabIndex.ACTIVE_ADS
                     viewModel.getMyAds(tabIndex)
-                }, text = { Text("Transactions") })
+                }, text = { Text("Transaksi Aktif") })
             }
-            LazyRow(
-                contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(5) {
-                    ChipItem(text = "Category $it")
-                }
-            }
+//            LazyRow(
+//                contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
+//                horizontalArrangement = Arrangement.spacedBy(8.dp)
+//            ) {
+//                items(5) {
+//                    ChipItem(text = "Category $it")
+//                }
+//            }
 
             when (tabIndex) {
                 TabIndex.MY_ADS -> {
@@ -210,12 +218,12 @@ private fun MyAdsScreen(
             )
             Column(modifier = Modifier.padding(vertical = 16.dp)) {
                 ListItem(headlineContent = { Text(text = "Edit") },
-                    supportingContent = { Text(text = "Change name, price, images, and description") },
+                    supportingContent = { Text(text = "Ganti nama, harga, gambar, dan deskripsi") },
                     modifier = Modifier.clickable {
                         Timber.d("Edit $postId")
                     })
                 ListItem(headlineContent = { Text(text = "Unlist") },
-                    supportingContent = { Text(text = "Make this ads not visible to people") },
+                    supportingContent = { Text(text = "Sembunyikan iklan dari orang lain") },
                     modifier = Modifier.clickable {
                         Timber.d("Unlist $postId")
                     })
@@ -228,7 +236,7 @@ private fun MyAdsScreen(
                 },
                     supportingContent = {
                         Text(
-                            text = "Delete this ads",
+                            text = "Hapus iklan",
                             color = Color.Red,
                         )
                     },
@@ -241,8 +249,8 @@ private fun MyAdsScreen(
                     visible = isAlertVisible
                 ) {
                     ListItem(
-                        headlineContent = { Text(text = "Confirm delete") },
-                        supportingContent = { Text(text = "Hold for to confirm") },
+                        headlineContent = { Text(text = "Konfirmasi penghapusan") },
+                        supportingContent = { Text(text = "Tahan untuk konfirmasi") },
                         modifier = Modifier
                             .pointerInput(Unit) {
                                 detectTapGestures(onLongPress = {
@@ -287,6 +295,7 @@ private fun ActiveTransactionScreen(
     }
     var isAlertVisible by remember { mutableStateOf(false) }
     var isConfirmDelete by remember { mutableStateOf(false) }
+    val sellerState by viewModel.sellerState.collectAsState()
     LazyColumn(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -299,6 +308,7 @@ private fun ActiveTransactionScreen(
                     scope.launch {
                         postId = it
                         viewModel.bottomSheet(BottomSheetState.SHOW)
+                        viewModel.getSellerRating(item.ownerId)
                         sheetState.show()
                     }
                 },
@@ -322,61 +332,71 @@ private fun ActiveTransactionScreen(
                 style = MaterialTheme.typography.titleMedium
             )
             Column(modifier = Modifier.padding(vertical = 16.dp)) {
-                ListItem(headlineContent = { Text(text = "Edit") },
-                    supportingContent = { Text(text = "Change name, price, images, and description") },
-                    modifier = Modifier.clickable {
-                        Timber.d("Edit $postId")
-                    })
-                ListItem(headlineContent = { Text(text = "Unlist") },
-                    supportingContent = { Text(text = "Make this ads not visible to people") },
-                    modifier = Modifier.clickable {
-                        Timber.d("Unlist $postId")
-                    })
-                ListItem(headlineContent = {
-                    Text(
-                        text = "Delete",
-                        color = Color.Red,
-                        fontWeight = FontWeight.Bold
-                    )
-                },
-                    supportingContent = {
-                        Text(
-                            text = "Delete this ads",
-                            color = Color.Red,
-                        )
-                    },
-                    modifier = Modifier.clickable {
-                        scope.launch {
-                            isAlertVisible = !isAlertVisible
-                        }
-                    })
-                AnimatedVisibility(
-                    visible = isAlertVisible
+                SellerCard(sellerState)
+            }
+        }
+    }
+}
+
+@Composable
+private fun SellerCard(sellerState: SellerState) {
+    when (sellerState) {
+        is SellerState.Loading -> {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
+            ) {
+                CircularProgressIndicator()
+            }
+        }
+
+        is SellerState.Error -> {
+            Text(text = "Error: ${(sellerState as SellerState.Error).message}")
+        }
+
+        is SellerState.Seller -> {
+            val sellerData = (sellerState as SellerState.Seller)
+            Card(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    ListItem(
-                        headlineContent = { Text(text = "Confirm delete") },
-                        supportingContent = { Text(text = "Hold for to confirm") },
+                    Box(
                         modifier = Modifier
-                            .pointerInput(Unit) {
-                                detectTapGestures(onLongPress = {
-                                    isConfirmDelete = true
-                                    scope.launch {
-                                        if (isConfirmDelete) {
-                                            scope.launch {
-                                                sheetState.hide()
-                                                isAlertVisible = false
-                                                viewModel.deletePost(postId, TabIndex.ACTIVE_ADS)
-                                            }
-                                        }
-                                        isConfirmDelete = false
-                                    }
-                                })
-                            }, colors = ListItemDefaults.colors(
-                            containerColor = MaterialTheme.colorScheme.error,
-                            headlineColor = MaterialTheme.colorScheme.onError,
-                            supportingColor = MaterialTheme.colorScheme.onError
+                            .size(50.dp)
+                            .background(MaterialTheme.colorScheme.primary, CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = sellerData.userRating.name[0].toString().uppercase(),
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
-                    )
+                    }
+                    Column {
+                        Text(text = sellerData.userRating.name)
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(2.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            repeat(sellerData.userRating.rating.toInteger()) {
+                                Icon(
+                                    imageVector = Icons.Default.Star,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+                            Spacer(modifier = Modifier.size(4.dp))
+                            Text(text = "${sellerData.userRating.rating} (${sellerData.userRating.reviewCount})")
+                        }
+                    }
                 }
             }
         }

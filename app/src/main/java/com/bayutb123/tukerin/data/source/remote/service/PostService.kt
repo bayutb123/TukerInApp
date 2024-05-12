@@ -3,7 +3,6 @@ package com.bayutb123.tukerin.data.source.remote.service
 import com.bayutb123.tukerin.data.source.remote.response.detail.DetailPostResponse
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.CreatePostResponse
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.DeletePostResponse
-import com.bayutb123.tukerin.data.source.remote.response.home.posts.GetActivePostResponse
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.GetAllPostResponse
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.GetPostCategoriesResponse
 import com.bayutb123.tukerin.data.source.remote.response.home.suggestions.SuggestionsResponse
@@ -77,6 +76,6 @@ interface PostService {
     @GET("post/active/{user_id}")
     suspend fun getActivePosts(
         @Path("user_id") userId: Int
-    ) : Response<GetActivePostResponse>
+    ) : Response<GetAllPostResponse>
 
 }
