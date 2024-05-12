@@ -22,3 +22,24 @@ fun GetAllPostResponse.toPostList() : List<Post> {
         )
     }
 }
+
+fun GetActivePostResponse.toPostList() : List<Post> {
+    return this.posts.map { post->
+        Post(
+            id = post.id,
+            title = post.title,
+            description = post.content,
+            price = post.price,
+            createdAt = post.created_at,
+            address = post.city,
+            thumbnailImage = post.thumnail?.image_name,
+            images = post.thumnail?.let { listOf(it.image_name) },
+            ownerId = post.user_id,
+            ownerName = post.author.name,
+            status = post.status,
+            isPublished = post.is_published == 1,
+            premium = post.is_premium == 1,
+            canTradeIn = post.can_trade_in == 1
+        )
+    }
+}
