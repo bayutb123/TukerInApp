@@ -6,7 +6,7 @@ data class GetActivePostResponse(
 )
 
 data class Post(
-    val author: Author,
+    val author: AuthorX,
     val city: String,
     val content: String,
     val created_at: String,
@@ -18,7 +18,7 @@ data class Post(
     val price: Long,
     val status: String,
     val is_published: Int,
-    val thumnail: Thumnail?,
+    val thumnail: ThumnailX,
     val title: String,
     val updated_at: String,
     val user_id: Int,
