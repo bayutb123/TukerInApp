@@ -44,9 +44,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.bayutb123.tukerin.domain.model.Post
 import com.bayutb123.tukerin.ui.components.input.ChipItem
 import com.bayutb123.tukerin.ui.components.view.ItemList
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -58,24 +60,24 @@ fun MyAdsScreen(
     onNavigationRequested: (String) -> Unit,
     viewModel: MyAdsViewModel = hiltViewModel()
 ) {
-    var tabIndex by remember { mutableIntStateOf(0) }
-
-    var isAlertVisible by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
+    var tabIndex by remember { mutableStateOf(TabIndex.MY_ADS) }
     val scope = rememberCoroutineScope()
     LaunchedEffect(key1 = Unit) {
-        viewModel.getMyAds()
+        viewModel.getMyAds(TabIndex.MY_ADS)
     }
     val state by viewModel.state.collectAsState()
-    var postId by remember {
-        mutableIntStateOf(0)
-    }
-    var isConfirmDelete by remember { mutableStateOf(false) }
+    val activePostState by viewModel.activePostState.collectAsState()
     Scaffold(topBar = { TopAppBar(title = { Text(text = "My Ads") }) }) { it ->
         Column(modifier.padding(it)) {
-            TabRow(selectedTabIndex = tabIndex) {
-                Tab(selected = tabIndex == 0, onClick = { tabIndex = 0 }, text = { Text("My Ads") })
-                Tab(selected = tabIndex == 1, onClick = { tabIndex = 1 }, text = { Text("Transactions") })
+            TabRow(selectedTabIndex = tabIndex.ordinal) {
+                Tab(selected = tabIndex == TabIndex.MY_ADS, onClick = {
+                    tabIndex = TabIndex.MY_ADS
+                    viewModel.getMyAds(tabIndex)
+                }, text = { Text("My Ads") })
+                Tab(selected = tabIndex == TabIndex.ACTIVE_ADS, onClick = {
+                    tabIndex = TabIndex.ACTIVE_ADS
+                    viewModel.getMyAds(tabIndex)
+                }, text = { Text("Transactions") })
             }
             LazyRow(
                 contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
@@ -86,116 +88,294 @@ fun MyAdsScreen(
                 }
             }
 
-            when (state) {
-                is MyAdsState.Loading -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
-                }
-
-                is MyAdsState.Success -> {
-                    val data = (state as MyAdsState.Success).data
-                    when (tabIndex) {
-                        0 -> {
-                            LazyColumn(
-                                contentPadding = PaddingValues(16.dp),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
+            when (tabIndex) {
+                TabIndex.MY_ADS -> {
+                    when (state) {
+                        is MyAdsState.Loading -> {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
                             ) {
-                                items(data) { item ->
-                                    ItemList(
-                                        item = item,
-                                        onClick = { onNavigationRequested("detail/${item.id}") },
-                                        onLongClick = {
-                                            scope.launch {
-                                                postId = it
-                                                viewModel.bottomSheet(BottomSheetState.SHOW)
-                                                sheetState.show()
-                                            }
-                                        },
-                                    )
-                                }
+                                CircularProgressIndicator()
                             }
-                            if (viewModel.bottomSheetState.collectAsState().value == BottomSheetState.SHOW) {
-                                ModalBottomSheet(
-                                    onDismissRequest = {
-                                        scope.launch {
-                                            sheetState.hide()
-                                            isAlertVisible = false
-                                        }.invokeOnCompletion { viewModel.bottomSheet(BottomSheetState.HIDE) }
-                                    }, sheetState = sheetState
-                                ) {
-                                    Text(
-                                        text = "Options",
-                                        modifier = Modifier
-                                            .fillMaxWidth(),
-                                        textAlign = TextAlign.Center,
-                                        style = MaterialTheme.typography.titleMedium
-                                    )
-                                    Column(modifier = Modifier.padding(vertical = 16.dp)) {
-                                        ListItem(headlineContent = { Text(text = "Edit") },
-                                            supportingContent = { Text(text = "Change name, price, images, and description") },
-                                            modifier = Modifier.clickable {
-                                                Timber.d("Edit $postId")
-                                            })
-                                        ListItem(headlineContent = { Text(text = "Unlist") },
-                                            supportingContent = { Text(text = "Make this ads not visible to people") },
-                                            modifier = Modifier.clickable {
-                                                Timber.d("Unlist $postId")
-                                            })
-                                        ListItem(headlineContent = {
-                                            Text(
-                                                text = "Delete",
-                                                color = Color.Red,
-                                                fontWeight = FontWeight.Bold
-                                            )
-                                        },
-                                            supportingContent = {
-                                                Text(
-                                                    text = "Delete this ads",
-                                                    color = Color.Red,
-                                                )
-                                            },
-                                            modifier = Modifier.clickable {
-                                                scope.launch {
-                                                    isAlertVisible = !isAlertVisible
-                                                }
-                                            })
-                                        AnimatedVisibility(
-                                            visible = isAlertVisible
-                                        ) {
-                                            ListItem(headlineContent = { Text(text = "Confirm delete") },
-                                                supportingContent = { Text(text = "Hold for to confirm") },
-                                                modifier = Modifier
-                                                    .pointerInput(Unit) {
-                                                        detectTapGestures(onLongPress = {
-                                                            isConfirmDelete = true
-                                                            scope.launch {
-                                                                if (isConfirmDelete) {
-                                                                    scope.launch {
-                                                                        sheetState.hide()
-                                                                        isAlertVisible = false
-                                                                        viewModel.deletePost(postId)
-                                                                    }
-                                                                }
-                                                                isConfirmDelete = false
-                                                            }
-                                                        })
-                                                    }, colors = ListItemDefaults.colors(
-                                                    containerColor = MaterialTheme.colorScheme.error,
-                                                    headlineColor = MaterialTheme.colorScheme.onError,
-                                                    supportingColor = MaterialTheme.colorScheme.onError
-                                                )
-                                            )
-                                        }
-                                    }
-                                }
+                        }
+
+                        is MyAdsState.Empty -> {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                Text(text = (state as MyAdsState.Empty).msg)
                             }
+                        }
+
+                        is MyAdsState.Success -> {
+                            val data = (state as MyAdsState.Success).data
+                            MyAdsScreen(
+                                data,
+                                onNavigationRequested,
+                                scope,
+                                viewModel
+                            )
+                        }
+
+                        is MyAdsState.Error -> {
+                            Text(text = "Error: ${(state as MyAdsState.Error).msg}")
                         }
                     }
                 }
 
-                is MyAdsState.Error -> {
-                    Text(text = "Error: ${(state as MyAdsState.Error).msg}")
+                TabIndex.ACTIVE_ADS -> {
+                    when (activePostState) {
+                        is MyAdsState.Loading -> {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
+                        }
+
+                        is MyAdsState.Empty -> {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                Text(text = (activePostState as MyAdsState.Empty).msg)
+                            }
+                        }
+
+                        is MyAdsState.Success -> {
+                            val data = (activePostState as MyAdsState.Success).data
+                            ActiveTransactionScreen(
+                                data,
+                                onNavigationRequested,
+                                scope,
+                                viewModel
+                            )
+                        }
+
+                        is MyAdsState.Error -> {
+                            Text(text = "Error: ${(activePostState as MyAdsState.Error).msg}")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun MyAdsScreen(
+    data: List<Post>,
+    onNavigationRequested: (String) -> Unit,
+    scope: CoroutineScope,
+    viewModel: MyAdsViewModel
+) {
+    val sheetState = rememberModalBottomSheetState()
+    var postId by remember {
+        mutableIntStateOf(0)
+    }
+    var isAlertVisible by remember { mutableStateOf(false) }
+    var isConfirmDelete by remember { mutableStateOf(false) }
+    LazyColumn(
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(data) { item ->
+            ItemList(
+                item = item,
+                onClick = { onNavigationRequested("detail/${item.id}") },
+                onLongClick = {
+                    scope.launch {
+                        postId = it
+                        viewModel.bottomSheet(BottomSheetState.SHOW)
+                        sheetState.show()
+                    }
+                },
+            )
+        }
+    }
+    if (viewModel.bottomSheetState.collectAsState().value == BottomSheetState.SHOW) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                scope.launch {
+                    sheetState.hide()
+                    isAlertVisible = false
+                }.invokeOnCompletion { viewModel.bottomSheet(BottomSheetState.HIDE) }
+            }, sheetState = sheetState
+        ) {
+            Text(
+                text = "Options",
+                modifier = Modifier
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleMedium
+            )
+            Column(modifier = Modifier.padding(vertical = 16.dp)) {
+                ListItem(headlineContent = { Text(text = "Edit") },
+                    supportingContent = { Text(text = "Change name, price, images, and description") },
+                    modifier = Modifier.clickable {
+                        Timber.d("Edit $postId")
+                    })
+                ListItem(headlineContent = { Text(text = "Unlist") },
+                    supportingContent = { Text(text = "Make this ads not visible to people") },
+                    modifier = Modifier.clickable {
+                        Timber.d("Unlist $postId")
+                    })
+                ListItem(headlineContent = {
+                    Text(
+                        text = "Delete",
+                        color = Color.Red,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                    supportingContent = {
+                        Text(
+                            text = "Delete this ads",
+                            color = Color.Red,
+                        )
+                    },
+                    modifier = Modifier.clickable {
+                        scope.launch {
+                            isAlertVisible = !isAlertVisible
+                        }
+                    })
+                AnimatedVisibility(
+                    visible = isAlertVisible
+                ) {
+                    ListItem(
+                        headlineContent = { Text(text = "Confirm delete") },
+                        supportingContent = { Text(text = "Hold for to confirm") },
+                        modifier = Modifier
+                            .pointerInput(Unit) {
+                                detectTapGestures(onLongPress = {
+                                    isConfirmDelete = true
+                                    scope.launch {
+                                        if (isConfirmDelete) {
+                                            scope.launch {
+                                                sheetState.hide()
+                                                isAlertVisible = false
+                                                viewModel.deletePost(
+                                                    postId,
+                                                    tabIndex = TabIndex.MY_ADS
+                                                )
+                                            }
+                                        }
+                                        isConfirmDelete = false
+                                    }
+                                })
+                            }, colors = ListItemDefaults.colors(
+                            containerColor = MaterialTheme.colorScheme.error,
+                            headlineColor = MaterialTheme.colorScheme.onError,
+                            supportingColor = MaterialTheme.colorScheme.onError
+                        )
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun ActiveTransactionScreen(
+    data: List<Post>,
+    onNavigationRequested: (String) -> Unit,
+    scope: CoroutineScope,
+    viewModel: MyAdsViewModel
+) {
+    val sheetState = rememberModalBottomSheetState()
+    var postId by remember {
+        mutableIntStateOf(0)
+    }
+    var isAlertVisible by remember { mutableStateOf(false) }
+    var isConfirmDelete by remember { mutableStateOf(false) }
+    LazyColumn(
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(data) { item ->
+            ItemList(
+                item = item,
+                onClick = { onNavigationRequested("detail/${item.id}") },
+                onLongClick = {
+                    scope.launch {
+                        postId = it
+                        viewModel.bottomSheet(BottomSheetState.SHOW)
+                        sheetState.show()
+                    }
+                },
+            )
+        }
+    }
+    if (viewModel.bottomSheetState.collectAsState().value == BottomSheetState.SHOW) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                scope.launch {
+                    sheetState.hide()
+                    isAlertVisible = false
+                }.invokeOnCompletion { viewModel.bottomSheet(BottomSheetState.HIDE) }
+            }, sheetState = sheetState
+        ) {
+            Text(
+                text = "Options",
+                modifier = Modifier
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleMedium
+            )
+            Column(modifier = Modifier.padding(vertical = 16.dp)) {
+                ListItem(headlineContent = { Text(text = "Edit") },
+                    supportingContent = { Text(text = "Change name, price, images, and description") },
+                    modifier = Modifier.clickable {
+                        Timber.d("Edit $postId")
+                    })
+                ListItem(headlineContent = { Text(text = "Unlist") },
+                    supportingContent = { Text(text = "Make this ads not visible to people") },
+                    modifier = Modifier.clickable {
+                        Timber.d("Unlist $postId")
+                    })
+                ListItem(headlineContent = {
+                    Text(
+                        text = "Delete",
+                        color = Color.Red,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                    supportingContent = {
+                        Text(
+                            text = "Delete this ads",
+                            color = Color.Red,
+                        )
+                    },
+                    modifier = Modifier.clickable {
+                        scope.launch {
+                            isAlertVisible = !isAlertVisible
+                        }
+                    })
+                AnimatedVisibility(
+                    visible = isAlertVisible
+                ) {
+                    ListItem(
+                        headlineContent = { Text(text = "Confirm delete") },
+                        supportingContent = { Text(text = "Hold for to confirm") },
+                        modifier = Modifier
+                            .pointerInput(Unit) {
+                                detectTapGestures(onLongPress = {
+                                    isConfirmDelete = true
+                                    scope.launch {
+                                        if (isConfirmDelete) {
+                                            scope.launch {
+                                                sheetState.hide()
+                                                isAlertVisible = false
+                                                viewModel.deletePost(postId, TabIndex.ACTIVE_ADS)
+                                            }
+                                        }
+                                        isConfirmDelete = false
+                                    }
+                                })
+                            }, colors = ListItemDefaults.colors(
+                            containerColor = MaterialTheme.colorScheme.error,
+                            headlineColor = MaterialTheme.colorScheme.onError,
+                            supportingColor = MaterialTheme.colorScheme.onError
+                        )
+                    )
                 }
             }
         }

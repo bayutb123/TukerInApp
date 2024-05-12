@@ -20,4 +20,5 @@ class PostUseCase @Inject constructor(
     suspend fun createPost(createPostRequest: CreatePostRequest, context: Context) = postRepository.createPost(createPostRequest, context)
     suspend fun getMyPosts(userId: Int, page: Int) : NetworkResult<List<Post>> = postRepository.getMyPosts(userId, page)
     suspend fun deletePost(postId: Int) : NetworkResult<Int> = postRepository.deletePost(postId)
+    suspend fun getActivePosts(userId: Int) : NetworkResult<List<Post>> = postRepository.getActivePosts(userId)
 }

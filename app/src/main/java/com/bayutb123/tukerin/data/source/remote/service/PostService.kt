@@ -73,4 +73,9 @@ interface PostService {
         @Path("post_id") postId: Int
     ) : Response<DeletePostResponse>
 
+    @GET("post/active/{user_id}")
+    suspend fun getActivePosts(
+        @Path("user_id") userId: Int
+    ) : Response<GetAllPostResponse>
+
 }

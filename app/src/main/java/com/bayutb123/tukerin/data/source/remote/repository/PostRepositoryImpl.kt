@@ -7,6 +7,7 @@ import com.bayutb123.tukerin.core.utils.InputConverter.removeDoubleQuotes
 import com.bayutb123.tukerin.core.utils.MediaUtils
 import com.bayutb123.tukerin.data.source.remote.request.CreatePostRequest
 import com.bayutb123.tukerin.data.source.remote.request.validate
+import com.bayutb123.tukerin.data.source.remote.response.ResponseCode
 import com.bayutb123.tukerin.data.source.remote.response.detail.toPost
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.toModel
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.toPostList
@@ -15,7 +16,6 @@ import com.bayutb123.tukerin.data.source.remote.service.PostService
 import com.bayutb123.tukerin.domain.model.Post
 import com.bayutb123.tukerin.domain.model.PostCategory
 import com.bayutb123.tukerin.domain.repository.PostRepository
-import okio.IOException
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -88,7 +88,7 @@ class PostRepositoryImpl @Inject constructor(
         }
         val images = MediaUtils.preparePart(createPostRequest.images, context)
 
-        try {
+        return try {
             val request = postService.createPost(
                 createPostRequest.userId,
                 createPostRequest.title.removeDoubleQuotes(),
@@ -101,18 +101,15 @@ class PostRepositoryImpl @Inject constructor(
                 createPostRequest.canTrade.convertToInt()
             )
 
-            return if (request.isSuccessful) {
+            if (request.isSuccessful) {
                 NetworkResult.Success(request.code())
             } else {
                 Timber.d(request.message())
                 NetworkResult.Error(request.code())
             }
-        } catch (e: IOException) {
-            return NetworkResult.Error(999)
         } catch (e: Exception) {
-            return NetworkResult.Error(999)
+            NetworkResult.Error(999)
         } finally {
-            Timber.d("Clearing local cache")
             MediaUtils.clearLocalCache(context)
         }
     }
@@ -174,6 +171,24 @@ class PostRepositoryImpl @Inject constructor(
                 NetworkResult.Error(response.code())
             }
         } catch (e: Exception) {
+            NetworkResult.Error(e.hashCode())
+        }
+    }
+
+    override suspend fun getActivePosts(userId: Int): NetworkResult<List<Post>> {
+        return try {
+            val response = postService.getActivePosts(userId)
+            if (response.isSuccessful) {
+                val post = response.body()!!
+                NetworkResult.Success(post.toPostList())
+            } else if (response.code() == ResponseCode.NO_CONTENT) {
+                Timber.d("empty")
+                NetworkResult.Success(emptyList())
+            } else {
+                NetworkResult.Error(response.code())
+            }
+        } catch (e: Exception) {
+            Timber.e(e.message)
             NetworkResult.Error(e.hashCode())
         }
     }
