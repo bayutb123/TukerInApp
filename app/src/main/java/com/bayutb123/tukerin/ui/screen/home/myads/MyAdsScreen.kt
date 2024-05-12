@@ -64,7 +64,7 @@ fun MyAdsScreen(
     var tabIndex by rememberSaveable { mutableStateOf(TabIndex.MY_ADS) }
     val scope = rememberCoroutineScope()
     LaunchedEffect(key1 = Unit) {
-        viewModel.getMyAds(TabIndex.MY_ADS)
+        viewModel.getMyAds(tabIndex)
     }
     val state by viewModel.state.collectAsState()
     val activePostState by viewModel.activePostState.collectAsState()
