@@ -3,6 +3,7 @@ package com.bayutb123.tukerin.ui.screen.detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bayutb123.tukerin.core.data.NetworkResult
+import com.bayutb123.tukerin.core.utils.PublishStatus
 import com.bayutb123.tukerin.domain.model.Post
 import com.bayutb123.tukerin.domain.usecase.PostUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,6 +33,12 @@ class DetailViewModel @Inject constructor(
                     _post.value = null
                 }
             }
+        }
+    }
+
+    fun updatePostPublishStatus(postId: Int, statusId: PublishStatus) {
+        viewModelScope.launch {
+            postUseCase.updatePostPublishStatus(postId, statusId.ordinal)
         }
     }
 }

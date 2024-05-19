@@ -10,6 +10,7 @@ fun GetAllPostResponse.toPostList() : List<Post> {
             description = post.content,
             price = post.price,
             createdAt = post.created_at,
+            updatedAt = post.updated_at,
             address = post.city,
             thumbnailImage = post.thumnail?.image_name,
             images = if (post.thumnail != null) listOf(post.thumnail.image_name) else emptyList(),

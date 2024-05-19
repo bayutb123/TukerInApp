@@ -15,12 +15,14 @@ import com.bayutb123.tukerin.data.source.remote.response.home.suggestions.toSugg
 import com.bayutb123.tukerin.data.source.remote.service.PostService
 import com.bayutb123.tukerin.domain.model.Post
 import com.bayutb123.tukerin.domain.model.PostCategory
+import com.bayutb123.tukerin.domain.repository.DataStoreRepository
 import com.bayutb123.tukerin.domain.repository.PostRepository
 import timber.log.Timber
 import javax.inject.Inject
 
 class PostRepositoryImpl @Inject constructor(
-    private val postService: PostService
+    private val postService: PostService,
+    private val dataStoreRepository: DataStoreRepository
 ) : PostRepository {
 
     override suspend fun getAllPosts(userId: Int, page: Int): NetworkResult<List<Post>> {
@@ -186,6 +188,25 @@ class PostRepositoryImpl @Inject constructor(
                 NetworkResult.Success(emptyList())
             } else {
                 NetworkResult.Error(response.code())
+            }
+        } catch (e: Exception) {
+            Timber.e(e.message)
+            NetworkResult.Error(e.hashCode())
+        }
+    }
+
+    override suspend fun updatePostPublishStatus(postId: Int, statusId: Int) : NetworkResult<Int> {
+        return try {
+            val userId = dataStoreRepository.getUserId()
+            if (userId != null) {
+                val response = postService.updatePostPublishStatus(postId, userId,  statusId)
+                if (response.isSuccessful) {
+                    NetworkResult.Success(200)
+                } else {
+                    NetworkResult.Error(response.code())
+                }
+            } else {
+                NetworkResult.Error(401)
             }
         } catch (e: Exception) {
             Timber.e(e.message)

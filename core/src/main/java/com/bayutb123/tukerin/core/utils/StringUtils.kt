@@ -9,4 +9,9 @@ object StringUtils {
             value
         }
     }
+
+    fun keepSymbols(value: String) : String {
+        // keep \n, 	, \r
+        return value.replace("\n", "/\n/").replace("\r", "/\r/")
+    }
 }

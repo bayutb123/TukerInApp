@@ -9,6 +9,7 @@ fun DetailPostResponse.toPost() : Post {
         description = this.post.content,
         price = this.post.price,
         createdAt = this.post.createdAt,
+        updatedAt = this.post.updatedAt,
         address = this.post.address,
         thumbnailImage = this.post.images[0],
         images = this.post.images,

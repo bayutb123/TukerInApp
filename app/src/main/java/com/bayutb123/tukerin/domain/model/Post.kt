@@ -13,6 +13,7 @@ data class Post(
     val isPublished: Boolean,
     val premium: Boolean,
     val createdAt: String,
+    val updatedAt: String,
     val images: List<String>? = null,
     val isSaved: Boolean = false,
     val canTradeIn: Boolean = false

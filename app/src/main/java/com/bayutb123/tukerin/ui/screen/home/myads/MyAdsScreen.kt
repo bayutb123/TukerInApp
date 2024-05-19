@@ -8,6 +8,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -57,6 +58,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.bayutb123.tukerin.core.utils.DoubleUtils.toInteger
 import com.bayutb123.tukerin.domain.model.Post
 import com.bayutb123.tukerin.ui.components.input.FullWidthButton
+import com.bayutb123.tukerin.ui.components.input.RatingInput
 import com.bayutb123.tukerin.ui.components.view.CustomAlertDialog
 import com.bayutb123.tukerin.ui.components.view.ItemList
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
@@ -209,7 +211,8 @@ private fun MyAdsScreen(
                 scope.launch {
                     sheetState.hide()
                     isAlertVisible = false
-                }.invokeOnCompletion { viewModel.bottomSheet(BottomSheetState.HIDE) }
+                    viewModel.bottomSheet(BottomSheetState.HIDE)
+                }
             }, sheetState = sheetState
         ) {
             Text(
@@ -296,7 +299,9 @@ private fun ActiveTransactionScreen(
     var postId by remember {
         mutableIntStateOf(0)
     }
-    var isBottomSheetVisible by remember { mutableStateOf(false) }
+    var rating by remember {
+        mutableIntStateOf(0)
+    }
     var isAlertVisible by remember { mutableStateOf(false) }
     val sellerState by viewModel.sellerState.collectAsState()
     LazyColumn(
@@ -325,18 +330,20 @@ private fun ActiveTransactionScreen(
     }, onConfirm = {
         scope.launch {
             isAlertVisible = false
-            isBottomSheetVisible = false
-            viewModel.bottomSheet(BottomSheetState.HIDE)
-        }
+            sheetState.hide()
+            rating = 0
+        }.invokeOnCompletion { viewModel.bottomSheet(BottomSheetState.HIDE) }
     })
     if (viewModel.bottomSheetState.collectAsState().value == BottomSheetState.SHOW) {
         ModalBottomSheet(
             onDismissRequest = {
                 scope.launch {
                     sheetState.hide()
-                    isBottomSheetVisible = false
-                }.invokeOnCompletion { viewModel.bottomSheet(BottomSheetState.HIDE) }
-            }, sheetState = sheetState
+                    viewModel.bottomSheet(BottomSheetState.HIDE)
+                    rating = 0
+                }
+            }, sheetState = sheetState,
+            modifier = Modifier.height(IntrinsicSize.Min)
         ) {
             Text(
                 text = "Options",
@@ -359,11 +366,17 @@ private fun ActiveTransactionScreen(
                         Timber.d("Unlist $postId")
                     })
                 Spacer(modifier = Modifier.height(8.dp))
+                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(text = "Rating")
+                    RatingInput(modifier = Modifier.fillMaxWidth()) {
+                        rating = it
+                    }
+                }
                 FullWidthButton(text = "Selesaikan transaksi", onClick = {
                     scope.launch {
                         isAlertVisible = true
                     }
-                })
+                }, enabled = rating != 0)
             }
         }
     }
@@ -388,7 +401,6 @@ private fun SellerCard(sellerState: SellerState) {
         }
 
         is SellerState.Seller -> {
-            val sellerData = sellerState
             Card(
                 modifier = Modifier
                     .padding(vertical = 16.dp)
@@ -406,17 +418,17 @@ private fun SellerCard(sellerState: SellerState) {
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = sellerData.userRating.name[0].toString().uppercase(),
+                            text = sellerState.userRating.name[0].toString().uppercase(),
                             color = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                     Column {
-                        Text(text = sellerData.userRating.name)
+                        Text(text = sellerState.userRating.name)
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(2.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            repeat(sellerData.userRating.rating.toInteger()) {
+                            repeat(sellerState.userRating.rating.toInteger()) {
                                 Icon(
                                     imageVector = Icons.Default.Star,
                                     contentDescription = null,
@@ -425,7 +437,7 @@ private fun SellerCard(sellerState: SellerState) {
                                 )
                             }
                             Spacer(modifier = Modifier.size(4.dp))
-                            Text(text = "${sellerData.userRating.rating} (${sellerData.userRating.reviewCount})")
+                            Text(text = "${sellerState.userRating.rating} (${sellerState.userRating.reviewCount})")
                         }
                     }
                 }

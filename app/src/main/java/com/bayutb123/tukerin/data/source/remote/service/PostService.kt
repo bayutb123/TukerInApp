@@ -5,10 +5,13 @@ import com.bayutb123.tukerin.data.source.remote.response.home.posts.CreatePostRe
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.DeletePostResponse
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.GetAllPostResponse
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.GetPostCategoriesResponse
+import com.bayutb123.tukerin.data.source.remote.response.home.posts.UpdatePostResponse
 import com.bayutb123.tukerin.data.source.remote.response.home.suggestions.SuggestionsResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.DELETE
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -77,5 +80,13 @@ interface PostService {
     suspend fun getActivePosts(
         @Path("user_id") userId: Int
     ) : Response<GetAllPostResponse>
+
+    @POST("post/update/publish/status")
+    @FormUrlEncoded
+    suspend fun updatePostPublishStatus(
+        @Field("post_id") postId: Int,
+        @Field("peer_id") peerId: Int,
+        @Field("publish_status_id") publishStatusId: Int
+    ) : Response<UpdatePostResponse>
 
 }

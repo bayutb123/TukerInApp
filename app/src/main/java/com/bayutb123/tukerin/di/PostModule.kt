@@ -2,6 +2,7 @@ package com.bayutb123.tukerin.di
 
 import com.bayutb123.tukerin.data.source.remote.repository.PostRepositoryImpl
 import com.bayutb123.tukerin.data.source.remote.service.PostService
+import com.bayutb123.tukerin.domain.repository.DataStoreRepository
 import com.bayutb123.tukerin.domain.repository.PostRepository
 import com.bayutb123.tukerin.domain.usecase.PostCategoryUseCase
 import com.bayutb123.tukerin.domain.usecase.PostUseCase
@@ -21,8 +22,8 @@ object PostModule {
     }
 
     @Provides
-    fun providePostRepository(postService: PostService) : PostRepository {
-        return PostRepositoryImpl(postService)
+    fun providePostRepository(postService: PostService, dataStoreRepository: DataStoreRepository) : PostRepository {
+        return PostRepositoryImpl(postService, dataStoreRepository)
     }
 
     @Provides

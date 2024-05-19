@@ -22,7 +22,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -122,7 +121,6 @@ fun ItemGrid(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ItemList(
     modifier: Modifier = Modifier,
@@ -237,7 +235,8 @@ fun PreviewItemGrid() {
                         images = listOf(),
                         address = "Jakarta Pusat",
                         canTradeIn = true,
-                        status = "active"
+                        status = "active",
+                        updatedAt = "2023-12-23T07:12:57.000000Z",
                     )
                 )
             }
@@ -269,7 +268,8 @@ fun PreviewItemList() {
                         images = listOf(),
                         address = "Jakarta Pusat",
                         canTradeIn = true,
-                        status = "active"
+                        status = "active",
+                        updatedAt = "2023-12-23T07:12:57.000000Z",
                     ),
                     onLongClick = { }
                 )

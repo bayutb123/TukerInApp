@@ -40,6 +40,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -57,10 +58,12 @@ import com.bayutb123.tukerin.BuildConfig
 import com.bayutb123.tukerin.R
 import com.bayutb123.tukerin.core.utils.Currency
 import com.bayutb123.tukerin.core.utils.Date
+import com.bayutb123.tukerin.core.utils.PublishStatus
 import com.bayutb123.tukerin.core.utils.StringUtils
 import com.bayutb123.tukerin.ui.components.view.FullImageView
 import com.bayutb123.tukerin.ui.components.view.SellerCard
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,6 +79,7 @@ fun DetailScreen(
     }
     // create scrollstate
     val scrollState = rememberScrollState()
+    val scope = rememberCoroutineScope()
 
     val viewModel = hiltViewModel<DetailViewModel>()
     val post = viewModel.post.collectAsStateWithLifecycle()
@@ -84,7 +88,6 @@ fun DetailScreen(
 
     LaunchedEffect(key1 = postId) {
         viewModel.getPost(postId)
-
     }
     Scaffold(
         topBar = {
@@ -127,7 +130,14 @@ fun DetailScreen(
                     modifier = Modifier
                         .clickable {
                             phoneNumber = StringUtils.preparePhoneNumber("081770591289")
-                            startWhatsapp(context, phoneNumber)
+                            scope.launch {
+                                post.value?.let {
+                                    viewModel.updatePostPublishStatus(
+                                        it.id,
+                                        PublishStatus.TRANSACTION_PENDING
+                                    )
+                                }
+                            }.invokeOnCompletion { startWhatsapp(context, phoneNumber, post.value?.title ?: "", Currency.convertIntToRupiah(post.value?.price ?: 0)) }
                         }
                         .padding(16.dp)
                         .size(24.dp)
@@ -191,10 +201,26 @@ fun DetailScreen(
     }
 }
 
-fun startWhatsapp(context: Context, phoneNumber: String) {
-    val intent = Intent(Intent.ACTION_VIEW)
-    intent.data = Uri.parse("https://api.whatsapp.com/send?phone=$phoneNumber")
-    context.startActivity(intent)
+fun startWhatsapp(
+    context: Context,
+    phoneNumber: String,
+    title: String,
+    price: String
+) {
+    try {
+        // Make the title bold
+        val boldTitle = "*$title*"
+
+        // Construct the message
+        val formattedMessage = "Halo, saya tertarik dengan iklanmu\n$boldTitle\nHarga: $price"
+
+        val uri = Uri.parse("https://api.whatsapp.com/send?phone=$phoneNumber&text=$formattedMessage")
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = uri
+        context.startActivity(intent)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
 }
 
 @Composable
