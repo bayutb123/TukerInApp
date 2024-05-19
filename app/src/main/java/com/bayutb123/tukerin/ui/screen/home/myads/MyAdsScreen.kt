@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -55,6 +56,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bayutb123.tukerin.core.utils.DoubleUtils.toInteger
 import com.bayutb123.tukerin.domain.model.Post
+import com.bayutb123.tukerin.ui.components.input.FullWidthButton
+import com.bayutb123.tukerin.ui.components.view.CustomAlertDialog
 import com.bayutb123.tukerin.ui.components.view.ItemList
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 import kotlinx.coroutines.CoroutineScope
@@ -293,8 +296,8 @@ private fun ActiveTransactionScreen(
     var postId by remember {
         mutableIntStateOf(0)
     }
+    var isBottomSheetVisible by remember { mutableStateOf(false) }
     var isAlertVisible by remember { mutableStateOf(false) }
-    var isConfirmDelete by remember { mutableStateOf(false) }
     val sellerState by viewModel.sellerState.collectAsState()
     LazyColumn(
         contentPadding = PaddingValues(16.dp),
@@ -315,12 +318,23 @@ private fun ActiveTransactionScreen(
             )
         }
     }
+    CustomAlertDialog(isVisible = isAlertVisible, title = "Selesaikan transaksi?", message = "apakah anda yakin ingin menyelesaikan transaksi ini?", onDismiss = {
+        scope.launch {
+            isAlertVisible = false
+        }
+    }, onConfirm = {
+        scope.launch {
+            isAlertVisible = false
+            isBottomSheetVisible = false
+            viewModel.bottomSheet(BottomSheetState.HIDE)
+        }
+    })
     if (viewModel.bottomSheetState.collectAsState().value == BottomSheetState.SHOW) {
         ModalBottomSheet(
             onDismissRequest = {
                 scope.launch {
                     sheetState.hide()
-                    isAlertVisible = false
+                    isBottomSheetVisible = false
                 }.invokeOnCompletion { viewModel.bottomSheet(BottomSheetState.HIDE) }
             }, sheetState = sheetState
         ) {
@@ -331,8 +345,25 @@ private fun ActiveTransactionScreen(
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleMedium
             )
-            Column(modifier = Modifier.padding(vertical = 16.dp)) {
+
+            Column(modifier = Modifier.padding(16.dp)) {
                 SellerCard(sellerState)
+                ListItem(headlineContent = { Text(text = "Unlist") },
+                    supportingContent = { Text(text = "Sembunyikan iklan dari orang lain") },
+                    modifier = Modifier.clickable {
+                        Timber.d("Unlist $postId")
+                    })
+                ListItem(headlineContent = { Text(text = "Unlist") },
+                    supportingContent = { Text(text = "Sembunyikan iklan dari orang lain") },
+                    modifier = Modifier.clickable {
+                        Timber.d("Unlist $postId")
+                    })
+                Spacer(modifier = Modifier.height(8.dp))
+                FullWidthButton(text = "Selesaikan transaksi", onClick = {
+                    scope.launch {
+                        isAlertVisible = true
+                    }
+                })
             }
         }
     }
@@ -353,14 +384,14 @@ private fun SellerCard(sellerState: SellerState) {
         }
 
         is SellerState.Error -> {
-            Text(text = "Error: ${(sellerState as SellerState.Error).message}")
+            Text(text = "Error: ${sellerState.message}")
         }
 
         is SellerState.Seller -> {
-            val sellerData = (sellerState as SellerState.Seller)
+            val sellerData = sellerState
             Card(
                 modifier = Modifier
-                    .padding(16.dp)
+                    .padding(vertical = 16.dp)
                     .fillMaxWidth()
             ) {
                 Row(
