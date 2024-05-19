@@ -25,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -53,15 +54,22 @@ fun CustomTextField(
     isEnabled: Boolean = true,
     isHasDefault: Boolean = false,
     defaultText: String = "",
-    readOnly : Boolean = false,
-    readOnlyText: String? = null
+    readOnly: Boolean = false,
+    readOnlyText: String? = null,
+    onFocus: () -> Unit = {}
 ) {
     var text by remember {
         mutableStateOf(if (isHasDefault) defaultText else "")
     }
     Column {
         TextField(
-            modifier = modifier.fillMaxWidth(),
+            modifier = modifier
+                .fillMaxWidth()
+                .onFocusEvent {
+                    if (it.hasFocus || it.isFocused) {
+                        onFocus()
+                    }
+                },
             value = if (readOnly) readOnlyText ?: text else text,
             onValueChange = {
                 text = if (isCurrency) {

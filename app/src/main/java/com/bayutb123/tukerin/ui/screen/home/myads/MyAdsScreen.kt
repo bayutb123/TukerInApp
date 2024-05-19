@@ -34,6 +34,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -50,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,9 +59,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bayutb123.tukerin.core.utils.DoubleUtils.toInteger
 import com.bayutb123.tukerin.domain.model.Post
+import com.bayutb123.tukerin.ui.components.input.CustomTextField
 import com.bayutb123.tukerin.ui.components.input.FullWidthButton
 import com.bayutb123.tukerin.ui.components.input.RatingInput
-import com.bayutb123.tukerin.ui.components.view.CustomAlertDialog
+import com.bayutb123.tukerin.ui.components.view.ContentDialog
 import com.bayutb123.tukerin.ui.components.view.ItemList
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 import kotlinx.coroutines.CoroutineScope
@@ -115,7 +118,10 @@ fun MyAdsScreen(
                         }
 
                         is MyAdsState.Empty -> {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
                                 Text(text = (state as MyAdsState.Empty).msg)
                             }
                         }
@@ -148,7 +154,10 @@ fun MyAdsScreen(
                         }
 
                         is MyAdsState.Empty -> {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
                                 Text(text = (activePostState as MyAdsState.Empty).msg)
                             }
                         }
@@ -295,11 +304,15 @@ private fun ActiveTransactionScreen(
     scope: CoroutineScope,
     viewModel: MyAdsViewModel
 ) {
+    val focusManager = LocalFocusManager.current
     val sheetState = rememberModalBottomSheetState()
     var postId by remember {
         mutableIntStateOf(0)
     }
-    var rating by remember {
+    var review by rememberSaveable {
+        mutableStateOf("")
+    }
+    var rating by rememberSaveable {
         mutableIntStateOf(0)
     }
     var isAlertVisible by remember { mutableStateOf(false) }
@@ -323,17 +336,38 @@ private fun ActiveTransactionScreen(
             )
         }
     }
-    CustomAlertDialog(isVisible = isAlertVisible, title = "Selesaikan transaksi?", message = "apakah anda yakin ingin menyelesaikan transaksi ini?", onDismiss = {
-        scope.launch {
-            isAlertVisible = false
-        }
-    }, onConfirm = {
-        scope.launch {
-            isAlertVisible = false
-            sheetState.hide()
-            rating = 0
-        }.invokeOnCompletion { viewModel.bottomSheet(BottomSheetState.HIDE) }
-    })
+    if (isAlertVisible) {
+        ContentDialog(
+            title = { Text(text = "Selesaikan transaksi?") },
+            content = {
+                Text(text = "apakah anda yakin ingin menyelesaikan transaksi ini?")
+                CustomTextField(
+                    onTextChanged = { review = it },
+                    placeholder = "Rating",
+                    onFocus = {
+                        scope.launch { sheetState.partialExpand() }
+                    }
+                )
+            },
+            dismissButton = {
+                TextButton(onClick = { }) {
+                    Text(text = "Batal")
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { scope.launch { isAlertVisible = false }
+                    .invokeOnCompletion {
+                        viewModel.bottomSheet(BottomSheetState.HIDE)
+                    }}) {
+                    Text(text = "Selesai")
+                }
+            },
+            onDismiss = {
+                scope.launch {
+                    isAlertVisible = false
+                }.invokeOnCompletion { viewModel.bottomSheet(BottomSheetState.HIDE) }
+            })
+    }
     if (viewModel.bottomSheetState.collectAsState().value == BottomSheetState.SHOW) {
         ModalBottomSheet(
             onDismissRequest = {
@@ -355,18 +389,11 @@ private fun ActiveTransactionScreen(
 
             Column(modifier = Modifier.padding(16.dp)) {
                 SellerCard(sellerState)
-                ListItem(headlineContent = { Text(text = "Unlist") },
-                    supportingContent = { Text(text = "Sembunyikan iklan dari orang lain") },
-                    modifier = Modifier.clickable {
-                        Timber.d("Unlist $postId")
-                    })
-                ListItem(headlineContent = { Text(text = "Unlist") },
-                    supportingContent = { Text(text = "Sembunyikan iklan dari orang lain") },
-                    modifier = Modifier.clickable {
-                        Timber.d("Unlist $postId")
-                    })
                 Spacer(modifier = Modifier.height(8.dp))
-                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                Column(
+                    Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Text(text = "Rating")
                     RatingInput(modifier = Modifier.fillMaxWidth()) {
                         rating = it
