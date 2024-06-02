@@ -355,8 +355,10 @@ private fun ActiveTransactionScreen(
                 }
             },
             confirmButton = {
-                TextButton(onClick = { scope.launch { isAlertVisible = false }
-                    .invokeOnCompletion {
+                TextButton(onClick = { scope.launch {
+                    viewModel.postReview(postId, review, rating)
+                    isAlertVisible = false
+                }.invokeOnCompletion {
                         viewModel.bottomSheet(BottomSheetState.HIDE)
                     }}) {
                     Text(text = "Selesai")

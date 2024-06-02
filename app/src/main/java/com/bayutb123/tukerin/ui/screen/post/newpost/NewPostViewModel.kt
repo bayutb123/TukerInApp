@@ -6,8 +6,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bayutb123.tukerin.core.data.NetworkResult
+import com.bayutb123.tukerin.core.utils.ResponseCode
 import com.bayutb123.tukerin.data.source.remote.request.CreatePostRequest
-import com.bayutb123.tukerin.data.source.remote.response.ResponseCode
 import com.bayutb123.tukerin.domain.model.PostCategory
 import com.bayutb123.tukerin.domain.usecase.DataStoreUseCase
 import com.bayutb123.tukerin.domain.usecase.PostCategoryUseCase
@@ -65,7 +65,7 @@ class NewPostViewModel @Inject constructor(
                 }
 
                 else -> {
-                    _newPostState.value = NewPostState.Failed(ResponseCode.UNKNOWN)
+                    _newPostState.value = NewPostState.Failed(ResponseCode.NO_CONTENT)
                 }
             }
         }

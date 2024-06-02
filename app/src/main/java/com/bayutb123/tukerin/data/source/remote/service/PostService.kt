@@ -2,6 +2,7 @@ package com.bayutb123.tukerin.data.source.remote.service
 
 import com.bayutb123.tukerin.data.source.remote.response.detail.DetailPostResponse
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.CreatePostResponse
+import com.bayutb123.tukerin.data.source.remote.response.home.posts.CreateReviewResponse
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.DeletePostResponse
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.GetAllPostResponse
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.GetPostCategoriesResponse
@@ -89,4 +90,12 @@ interface PostService {
         @Field("publish_status_id") publishStatusId: Int
     ) : Response<UpdatePostResponse>
 
+    @POST("post/review")
+    @FormUrlEncoded
+    suspend fun postReview(
+        @Field("user_id") userId: Int,
+        @Field("post_id") postId: Int,
+        @Field("rating") rating: Int,
+        @Field("review") review: String
+    ) : Response<CreateReviewResponse>
 }

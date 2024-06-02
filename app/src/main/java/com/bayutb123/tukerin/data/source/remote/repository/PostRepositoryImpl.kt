@@ -5,9 +5,9 @@ import com.bayutb123.tukerin.core.data.NetworkResult
 import com.bayutb123.tukerin.core.utils.InputConverter.convertToInt
 import com.bayutb123.tukerin.core.utils.InputConverter.removeDoubleQuotes
 import com.bayutb123.tukerin.core.utils.MediaUtils
+import com.bayutb123.tukerin.core.utils.ResponseCode
 import com.bayutb123.tukerin.data.source.remote.request.CreatePostRequest
 import com.bayutb123.tukerin.data.source.remote.request.validate
-import com.bayutb123.tukerin.data.source.remote.response.ResponseCode
 import com.bayutb123.tukerin.data.source.remote.response.detail.toPost
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.toModel
 import com.bayutb123.tukerin.data.source.remote.response.home.posts.toPostList
@@ -203,6 +203,29 @@ class PostRepositoryImpl @Inject constructor(
                 if (response.isSuccessful) {
                     NetworkResult.Success(200)
                 } else {
+                    NetworkResult.Error(response.code())
+                }
+            } else {
+                NetworkResult.Error(401)
+            }
+        } catch (e: Exception) {
+            Timber.e(e.message)
+            NetworkResult.Error(e.hashCode())
+        }
+    }
+
+    override suspend fun postReview(postId: Int, review: String, rating: Int): NetworkResult<Int> {
+        return try {
+            val userId = dataStoreRepository.getUserId()
+            if (userId != null) {
+                val response = postService.postReview(userId, postId, rating, review)
+                if (response.isSuccessful) {
+                    NetworkResult.Success(200)
+                } else {
+                    if (response.code() == ResponseCode.CONFLICT) {
+                        Timber.d("response: ${ResponseCode.CONFLICT}")
+                        NetworkResult.Success(ResponseCode.CONFLICT)
+                    }
                     NetworkResult.Error(response.code())
                 }
             } else {

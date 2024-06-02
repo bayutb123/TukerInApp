@@ -3,6 +3,7 @@ package com.bayutb123.tukerin.ui.screen.home.myads
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bayutb123.tukerin.core.data.NetworkResult
+import com.bayutb123.tukerin.core.utils.PublishStatus
 import com.bayutb123.tukerin.domain.model.Post
 import com.bayutb123.tukerin.domain.model.UserRating
 import com.bayutb123.tukerin.domain.usecase.DataStoreUseCase
@@ -136,6 +137,52 @@ class MyAdsViewModel @Inject constructor(
 
                 else -> {
                     _sellerState.value = SellerState.Error("App Error")
+                }
+            }
+        }
+    }
+
+    fun postReview(postId: Int, review: String, rating: Int) {
+        viewModelScope.launch {
+            _bottomSheetState.value = BottomSheetState.LOADING
+            delay(500)
+            when (val result = postUseCase.postReview(postId, review, rating)) {
+                is NetworkResult.Success -> {
+                    finishTransaction(postId)
+                }
+
+                is NetworkResult.Error -> {
+                    _bottomSheetState.value = BottomSheetState.HIDE
+                    _state.value = MyAdsState.Error("Error: ${result.message}")
+                }
+
+                else -> {
+                    _bottomSheetState.value = BottomSheetState.HIDE
+                    _state.value = MyAdsState.Error("App Error")
+                }
+            }
+        }
+    }
+
+    private fun finishTransaction(postId: Int) {
+        viewModelScope.launch {
+            val status = PublishStatus.CLOSED
+            _bottomSheetState.value = BottomSheetState.LOADING
+            delay(500)
+            when (val result = postUseCase.updatePostPublishStatus(postId, status.ordinal)) {
+                is NetworkResult.Success -> {
+                    getMyAds(TabIndex.ACTIVE_ADS)
+                    _bottomSheetState.value = BottomSheetState.HIDE
+                }
+
+                is NetworkResult.Error -> {
+                    _bottomSheetState.value = BottomSheetState.HIDE
+                    _state.value = MyAdsState.Error("Error: ${result.message}")
+                }
+
+                else -> {
+                    _bottomSheetState.value = BottomSheetState.HIDE
+                    _state.value = MyAdsState.Error("App Error")
                 }
             }
         }

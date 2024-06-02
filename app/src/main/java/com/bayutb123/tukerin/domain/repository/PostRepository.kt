@@ -18,5 +18,6 @@ interface PostRepository {
     suspend fun deletePost(postId: Int) : NetworkResult<Int>
     suspend fun getActivePosts(userId: Int) : NetworkResult<List<Post>>
     suspend fun updatePostPublishStatus(postId: Int, statusId : Int) : NetworkResult<Int>
+    suspend fun postReview(postId: Int, review: String, rating: Int) : NetworkResult<Int>
 
 }

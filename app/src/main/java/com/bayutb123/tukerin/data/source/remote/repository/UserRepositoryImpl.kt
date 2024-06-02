@@ -1,7 +1,7 @@
 package com.bayutb123.tukerin.data.source.remote.repository
 
 import com.bayutb123.tukerin.core.data.NetworkResult
-import com.bayutb123.tukerin.data.source.remote.response.ResponseCode.NOT_FOUND
+import com.bayutb123.tukerin.core.utils.ResponseCode
 import com.bayutb123.tukerin.data.source.remote.response.user.toModel
 import com.bayutb123.tukerin.data.source.remote.service.UserService
 import com.bayutb123.tukerin.domain.model.User
@@ -22,7 +22,7 @@ class UserRepositoryImpl @Inject constructor(
                 if (response.body() != null) {
                     NetworkResult.Success(response.body()!!.toModel())
                 } else {
-                    NetworkResult.Error(NOT_FOUND)
+                    NetworkResult.Error(ResponseCode.NOT_FOUND)
                 }
             } else {
                 NetworkResult.Error(response.code())
@@ -40,7 +40,7 @@ class UserRepositoryImpl @Inject constructor(
                     NetworkResult.Success(response.body()!!.toModel())
                 } else {
                     Timber.d("UserRating is null")
-                    NetworkResult.Error(NOT_FOUND)
+                    NetworkResult.Error(ResponseCode.NOT_FOUND)
                 }
             } else {
                 Timber.d("{${response.code()}}")

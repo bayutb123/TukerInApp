@@ -24,4 +24,7 @@ class PostUseCase @Inject constructor(
     suspend fun updatePostPublishStatus(userId: Int, statusId: Int) : NetworkResult<Int> {
         return postRepository.updatePostPublishStatus(userId, statusId)
     }
+    suspend fun postReview(postId: Int, review: String, rating: Int) : NetworkResult<Int> {
+        return postRepository.postReview(postId, review, rating)
+    }
 }
