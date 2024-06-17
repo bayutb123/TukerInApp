@@ -58,6 +58,16 @@ fun ItemGrid(
     ) {
         Column {
             Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.BottomCenter) {
+
+                AsyncImage(
+                    model = BuildConfig.apiUrl + "/images/" + item.thumbnailImage,
+                    contentDescription = null,
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .height(154.dp),
+                    contentScale = ContentScale.Crop,
+                    filterQuality = FilterQuality.Medium
+                )
                 if (item.canTradeIn) {
                     Text(
                         text = "Tukar Tambah",
@@ -71,16 +81,6 @@ fun ItemGrid(
                         fontSize = MaterialTheme.typography.bodySmall.fontSize
                     )
                 }
-                AsyncImage(
-                    model = BuildConfig.apiUrl + "/images/" + item.thumbnailImage,
-                    contentDescription = null,
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .height(154.dp),
-                    contentScale = ContentScale.Crop,
-                    filterQuality = FilterQuality.Medium
-                )
-
             }
             Column(
                 modifier = modifier

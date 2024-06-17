@@ -197,8 +197,10 @@ fun DetailScreen(
                                     fontWeight = FontWeight.Bold
                                 )
                                 Spacer(modifier = Modifier.weight(1f))
-                                Text(text = "Bisa Tukar Tambah!", modifier = Modifier.background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(4.dp))
-                                    .padding(4.dp), color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.bodySmall)
+                                if (it.canTradeIn) {
+                                    Text(text = "Bisa Tukar Tambah!", modifier = Modifier.background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(4.dp))
+                                        .padding(4.dp), color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.bodySmall)
+                                }
                             }
                             Text(text = Date.formatStringDate(it.createdAt))
                             Spacer(modifier = Modifier.height(8.dp))

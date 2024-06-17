@@ -56,6 +56,7 @@ fun SellerCard(
                 )
                 Text(
                     text = sellerLocation,
+                    style = MaterialTheme.typography.bodySmall,
                     modifier = modifier.fillMaxWidth(),
                 )
             }
