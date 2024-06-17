@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -43,6 +44,7 @@ import com.bayutb123.tukerin.core.utils.Currency
 import com.bayutb123.tukerin.core.utils.Date
 import com.bayutb123.tukerin.domain.model.Post
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
+import com.bayutb123.tukerin.ui.utils.LocationUtils
 
 @Composable
 fun ItemGrid(
@@ -50,6 +52,7 @@ fun ItemGrid(
     onClick: (Int) -> Unit,
     item: Post
 ) {
+    val context = LocalContext.current
     Card(
         onClick = { onClick(0) }, shape = RoundedCornerShape(4.dp)
     ) {
@@ -111,7 +114,7 @@ fun ItemGrid(
                     )
                     Spacer(modifier = modifier.width(2.dp))
                     Text(
-                        text = item.address,
+                        text = LocationUtils.convertLatLongToCityName(context = context, item.latitude, item.longitude),
                         style = MaterialTheme.typography.bodySmall,
                         maxLines = 1
                     )
@@ -237,6 +240,8 @@ fun PreviewItemGrid() {
                         canTradeIn = true,
                         status = "active",
                         updatedAt = "2023-12-23T07:12:57.000000Z",
+                        latitude = 0.0,
+                        longitude = 0.0
                     )
                 )
             }
@@ -270,6 +275,8 @@ fun PreviewItemList() {
                         canTradeIn = true,
                         status = "active",
                         updatedAt = "2023-12-23T07:12:57.000000Z",
+                        latitude = 0.0,
+                        longitude = 0.0
                     ),
                     onLongClick = { }
                 )

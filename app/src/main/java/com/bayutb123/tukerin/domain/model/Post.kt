@@ -16,7 +16,9 @@ data class Post(
     val updatedAt: String,
     val images: List<String>? = null,
     val isSaved: Boolean = false,
-    val canTradeIn: Boolean = false
+    val canTradeIn: Boolean = false,
+    val latitude: Double,
+    val longitude: Double,
 )
 
 

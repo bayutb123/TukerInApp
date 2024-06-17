@@ -20,7 +20,7 @@ data class DetailPost(
 	val images: List<String>,
 
 	@field:SerializedName("latitude")
-	val latitude: String,
+	val latitude: Double,
 
 	@field:SerializedName("created_at")
 	val createdAt: String,
@@ -65,5 +65,8 @@ data class DetailPost(
 	val isPublished: Int,
 
 	@field:SerializedName("longitude")
-	val longitude: String
+	val longitude: Double,
+
+	@field:SerializedName("can_trade_in")
+	val canTradeIn: Int
 )

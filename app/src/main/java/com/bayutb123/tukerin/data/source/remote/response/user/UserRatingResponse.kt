@@ -5,6 +5,6 @@ data class UserRatingResponse(
     val count: Int,
     val message: String,
     val points: Int,
-    val rating: Int
+    val rating: Double
 )
 

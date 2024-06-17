@@ -7,4 +7,5 @@ class UserUseCase @Inject constructor(
     private val userRepository: UserRepository
 ) {
     suspend fun getUserProfile(id: Int) = userRepository.getUserProfile(id)
+    suspend fun getUserRating(id: Int) = userRepository.getUserRating(id)
 }

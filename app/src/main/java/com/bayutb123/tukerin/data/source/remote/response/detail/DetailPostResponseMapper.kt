@@ -18,5 +18,8 @@ fun DetailPostResponse.toPost() : Post {
         status = this.post.status,
         isPublished = this.post.isPublished == 1,
         premium = this.post.isPremium == 1,
+        canTradeIn = this.post.canTradeIn == 1,
+        latitude = this.post.latitude,
+        longitude = this.post.longitude
     )
 }

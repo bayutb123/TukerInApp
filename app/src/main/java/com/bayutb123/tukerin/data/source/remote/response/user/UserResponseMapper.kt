@@ -8,7 +8,7 @@ fun UserProfileResponse.toModel() : User {
         email = this.user.email,
         token = this.user.apiToken,
         isPremium = this.user.isPremiumUser == "1",
-        rating = this.user.rating,
+        rating = this.user.rating.toDouble(),
         trxPoints = this.user.trxPoints
     )
 }

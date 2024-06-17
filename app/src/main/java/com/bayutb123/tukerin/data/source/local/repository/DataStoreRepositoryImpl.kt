@@ -3,6 +3,7 @@ package com.bayutb123.tukerin.data.source.local.repository
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -51,7 +52,7 @@ class DataStoreRepositoryImpl @Inject constructor(
                 name = name,
                 email = preferences[EMAIL] ?: "",
                 trxPoints = preferences[TRX_POINT] ?: 0,
-                rating = preferences[RATING] ?: 0,
+                rating = preferences[RATING] ?: 0.0,
                 isPremium = preferences[IS_PREMIUM] ?: false
             )
         }
@@ -63,7 +64,7 @@ class DataStoreRepositoryImpl @Inject constructor(
         val NAME = stringPreferencesKey("name")
         val EMAIL = stringPreferencesKey("email")
         val TRX_POINT = intPreferencesKey("trxpoint")
-        val RATING = intPreferencesKey("rating")
+        val RATING = doublePreferencesKey("rating")
         val IS_PREMIUM = booleanPreferencesKey("is_premium")
     }
 }

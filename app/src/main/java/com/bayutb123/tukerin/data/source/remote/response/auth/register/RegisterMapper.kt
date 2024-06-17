@@ -10,7 +10,7 @@ fun RegisterResponse.toDomain(): User {
             email = user.email,
             token = user.apiToken,
             isPremium = user.isPremiumUser == "1",
-            rating = user.rating,
+            rating = user.rating.toDouble(),
             trxPoints = user.trxPoints
         )
     }

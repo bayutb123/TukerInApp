@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,6 +46,7 @@ fun ProfileScreen(
     modifier: Modifier = Modifier,
     onLogout: () -> Unit,
 ) {
+    val context = LocalContext.current
     val viewModel: ProfileViewModel = hiltViewModel()
     viewModel.updateUserData()
     val state = viewModel.userState.collectAsStateWithLifecycle()
@@ -83,7 +85,7 @@ fun ProfileScreen(
                         ProfileContent(
                             userName = state.value.user?.name ?: "",
                             transactionPoint = state.value.user?.trxPoints ?: 0,
-                            rating = state.value.user?.rating ?: 0,
+                            rating = state.value.user?.rating ?: 0.0,
                             isLoading = isLoading
                         )
                         Box(
@@ -98,11 +100,23 @@ fun ProfileScreen(
                             Column {
                                 ListItem(
                                     headlineContent = { Text(text = "Edit profile") },
-                                    supportingContent = { Text(text = "Edit your profile") })
+                                    supportingContent = { Text(text = "Edit your profile") },
+                                    modifier = Modifier.clickable {
+                                        viewModel.showToast(
+                                            context,
+                                            "This feature is not available yet"
+                                        )
+                                    })
                                 HorizontalDivider()
                                 ListItem(
                                     headlineContent = { Text(text = "Settings") },
-                                    supportingContent = { Text(text = "TukerIn app settings") })
+                                    supportingContent = { Text(text = "TukerIn app settings")},
+                                    modifier = Modifier.clickable {
+                                        viewModel.showToast(
+                                            context,
+                                            "This feature is not available yet"
+                                        )
+                                    })
                                 HorizontalDivider()
                                 ListItem(
                                     headlineContent = { Text(text = "Logout") },
@@ -121,7 +135,7 @@ fun ProfileScreen(
                         ProfileContent(
                             userName = state.value.user?.name ?: "",
                             transactionPoint = state.value.user?.trxPoints ?: 0,
-                            rating = state.value.user?.rating ?: 0,
+                            rating = state.value.user?.rating ?: 0.0,
                             isLoading = isLoading
                         )
                         Box(
@@ -166,7 +180,7 @@ fun ProfileScreen(
 fun ProfileContent(
     userName: String,
     transactionPoint: Int,
-    rating: Int,
+    rating: Double,
     isLoading: Boolean,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary
 ) {
@@ -210,14 +224,16 @@ fun ProfileContent(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "Rating", color = contentColor, style = MaterialTheme.typography.bodyMedium)
-            Row() {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 // Rating stars
                 repeat(5) {
                     if (it < rating) {
                         Icon(
                             imageVector = Icons.Default.Star,
                             contentDescription = null,
-                            tint = contentColor
+                            tint = Color.Yellow
                         )
                     } else {
                         Icon(

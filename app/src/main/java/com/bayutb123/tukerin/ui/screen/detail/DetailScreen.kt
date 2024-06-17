@@ -42,6 +42,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -63,6 +64,7 @@ import com.bayutb123.tukerin.core.utils.StringUtils
 import com.bayutb123.tukerin.ui.components.view.FullImageView
 import com.bayutb123.tukerin.ui.components.view.SellerCard
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
+import com.bayutb123.tukerin.ui.utils.LocationUtils
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -130,14 +132,23 @@ fun DetailScreen(
                     modifier = Modifier
                         .clickable {
                             phoneNumber = StringUtils.preparePhoneNumber("081770591289")
-                            scope.launch {
-                                post.value?.let {
-                                    viewModel.updatePostPublishStatus(
-                                        it.id,
-                                        PublishStatus.TRANSACTION_PENDING
+                            scope
+                                .launch {
+                                    post.value?.let {
+                                        viewModel.updatePostPublishStatus(
+                                            it.id,
+                                            PublishStatus.TRANSACTION_PENDING
+                                        )
+                                    }
+                                }
+                                .invokeOnCompletion {
+                                    startWhatsapp(
+                                        context,
+                                        phoneNumber,
+                                        post.value?.title ?: "",
+                                        Currency.convertIntToRupiah(post.value?.price ?: 0)
                                     )
                                 }
-                            }.invokeOnCompletion { startWhatsapp(context, phoneNumber, post.value?.title ?: "", Currency.convertIntToRupiah(post.value?.price ?: 0)) }
                         }
                         .padding(16.dp)
                         .size(24.dp)
@@ -179,16 +190,25 @@ fun DetailScreen(
                         ) {
                             Text(text = it.title)
                             // price
-                            Text(
-                                text = Currency.convertIntToRupiah(it.price),
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold
-                            )
+                            Row(verticalAlignment = CenterVertically) {
+                                Text(
+                                    text = Currency.convertIntToRupiah(it.price),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Spacer(modifier = Modifier.weight(1f))
+                                Text(text = "Bisa Tukar Tambah!", modifier = Modifier.background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(4.dp))
+                                    .padding(4.dp), color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.bodySmall)
+                            }
                             Text(text = Date.formatStringDate(it.createdAt))
                             Spacer(modifier = Modifier.height(8.dp))
                             SellerCard(
                                 sellerName = it.ownerName,
-                                sellerLocation = it.address,
+                                sellerLocation = LocationUtils.convertLatLongToAddress(
+                                    context,
+                                    it.latitude,
+                                    it.longitude
+                                ),
                                 sellerImage = "https://cdn-icons-png.flaticon.com/512/2919/2919906.png"
                             )
                             Spacer(modifier = Modifier.height(8.dp))

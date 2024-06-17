@@ -19,7 +19,9 @@ fun GetAllPostResponse.toPostList() : List<Post> {
             status = post.status,
             isPublished = post.is_published == 1,
             premium = post.is_premium == 1,
-            canTradeIn = post.can_trade_in == 1
+            canTradeIn = post.can_trade_in == 1,
+            latitude = post.latitude,
+            longitude = post.longitude
         )
     }
 }
