@@ -46,6 +46,7 @@ class NewPostViewModel @Inject constructor(
         viewModelScope.launch {
             _newPostState.value = NewPostState.Loading
             val userId = dataStoreUseCase.getUserId()
+            Log.d("NewPostViewModel", "createPost: $lat $long")
             val requestBody = userId?.let {
                 CreatePostRequest(
                     it, title, description, uris, lat, long, price, type, canTrade

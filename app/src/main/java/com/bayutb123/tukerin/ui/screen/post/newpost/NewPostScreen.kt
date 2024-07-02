@@ -97,10 +97,10 @@ fun NewPostScreen(
     var selectedSubCategory by remember {
         mutableStateOf("")
     }
-    var lat: Double by rememberSaveable {
+    var lat: Double by remember {
         mutableDoubleStateOf(0.0)
     }
-    var long: Double by rememberSaveable {
+    var long: Double by remember {
         mutableDoubleStateOf(0.0)
     }
     var isLoading by remember {
@@ -111,12 +111,15 @@ fun NewPostScreen(
     }
     var isSuccess by remember { mutableStateOf(false) }
     var isFailed by remember { mutableStateOf(false) }
-    SystemUtils.getUserLocation(context) { latResult, longResult ->
-        isLoading = true
-        lat = latResult
-        long = longResult
-        isLoading = false
-    }
+    SystemUtils.getUserLongLatAlt(
+        context,
+        onLongLatAltObtained = { latResult, longResult, _ ->
+            isLoading = true
+            lat = latResult
+            long = longResult
+            isLoading = false
+        },
+        onFailure = {})
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = {
@@ -352,11 +355,17 @@ fun NewPostScreen(
                     }
                 }
 
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(text = "Bisa tukar tambah?")
                         AnimatedVisibility(visible = canTrade) {
-                            Text(text = "Mantap! Barang yang dipost kini bisa ditukar tambah", fontSize = MaterialTheme.typography.bodySmall.fontSize)
+                            Text(
+                                text = "Mantap! Barang yang dipost kini bisa ditukar tambah",
+                                fontSize = MaterialTheme.typography.bodySmall.fontSize
+                            )
                         }
                     }
                     Switch(checked = canTrade, onCheckedChange = { canTrade = it })
