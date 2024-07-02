@@ -3,6 +3,9 @@ package com.bayutb123.tukerin.ui.screen.post.newpost
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.bayutb123.tukerin.core.data.NetworkResult
@@ -25,6 +28,14 @@ class NewPostViewModel @Inject constructor(
     private val postCategoryUseCase: PostCategoryUseCase,
     private val dataStoreUseCase: DataStoreUseCase
 ) : ViewModel() {
+    var isLoading by mutableStateOf(false)
+        private set
+
+    var lat by mutableStateOf(0.0)
+        private set
+
+    var long by mutableStateOf(0.0)
+        private set
 
     private val _newPostState: MutableStateFlow<NewPostState> = MutableStateFlow(NewPostState.Idle)
     private val _postCategories: MutableStateFlow<List<PostCategory>> = MutableStateFlow(emptyList())
@@ -36,14 +47,13 @@ class NewPostViewModel @Inject constructor(
         title: String,
         description: String,
         uris: List<Uri>,
-        lat: Double,
-        long: Double,
         price: Long,
         type: String,
         canTrade: Boolean,
         context: Context
     ) {
         viewModelScope.launch {
+            isLoading = true
             _newPostState.value = NewPostState.Loading
             val userId = dataStoreUseCase.getUserId()
             Log.d("NewPostViewModel", "createPost: $lat $long")
@@ -69,6 +79,7 @@ class NewPostViewModel @Inject constructor(
                     _newPostState.value = NewPostState.Failed(ResponseCode.NO_CONTENT)
                 }
             }
+            isLoading = false
         }
     }
 
@@ -114,6 +125,11 @@ class NewPostViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun updateLocation(latResult: Double, longResult: Double) {
+        lat = latResult
+        long = longResult
     }
 
 }

@@ -97,29 +97,23 @@ fun NewPostScreen(
     var selectedSubCategory by remember {
         mutableStateOf("")
     }
-    var lat: Double by remember {
-        mutableDoubleStateOf(0.0)
-    }
-    var long: Double by remember {
-        mutableDoubleStateOf(0.0)
-    }
-    var isLoading by remember {
-        mutableStateOf(false)
-    }
     var canTrade: Boolean by rememberSaveable {
         mutableStateOf(false)
     }
     var isSuccess by remember { mutableStateOf(false) }
     var isFailed by remember { mutableStateOf(false) }
-    SystemUtils.getUserLongLatAlt(
-        context,
-        onLongLatAltObtained = { latResult, longResult, _ ->
-            isLoading = true
-            lat = latResult
-            long = longResult
-            isLoading = false
-        },
-        onFailure = {})
+    LaunchedEffect(key1 = Unit) {
+        SystemUtils.getUserLongLatAlt(
+            context,
+            onLongLatAltObtained = { latResult, longResult, _ ->
+                Timber.d("lat: $latResult, long: $longResult")
+                newPostViewModel.updateLocation(latResult, longResult)
+            },
+            onFailure = {
+                Timber.e(it)
+            }
+        )
+    }
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = {
@@ -145,9 +139,6 @@ fun NewPostScreen(
         state,
         onPostSuccess = {
             isSuccess = true
-        },
-        onLoading = {
-            isLoading = it
         },
         onError = {
             isFailed = true
@@ -178,8 +169,6 @@ fun NewPostScreen(
                             title,
                             description,
                             imageUris,
-                            lat,
-                            long,
                             price,
                             categoryResult,
                             canTrade,
@@ -229,7 +218,7 @@ fun NewPostScreen(
                                     shape = RoundedCornerShape(4.dp)
                                 )
                                 .clickable {
-                                    if (!isLoading) {
+                                    if (!newPostViewModel.isLoading) {
                                         launcher.launch("image/*")
                                     }
                                 },
@@ -267,7 +256,7 @@ fun NewPostScreen(
                     onTextChanged = {
                         title = it
                     },
-                    isEnabled = !isLoading,
+                    isEnabled = !newPostViewModel.isLoading,
                     placeholder = "Title"
                 )
 
@@ -275,7 +264,7 @@ fun NewPostScreen(
                     onTextChanged = {
                         description = it
                     },
-                    isEnabled = !isLoading,
+                    isEnabled = !newPostViewModel.isLoading,
                     placeholder = "Description",
                     minLines = 3,
                     maxLines = 10,
@@ -291,7 +280,7 @@ fun NewPostScreen(
                         }
                     },
                     isCurrency = true,
-                    isEnabled = !isLoading,
+                    isEnabled = !newPostViewModel.isLoading,
                     placeholder = "Price",
                     keyboardType = KeyboardType.Number
                 )
@@ -334,23 +323,23 @@ fun NewPostScreen(
                     Column(modifier = Modifier.weight(0.5f)) {
                         CustomTextField(
                             onTextChanged = {
-                                lat = it.toDouble()
+                                // replace all except 0 - 9
                             },
                             placeholder = "lat",
                             isEnabled = false,
                             isHasDefault = true,
-                            defaultText = lat.toString()
+                            defaultText = newPostViewModel.lat.toString()
                         )
                     }
                     Column(modifier = Modifier.weight(0.5f)) {
                         CustomTextField(
                             onTextChanged = {
-                                long = it.toDouble()
+                                // replace all except 0 - 9
                             },
                             placeholder = "long",
                             isEnabled = false,
                             isHasDefault = true,
-                            defaultText = long.toString()
+                            defaultText = newPostViewModel.long.toString()
                         )
                     }
                 }
@@ -371,7 +360,7 @@ fun NewPostScreen(
                     Switch(checked = canTrade, onCheckedChange = { canTrade = it })
                 }
             }
-            AnimatedVisibility(visible = isLoading, enter = fadeIn(), exit = fadeOut()) {
+            AnimatedVisibility(visible = newPostViewModel.isLoading, enter = fadeIn(), exit = fadeOut()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -387,26 +376,21 @@ fun NewPostScreen(
 fun ObserveState(
     newPostState: NewPostState,
     onPostSuccess: () -> Unit,
-    onLoading: (Boolean) -> Unit,
     onError: () -> Unit = {}
 ) {
     when (newPostState) {
         is NewPostState.Success -> {
             onPostSuccess()
-            onLoading(false)
         }
 
         is NewPostState.Loading -> {
-            onLoading(true)
         }
 
         is NewPostState.Failed -> {
             onError()
-            onLoading(false)
         }
 
         else -> {
-            onLoading(false)
         }
     }
 }
