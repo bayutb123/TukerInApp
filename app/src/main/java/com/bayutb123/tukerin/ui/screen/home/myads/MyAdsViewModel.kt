@@ -72,6 +72,7 @@ class MyAdsViewModel @Inject constructor(
                             if (result.data != null) {
                                 val data = result.data as List<Post>
                                 if (data.isNotEmpty()) {
+                                    data.filter { it.status == PublishStatus.TRANSACTION_PENDING.name }
                                     _activePostState.value = MyAdsState.Success(data)
                                 } else {
                                     _activePostState.value =

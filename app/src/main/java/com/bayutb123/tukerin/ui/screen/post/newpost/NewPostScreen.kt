@@ -62,6 +62,7 @@ import com.bayutb123.tukerin.ui.components.input.CustomDropDown
 import com.bayutb123.tukerin.ui.components.input.CustomTextField
 import com.bayutb123.tukerin.ui.components.view.CustomAlertDialog
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
@@ -100,19 +101,34 @@ fun NewPostScreen(
     var canTrade: Boolean by rememberSaveable {
         mutableStateOf(false)
     }
+    var kecamatan by remember {
+        mutableStateOf("")
+    }
+    var kota by remember {
+        mutableStateOf("")
+    }
     var isSuccess by remember { mutableStateOf(false) }
     var isFailed by remember { mutableStateOf(false) }
     LaunchedEffect(key1 = Unit) {
-        SystemUtils.getUserLongLatAlt(
-            context,
-            onLongLatAltObtained = { latResult, longResult, _ ->
-                Timber.d("lat: $latResult, long: $longResult")
-                newPostViewModel.updateLocation(latResult, longResult)
-            },
-            onFailure = {
-                Timber.e(it)
-            }
-        )
+        launch {
+            SystemUtils.getUserLongLatAlt(
+                context,
+                onLongLatAltObtained = { latResult, longResult, _ ->
+                    Timber.d("lat: $latResult, long: $longResult")
+                    newPostViewModel.updateLocation(latResult, longResult)
+                },
+                onFailure = {
+                    Timber.e(it)
+                }
+            )
+        }
+
+        launch {
+            SystemUtils.getUserLocation(context, onCityObtained = { city, kec ->
+                kecamatan = kec
+                kota = city
+            }, onFailure = {})
+        }
     }
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
@@ -319,30 +335,6 @@ fun NewPostScreen(
                     }
                 }
 
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Column(modifier = Modifier.weight(0.5f)) {
-                        CustomTextField(
-                            onTextChanged = {
-                                // replace all except 0 - 9
-                            },
-                            placeholder = "lat",
-                            isEnabled = false,
-                            isHasDefault = true,
-                            defaultText = newPostViewModel.lat.toString()
-                        )
-                    }
-                    Column(modifier = Modifier.weight(0.5f)) {
-                        CustomTextField(
-                            onTextChanged = {
-                                // replace all except 0 - 9
-                            },
-                            placeholder = "long",
-                            isEnabled = false,
-                            isHasDefault = true,
-                            defaultText = newPostViewModel.long.toString()
-                        )
-                    }
-                }
 
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -359,8 +351,18 @@ fun NewPostScreen(
                     }
                     Switch(checked = canTrade, onCheckedChange = { canTrade = it })
                 }
+
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Column(modifier = Modifier.weight(0.5f)) {
+                        Text(text = "Lokasi saat ini: $kecamatan, $kota")
+                    }
+                }
             }
-            AnimatedVisibility(visible = newPostViewModel.isLoading, enter = fadeIn(), exit = fadeOut()) {
+            AnimatedVisibility(
+                visible = newPostViewModel.isLoading,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
