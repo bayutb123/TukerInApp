@@ -27,10 +27,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="com.bayutb123.tukerin" />
-                  <option name="mobileSdkAppId" value="1:385494040465:android:9a4bf6e091d7ff0d91a430" />
-                  <option name="projectId" value="tukerin-e4791" />
-                  <option name="projectNumber" value="385494040465" />
+                  <option name="appId" value="PLACEHOLDER" />
+                  <option name="mobileSdkAppId" value="" />
+                  <option name="projectId" value="" />
+                  <option name="projectNumber" value="" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
