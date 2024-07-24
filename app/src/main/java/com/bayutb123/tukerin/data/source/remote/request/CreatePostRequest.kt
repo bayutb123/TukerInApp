@@ -11,7 +11,8 @@ data class CreatePostRequest(
     val long: Double,
     val price: Long,
     val type: String,
-    val canTrade: Boolean
+    val canTrade: Boolean,
+    val phone: String,
 )
 
 fun CreatePostRequest.validate() : Boolean {

@@ -9,6 +9,7 @@ fun LoginResponse.toDomain(): User? {
             name = user.name,
             email = user.email,
             token = user.apiToken,
+            phone = user.phone,
             isPremium = user.isPremiumUser == "1",
             rating = user.rating.toDouble(),
             trxPoints = user.trxPoints

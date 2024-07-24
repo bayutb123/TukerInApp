@@ -7,24 +7,24 @@ import javax.inject.Inject
 class DataStoreUseCase @Inject constructor(
     private val dataStoreRepository: DataStoreRepository
 ) {
-        suspend fun saveUser(user: User) {
-            dataStoreRepository.saveUser(user)
-        }
+    suspend fun saveUser(user: User) {
+        dataStoreRepository.saveUser(user)
+    }
 
-        suspend fun clearUser() {
-            dataStoreRepository.clearUser()
-        }
+    suspend fun clearUser() {
+        dataStoreRepository.clearUser()
+    }
 
-        suspend fun getToken(): String? {
-            return dataStoreRepository.getToken()
-        }
+    suspend fun getToken(): String? {
+        return dataStoreRepository.getToken()
+    }
 
-        suspend fun getUserId(): Int? {
-            return dataStoreRepository.getUserId()
-        }
+    suspend fun getUserId(): Int? {
+        return dataStoreRepository.getUserId()
+    }
 
-        suspend fun getUser(): User? {
-            return dataStoreRepository.getUser()
-        }
+    suspend fun getUser(): User? {
+        return dataStoreRepository.getUser()
+    }
 
 }

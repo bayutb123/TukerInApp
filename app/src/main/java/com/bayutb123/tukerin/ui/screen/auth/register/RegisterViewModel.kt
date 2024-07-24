@@ -24,12 +24,13 @@ class RegisterViewModel @Inject constructor(
         name: String,
         email: String,
         password: String,
-        confirmPassword: String
+        confirmPassword: String,
+        phone: String
     ) {
         _state.value = RegisterState.Loading
         if (password == confirmPassword) {
             viewModelScope.launch {
-                when (val result  = authUseCase.register(name, email, password)) {
+                when (val result  = authUseCase.register(name, email, password, phone)) {
                     is NetworkResult.Success -> {
                         result.data?.let {
                             _state.value = RegisterState.Success(

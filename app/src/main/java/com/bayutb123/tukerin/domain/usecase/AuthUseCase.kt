@@ -12,7 +12,7 @@ class AuthUseCase @Inject constructor(
         return authRepository.login(email, password)
     }
 
-    suspend fun register(name: String, email: String, password: String) : NetworkResult<User> {
-        return authRepository.register(name, email, password)
+    suspend fun register(name: String, email: String, password: String, phone: String) : NetworkResult<User> {
+        return authRepository.register(name, email, password, phone)
     }
 }

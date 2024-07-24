@@ -31,6 +31,9 @@ data class LoginUser(
 	@field:SerializedName("rating")
 	val rating: Int,
 
+	@field:SerializedName("phone")
+	val phone: String,
+
 	@field:SerializedName("created_at")
 	val createdAt: String,
 

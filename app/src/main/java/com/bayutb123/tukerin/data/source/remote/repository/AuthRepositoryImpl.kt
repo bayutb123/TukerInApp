@@ -6,6 +6,7 @@ import com.bayutb123.tukerin.data.source.remote.response.auth.register.toDomain
 import com.bayutb123.tukerin.data.source.remote.service.AuthService
 import com.bayutb123.tukerin.domain.model.User
 import com.bayutb123.tukerin.domain.repository.AuthRepository
+import com.bayutb123.tukerin.ui.utils.toPhoneNumber
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
@@ -32,9 +33,9 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun register(name: String, email: String, password: String): NetworkResult<User> {
+    override suspend fun register(name: String, email: String, password: String, phone: String): NetworkResult<User> {
         return try {
-            val result = authService.register(name, email, password)
+            val result = authService.register(name, email, password, phone.toPhoneNumber())
             if (result.isSuccessful) {
                 when (result.code()) {
                     201 -> {

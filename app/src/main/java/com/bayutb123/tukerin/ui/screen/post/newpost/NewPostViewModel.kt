@@ -2,7 +2,6 @@ package com.bayutb123.tukerin.ui.screen.post.newpost
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -55,11 +54,10 @@ class NewPostViewModel @Inject constructor(
         viewModelScope.launch {
             isLoading = true
             _newPostState.value = NewPostState.Loading
-            val userId = dataStoreUseCase.getUserId()
-            Log.d("NewPostViewModel", "createPost: $lat $long")
+            val userId = dataStoreUseCase.getUser()
             val requestBody = userId?.let {
                 CreatePostRequest(
-                    it, title, description, uris, lat, long, price, type, canTrade
+                    it.id, title, description, uris, lat, long, price, type, canTrade, it.phone
                 )
             }
             when (val request = requestBody?.let { postUseCase.createPost(it, context) }) {
@@ -92,7 +90,6 @@ class NewPostViewModel @Inject constructor(
                         for (item in result.data!!) {
                             if (item.id == 1 || item.parentId != 0) {
                                 resultList.remove(item)
-                                Log.d("NewPostViewModel", "getPostCategories: removed ${item.name}")
                             }
                         }
                         _postCategories.value = resultList

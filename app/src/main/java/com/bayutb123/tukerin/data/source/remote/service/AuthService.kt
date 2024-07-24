@@ -20,7 +20,8 @@ interface AuthService {
     suspend fun register(
         @Field("name") name: String,
         @Field("email") email: String,
-        @Field("password") password: String
+        @Field("password") password: String,
+        @Field("phone") phone: String,
     ) : Response<RegisterResponse>
 
 }

@@ -13,6 +13,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -50,6 +51,7 @@ fun RegisterScreen(
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var confirmPassword by rememberSaveable { mutableStateOf("") }
+    var phone by rememberSaveable { mutableStateOf("") }
     var errorMsg by rememberSaveable { mutableStateOf("") }
 
     if (state.value is RegisterState.Success) {
@@ -139,9 +141,25 @@ fun RegisterScreen(
                 isHidden = true
             )
             Spacer(modifier = Modifier.height(16.dp))
+            CustomTextField(
+                onTextChanged = { phone = it },
+                placeholder = "Phone Number",
+                isError = phone.length < 10,
+                errorMsg = "Phone number must be at least 10 characters",
+                keyboardType = KeyboardType.Phone,
+                contentColor = MaterialTheme.colorScheme.onSurface,
+                containerColor = MaterialTheme.colorScheme.surface,
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Phone,
+                        contentDescription = "Phone Number"
+                    )
+                }
+            )
+            Spacer(modifier = Modifier.height(16.dp))
             Column {
                 FullWidthButton(onClick = {
-                    viewModel.register(name, email, password, confirmPassword)
+                    viewModel.register(name, email, password, confirmPassword, phone)
                 }, text = "Register")
                 Row(
                     modifier = modifier

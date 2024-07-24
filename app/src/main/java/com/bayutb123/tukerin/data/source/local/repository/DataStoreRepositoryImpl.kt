@@ -21,6 +21,7 @@ class DataStoreRepositoryImpl @Inject constructor(
             preferences[ID] = user.id
             preferences[NAME] = user.name
             preferences[EMAIL] = user.email
+            preferences[PHONE] = user.phone
             preferences[TRX_POINT] = user.trxPoints
             preferences[RATING] = user.rating
             preferences[IS_PREMIUM] = user.isPremium
@@ -51,6 +52,7 @@ class DataStoreRepositoryImpl @Inject constructor(
                 id = preferences[ID] ?: 0,
                 name = name,
                 email = preferences[EMAIL] ?: "",
+                phone = preferences[PHONE] ?: "",
                 trxPoints = preferences[TRX_POINT] ?: 0,
                 rating = preferences[RATING] ?: 0.0,
                 isPremium = preferences[IS_PREMIUM] ?: false
@@ -63,6 +65,7 @@ class DataStoreRepositoryImpl @Inject constructor(
         val ID = intPreferencesKey("id")
         val NAME = stringPreferencesKey("name")
         val EMAIL = stringPreferencesKey("email")
+        val PHONE = stringPreferencesKey("phone")
         val TRX_POINT = intPreferencesKey("trxpoint")
         val RATING = doublePreferencesKey("rating")
         val IS_PREMIUM = booleanPreferencesKey("is_premium")
