@@ -77,7 +77,7 @@ fun DetailScreen(
 ) {
     val context = LocalContext.current
     var phoneNumber by remember {
-        mutableStateOf("")
+        mutableStateOf(null as String?)
     }
     // create scrollstate
     val scrollState = rememberScrollState()
@@ -131,7 +131,7 @@ fun DetailScreen(
                     contentDescription = "Chat",
                     modifier = Modifier
                         .clickable {
-                            phoneNumber = StringUtils.preparePhoneNumber("081770591289")
+                            phoneNumber = StringUtils.preparePhoneNumber(post.value?.ownerPhone)
                             scope
                                 .launch {
                                     post.value?.let {
@@ -225,7 +225,7 @@ fun DetailScreen(
 
 fun startWhatsapp(
     context: Context,
-    phoneNumber: String,
+    phoneNumber: String?,
     title: String,
     price: String
 ) {
@@ -239,7 +239,9 @@ fun startWhatsapp(
         val uri = Uri.parse("https://api.whatsapp.com/send?phone=$phoneNumber&text=$formattedMessage")
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = uri
-        context.startActivity(intent)
+        phoneNumber.let {
+            context.startActivity(intent)
+        }
     } catch (e: Exception) {
         e.printStackTrace()
     }

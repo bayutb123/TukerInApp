@@ -9,6 +9,7 @@ data class Post(
     val thumbnailImage : String?,
     val ownerId: Int,
     val ownerName: String,
+    val ownerPhone: String? = null,
     val status: String,
     val isPublished: Boolean,
     val premium: Boolean,

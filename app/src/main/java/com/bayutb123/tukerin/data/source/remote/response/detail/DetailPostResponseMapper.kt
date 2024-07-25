@@ -20,6 +20,7 @@ fun DetailPostResponse.toPost() : Post {
         premium = this.post.isPremium == 1,
         canTradeIn = this.post.canTradeIn == 1,
         latitude = this.post.latitude,
-        longitude = this.post.longitude
+        longitude = this.post.longitude,
+        ownerPhone = this.post.authorPhone
     )
 }

@@ -52,6 +52,9 @@ data class DetailPost(
 	@field:SerializedName("author_email")
 	val authorEmail: String,
 
+	@field:SerializedName("author_phone")
+	val authorPhone: String,
+
 	@field:SerializedName("id")
 	val id: Int,
 
