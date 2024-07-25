@@ -19,8 +19,8 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
-        buildConfigField("String", "apiUrl", apiUrl)
-        buildConfigField("String", "pathUrl", pathUrl)
+        buildConfigField("String", "apiUrl", "\"$apiUrl\"")
+        buildConfigField("String", "pathUrl", "\"$pathUrl\"")
     }
 
     buildTypes {

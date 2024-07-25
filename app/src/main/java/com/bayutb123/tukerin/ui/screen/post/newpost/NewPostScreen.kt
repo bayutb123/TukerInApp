@@ -144,7 +144,7 @@ fun NewPostScreen(
         rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestMultiplePermissions()) { map ->
             val isGranted = map.values.all { it }
             if (!isGranted) {
-                onBackRequested()
+//                onBackRequested()
             }
         }
     LaunchedEffect(key1 = managedActivityResultLauncher) {

@@ -11,7 +11,8 @@ fun RegisterResponse.toDomain(): User {
             token = user.apiToken,
             isPremium = user.isPremiumUser == "1",
             rating = user.rating.toDouble(),
-            trxPoints = user.trxPoints
+            trxPoints = user.trxPoints,
+            phone = user.phone
         )
     }
 }

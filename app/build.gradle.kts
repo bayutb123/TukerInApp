@@ -18,8 +18,8 @@ android {
         applicationId = "com.tukerin.app"
         minSdk = 25
         targetSdk = 34
-        versionCode = 3
-        versionName = "1.2.0-alpha"
+        versionCode = 4
+        versionName = "1.3.0-alpha"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -29,12 +29,12 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField("String", "apiUrl", apiUrl)
-            buildConfigField("String", "pathUrl", pathUrl)
+            buildConfigField("String", "apiUrl", "\"$apiUrl\"")
+            buildConfigField("String", "pathUrl", "\"$pathUrl\"")
         }
         release {
-            buildConfigField("String", "apiUrl", apiUrl)
-            buildConfigField("String", "pathUrl", pathUrl)
+            buildConfigField("String", "apiUrl", "\"$apiUrl\"")
+            buildConfigField("String", "pathUrl", "\"$pathUrl\"")
             isMinifyEnabled = true
             isDebuggable = false
             proguardFiles(

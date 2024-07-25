@@ -28,6 +28,9 @@ data class User(
 	@field:SerializedName("name")
 	val name: String,
 
+	@field:SerializedName("phone")
+	val phone: String,
+
 	@field:SerializedName("rating")
 	val rating: Int,
 
