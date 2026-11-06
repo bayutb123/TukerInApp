@@ -27,7 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.bayutb123.tukerin.ui.components.input.CustomMessageField
 import com.bayutb123.tukerin.ui.components.view.ChatBubble
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
