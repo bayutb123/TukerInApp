@@ -22,9 +22,6 @@ data class User(
 	@field:SerializedName("verified_at")
 	val verifiedAt: Any,
 
-	@field:SerializedName("api_token")
-	val apiToken: String,
-
 	@field:SerializedName("name")
 	val name: String,
 

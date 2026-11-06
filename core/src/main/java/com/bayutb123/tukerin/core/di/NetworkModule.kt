@@ -2,6 +2,8 @@ package com.bayutb123.tukerin.core.di
 
 import android.content.Context
 import com.bayutb123.tukerin.core.BuildConfig
+import com.bayutb123.tukerin.core.okhttp.TokenProvider
+import com.bayutb123.tukerin.core.okhttp.interceptor.AuthInterceptor
 import com.bayutb123.tukerin.core.okhttp.interceptor.ContentTypeInterceptor
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -23,9 +25,12 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(context: Context) : OkHttpClient {
+    fun provideOkHttpClient(context: Context, tokenProvider: TokenProvider) : OkHttpClient {
+        val authInterceptor = AuthInterceptor(tokenProvider)
         val interceptor = HttpLoggingInterceptor()
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+        // keep the user's token out of logcat
+        interceptor.redactHeader("Authorization")
         return if (BuildConfig.DEBUG) {
             OkHttpClient.Builder()
                 .cache(
@@ -37,6 +42,7 @@ object NetworkModule {
                 .callTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .addInterceptor(ContentTypeInterceptor())
+                .addInterceptor(authInterceptor)
                 .addInterceptor(interceptor)
                 .build()
         } else OkHttpClient.Builder()
@@ -47,6 +53,7 @@ object NetworkModule {
                 )
             )
             .addInterceptor(ContentTypeInterceptor())
+            .addInterceptor(authInterceptor)
             .build()
     }
 

@@ -1,7 +1,6 @@
 package com.bayutb123.tukerin.data.source.remote.response.home.posts
 
 data class Author(
-    val api_token: String,
     val created_at: String,
     val email: String,
     val id: Int,

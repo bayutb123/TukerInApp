@@ -17,7 +17,13 @@ class DataStoreRepositoryImpl @Inject constructor(
 ) : DataStoreRepository {
     override suspend fun saveUser(user: User) {
         dataStore.edit { preferences ->
-            preferences[TOKEN] = user.token
+            // Only login and register return the token. Other responses
+            // (e.g. the profile) don't, and must not erase the saved one.
+            // Gson can leave `token` null despite its type, hence the `?`.
+            val token: String? = user.token
+            if (!token.isNullOrBlank()) {
+                preferences[TOKEN] = token
+            }
             preferences[ID] = user.id
             preferences[NAME] = user.name
             preferences[EMAIL] = user.email
