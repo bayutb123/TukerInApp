@@ -1,24 +1,25 @@
 package com.bayutb123.tukerin.data.source.remote.repository
 
-import android.util.Log
-import com.bayutb123.tukerin.data.DataMapper
-import com.bayutb123.tukerin.data.NetworkResult
-import com.bayutb123.tukerin.data.source.remote.ApiService
+import com.bayutb123.tukerin.core.data.NetworkResult
+import com.bayutb123.tukerin.data.source.remote.response.auth.login.toDomain
+import com.bayutb123.tukerin.data.source.remote.response.auth.register.toDomain
+import com.bayutb123.tukerin.data.source.remote.service.AuthService
 import com.bayutb123.tukerin.domain.model.User
 import com.bayutb123.tukerin.domain.repository.AuthRepository
+import com.bayutb123.tukerin.ui.utils.toPhoneNumber
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
-    private val apiService: ApiService
+    private val authService: AuthService
 ) : AuthRepository {
     override suspend fun login(email: String, password: String): NetworkResult<User> {
         return try {
-            val result = apiService.login(email, password)
+            val result = authService.login(email, password)
             if (result.isSuccessful) {
                 when (result.code()) {
                     200 -> {
                         val body = result.body()
-                        NetworkResult.Success(DataMapper.mapLoginUserToUser(body?.user!!))
+                        NetworkResult.Success(body?.toDomain()!!)
                     }
                     else -> {
                         NetworkResult.Error(result.code())
@@ -28,19 +29,18 @@ class AuthRepositoryImpl @Inject constructor(
                 NetworkResult.Error(result.code())
             }
         } catch (e: Exception) {
-            Log.e("AuthRepositoryImpl", "login: ${e.message}", e)
             NetworkResult.Error(e.hashCode())
         }
     }
 
-    override suspend fun register(name: String, email: String, password: String): NetworkResult<User> {
+    override suspend fun register(name: String, email: String, password: String, phone: String): NetworkResult<User> {
         return try {
-            val result = apiService.register(name, email, password)
+            val result = authService.register(name, email, password, phone.toPhoneNumber())
             if (result.isSuccessful) {
                 when (result.code()) {
                     201 -> {
-                        // success
-                        NetworkResult.Success(DataMapper.mapRegisterUserToUser(result.body()?.user!!))
+                        val body = result.body()
+                        NetworkResult.Success(body?.toDomain()!!)
                     }
                     else -> {
                         NetworkResult.Error(result.code())
@@ -50,7 +50,6 @@ class AuthRepositoryImpl @Inject constructor(
                 NetworkResult.Error(result.code())
             }
         } catch (e: Exception) {
-            Log.e("AuthRepositoryImpl", "register: ${e.message}", e)
             NetworkResult.Error(e.hashCode())
         }
     }

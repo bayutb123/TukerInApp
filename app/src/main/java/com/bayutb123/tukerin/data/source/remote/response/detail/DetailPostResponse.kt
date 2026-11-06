@@ -20,7 +20,7 @@ data class DetailPost(
 	val images: List<String>,
 
 	@field:SerializedName("latitude")
-	val latitude: String,
+	val latitude: Double,
 
 	@field:SerializedName("created_at")
 	val createdAt: String,
@@ -47,10 +47,14 @@ data class DetailPost(
 	val userId: Int,
 
 	@field:SerializedName("price")
-	val price: Int,
+	val price: Long,
 
 	@field:SerializedName("author_email")
 	val authorEmail: String,
+
+	// null when the post's author has no phone number
+	@field:SerializedName("author_phone")
+	val authorPhone: String?,
 
 	@field:SerializedName("id")
 	val id: Int,
@@ -59,8 +63,14 @@ data class DetailPost(
 	val imageId: Int,
 
 	@field:SerializedName("status")
-	val status: Int,
+	val status: String,
+
+	@field:SerializedName("is_published")
+	val isPublished: Int,
 
 	@field:SerializedName("longitude")
-	val longitude: String
+	val longitude: Double,
+
+	@field:SerializedName("can_trade_in")
+	val canTradeIn: Int
 )

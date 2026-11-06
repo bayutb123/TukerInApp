@@ -13,7 +13,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -34,7 +34,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTextField(
     modifier: Modifier = Modifier,
@@ -43,39 +42,61 @@ fun CustomTextField(
     trailingIcon: @Composable (() -> Unit)? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
     singleLine: Boolean = true,
+    minLines: Int = 1,
     maxLines: Int = 1,
     containerColor: Color = MaterialTheme.colorScheme.primaryContainer,
     contentColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
     placeholder: String?,
     isHidden: Boolean = false,
     isError: Boolean = false,
-    errorMsg: String = ""
+    errorMsg: String = "",
+    isCurrency: Boolean = false,
+    isEnabled: Boolean = true,
+    isHasDefault: Boolean = false,
+    defaultText: String = "",
+    readOnly: Boolean = false,
+    readOnlyText: String? = null,
+    onFocus: () -> Unit = {}
 ) {
     var text by remember {
-        mutableStateOf("")
+        mutableStateOf(if (isHasDefault) defaultText else "")
     }
     Column {
         TextField(
-            modifier = modifier.fillMaxWidth(),
-            value = text,
+            modifier = modifier
+                .fillMaxWidth()
+                .onFocusEvent {
+                    if (it.hasFocus || it.isFocused) {
+                        onFocus()
+                    }
+                },
+            value = if (readOnly) readOnlyText ?: text else text,
             onValueChange = {
-                text = it
+                text = if (isCurrency) {
+                    it.replace(Regex("[^0-9]"), "")
+                } else {
+                    it
+                }
                 onTextChanged(it)
             },
             isError = isError,
             singleLine = singleLine,
+            minLines = minLines,
             maxLines = maxLines,
-            shape = RoundedCornerShape(MaterialTheme.shapes.large.topStart),
+            shape = RoundedCornerShape(MaterialTheme.shapes.medium.topStart),
             colors = TextFieldDefaults.colors(
                 focusedTextColor = contentColor,
                 unfocusedTextColor = contentColor,
                 focusedContainerColor = containerColor,
                 unfocusedContainerColor = containerColor,
-                disabledContainerColor = containerColor,
+                disabledContainerColor = Color.Gray,
                 cursorColor = contentColor,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
-                errorIndicatorColor = Color.Transparent
+                errorIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+                disabledTextColor = Color.White,
+                disabledPlaceholderColor = Color.White
             ),
             leadingIcon = leadingIcon,
             trailingIcon = trailingIcon,
@@ -89,7 +110,9 @@ fun CustomTextField(
                 PasswordVisualTransformation()
             } else {
                 VisualTransformation.None
-            }
+            },
+            enabled = isEnabled,
+            readOnly = readOnly
         )
         AnimatedVisibility(visible = isError && text.isNotEmpty()) {
             Text(

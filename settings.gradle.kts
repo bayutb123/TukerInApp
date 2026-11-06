@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "TukerIn"
 include(":app")
+include(":core")

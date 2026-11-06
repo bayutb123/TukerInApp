@@ -1,6 +1,5 @@
 package com.bayutb123.tukerin.ui.components.view
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -57,6 +56,7 @@ fun SellerCard(
                 )
                 Text(
                     text = sellerLocation,
+                    style = MaterialTheme.typography.bodySmall,
                     modifier = modifier.fillMaxWidth(),
                 )
             }

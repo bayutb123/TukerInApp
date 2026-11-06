@@ -1,8 +1,18 @@
 package com.bayutb123.tukerin.ui.screen.detail
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -11,9 +21,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,20 +38,35 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.bayutb123.tukerin.BuildConfig
+import com.bayutb123.tukerin.R
+import com.bayutb123.tukerin.core.utils.Currency
+import com.bayutb123.tukerin.core.utils.Date
+import com.bayutb123.tukerin.core.utils.PublishStatus
+import com.bayutb123.tukerin.core.utils.StringUtils
+import com.bayutb123.tukerin.ui.components.view.FullImageView
 import com.bayutb123.tukerin.ui.components.view.SellerCard
 import com.bayutb123.tukerin.ui.theme.TukerInTheme
-import com.bayutb123.tukerin.ui.utils.Currency
-import com.bayutb123.tukerin.ui.utils.Date
+import com.bayutb123.tukerin.ui.utils.LocationUtils
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,14 +76,21 @@ fun DetailScreen(
     onNavigationRequested: (route: String) -> Unit,
     postId: Int
 ) {
+    val context = LocalContext.current
+    var phoneNumber by remember {
+        mutableStateOf(null as String?)
+    }
     // create scrollstate
+    val scrollState = rememberScrollState()
+    val scope = rememberCoroutineScope()
 
     val viewModel = hiltViewModel<DetailViewModel>()
     val post = viewModel.post.collectAsStateWithLifecycle()
+    var isFullImageVisible by remember { mutableStateOf(false) }
+    var imageUrlForFullImage by remember { mutableStateOf("") }
 
     LaunchedEffect(key1 = postId) {
         viewModel.getPost(postId)
-
     }
     Scaffold(
         topBar = {
@@ -67,21 +104,95 @@ fun DetailScreen(
                     }
                 }
             )
+        },
+        bottomBar = {
+            BottomAppBar(actions = {
+                Row(Modifier.weight(1f)) {
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(
+                            imageVector = if (post.value?.isSaved == true) {
+                                Icons.Filled.Favorite
+                            } else {
+                                Icons.Filled.FavoriteBorder
+                            },
+                            contentDescription = "Save"
+                        )
+                    }
+                    IconButton(onClick = { /*TODO*/ }) {
+                        Icon(
+                            imageVector = Icons.Filled.Share,
+                            contentDescription = "Share"
+                        )
+                    }
+                }
+
+                Icon(
+                    painter = painterResource(id = R.drawable.whatsapp_svgrepo_com),
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    contentDescription = "Chat",
+                    modifier = Modifier
+                        .clickable {
+                            phoneNumber = StringUtils.preparePhoneNumber(post.value?.ownerPhone)
+                            if (phoneNumber == null) {
+                                // don't start a trade nobody can be contacted for
+                                Toast.makeText(
+                                    context,
+                                    "The seller hasn't added a phone number yet.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                return@clickable
+                            }
+                            scope
+                                .launch {
+                                    post.value?.let {
+                                        viewModel.updatePostPublishStatus(
+                                            it.id,
+                                            PublishStatus.TRANSACTION_PENDING
+                                        )
+                                    }
+                                }
+                                .invokeOnCompletion {
+                                    startWhatsapp(
+                                        context,
+                                        phoneNumber,
+                                        post.value?.title ?: "",
+                                        Currency.convertIntToRupiah(post.value?.price ?: 0)
+                                    )
+                                }
+                        }
+                        .padding(16.dp)
+                        .size(24.dp)
+                        .background(color = Color.Transparent, shape = RoundedCornerShape(4.dp))
+                )
+            })
         }
     ) { paddingValues ->
         Box(
             modifier = modifier
                 .padding(paddingValues = paddingValues)
-
+                .scrollable(
+                    scrollState,
+                    orientation = Orientation.Vertical
+                )
         ) {
+            AnimatedVisibility(visible = isFullImageVisible) {
+                FullImageView(modifier = Modifier.fillMaxWidth(), imageUrl = imageUrlForFullImage) {
+                    isFullImageVisible = false
+                }
+            }
             Column(
                 modifier = modifier
                     .verticalScroll(rememberScrollState())
             ) {
                 post.value.let {
                     it?.let {
-                        it.images?.let { it1 -> ImagesView(images = it1) }
-                        Date().formatStringDate(it.createdAt)
+                        it.images?.let { it1 ->
+                            ImagesView(images = it1, onClickImage = { url ->
+                                imageUrlForFullImage = url
+                                isFullImageVisible = true
+                            })
+                        }
+                        Date.formatStringDate(it.createdAt)
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -89,20 +200,31 @@ fun DetailScreen(
                         ) {
                             Text(text = it.title)
                             // price
-                            Text(
-                                text = Currency.convertIntToRupiah(it.price),
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(text = Date().formatStringDate(it.createdAt))
+                            Row(verticalAlignment = CenterVertically) {
+                                Text(
+                                    text = Currency.convertIntToRupiah(it.price),
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Spacer(modifier = Modifier.weight(1f))
+                                if (it.canTradeIn) {
+                                    Text(text = "Bisa Tukar Tambah!", modifier = Modifier.background(MaterialTheme.colorScheme.primary, shape = RoundedCornerShape(4.dp))
+                                        .padding(4.dp), color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.bodySmall)
+                                }
+                            }
+                            Text(text = Date.formatStringDate(it.createdAt))
                             Spacer(modifier = Modifier.height(8.dp))
                             SellerCard(
                                 sellerName = it.ownerName,
-                                sellerLocation = it.address,
-                                sellerImage = "https://media.licdn.com/dms/image/D5603AQEQqJu4ohbltA/profile-displayphoto-shrink_200_200/0/1679033845873?e=1705536000&v=beta&t=w4rpjT0ZRRd1eo49L3TURJGqpXXmFVH7MXlJzLseg8I"
+                                sellerLocation = LocationUtils.convertLatLongToAddress(
+                                    context,
+                                    it.latitude,
+                                    it.longitude
+                                ),
+                                sellerImage = "https://cdn-icons-png.flaticon.com/512/2919/2919906.png"
                             )
                             Spacer(modifier = Modifier.height(8.dp))
-                                Text(text = it.description)
+                            Text(text = it.description)
                         }
                     }
                 }
@@ -111,10 +233,34 @@ fun DetailScreen(
     }
 }
 
+fun startWhatsapp(
+    context: Context,
+    phoneNumber: String?,
+    title: String,
+    price: String
+) {
+    try {
+        // Make the title bold
+        val boldTitle = "*$title*"
+
+        // Construct the message
+        val formattedMessage = "Halo, saya tertarik dengan iklanmu\n$boldTitle\nHarga: $price"
+
+        val uri = Uri.parse("https://api.whatsapp.com/send?phone=$phoneNumber&text=$formattedMessage")
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = uri
+        phoneNumber.let {
+            context.startActivity(intent)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
 @Composable
 fun ImagesView(
-    modifier: Modifier = Modifier,
-    images: List<String>
+    images: List<String>,
+    onClickImage: (String) -> Unit
 ) {
     LazyRow(
         modifier = Modifier
@@ -128,7 +274,11 @@ fun ImagesView(
             AsyncImage(
                 model = imageUrl, contentDescription = index.toString(),
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.size(250.dp)
+                modifier = Modifier
+                    .size(250.dp)
+                    .clickable {
+                        onClickImage(imageUrl)
+                    }
             )
         }
     }
@@ -144,7 +294,7 @@ fun DetailScreenPreview() {
         DetailScreen(
             onBackRequested = {},
             onNavigationRequested = {},
-            postId = 4
+            postId = 4,
         )
     }
 }

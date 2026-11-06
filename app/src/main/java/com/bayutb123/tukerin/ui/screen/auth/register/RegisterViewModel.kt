@@ -2,7 +2,7 @@ package com.bayutb123.tukerin.ui.screen.auth.register
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.bayutb123.tukerin.data.NetworkResult
+import com.bayutb123.tukerin.core.data.NetworkResult
 import com.bayutb123.tukerin.domain.usecase.AuthUseCase
 import com.bayutb123.tukerin.domain.usecase.DataStoreUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,12 +24,13 @@ class RegisterViewModel @Inject constructor(
         name: String,
         email: String,
         password: String,
-        confirmPassword: String
+        confirmPassword: String,
+        phone: String
     ) {
         _state.value = RegisterState.Loading
         if (password == confirmPassword) {
             viewModelScope.launch {
-                when (val result  = authUseCase.register(name, email, password)) {
+                when (val result  = authUseCase.register(name, email, password, phone)) {
                     is NetworkResult.Success -> {
                         result.data?.let {
                             _state.value = RegisterState.Success(

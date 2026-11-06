@@ -1,6 +1,8 @@
 package com.bayutb123.tukerin.domain.usecase
 
-import com.bayutb123.tukerin.data.NetworkResult
+import android.content.Context
+import com.bayutb123.tukerin.core.data.NetworkResult
+import com.bayutb123.tukerin.data.source.remote.request.CreatePostRequest
 import com.bayutb123.tukerin.domain.model.Post
 import com.bayutb123.tukerin.domain.repository.PostRepository
 import javax.inject.Inject
@@ -15,4 +17,14 @@ class PostUseCase @Inject constructor(
     suspend fun getSuggestions(query: String, userId: Int) : NetworkResult<List<String>> = postRepository.getSuggestions(query, userId)
 
     suspend fun getPost(postId: Int) : NetworkResult<Post> = postRepository.getPost(postId)
+    suspend fun createPost(createPostRequest: CreatePostRequest, context: Context) = postRepository.createPost(createPostRequest, context)
+    suspend fun getMyPosts(userId: Int, page: Int) : NetworkResult<List<Post>> = postRepository.getMyPosts(userId, page)
+    suspend fun deletePost(postId: Int) : NetworkResult<Int> = postRepository.deletePost(postId)
+    suspend fun getActivePosts(userId: Int) : NetworkResult<List<Post>> = postRepository.getActivePosts(userId)
+    suspend fun updatePostPublishStatus(userId: Int, statusId: Int) : NetworkResult<Int> {
+        return postRepository.updatePostPublishStatus(userId, statusId)
+    }
+    suspend fun postReview(postId: Int, review: String, rating: Int) : NetworkResult<Int> {
+        return postRepository.postReview(postId, review, rating)
+    }
 }

@@ -5,13 +5,21 @@ data class Post(
     val title: String,
     val description: String,
     val address : String,
-    val price: Int,
-    val thumbnailImage : String,
+    val price: Long,
+    val thumbnailImage : String?,
     val ownerId: Int,
     val ownerName: String,
-    val active: Boolean,
+    val ownerPhone: String? = null,
+    val status: String,
+    val isPublished: Boolean,
     val premium: Boolean,
     val createdAt: String,
-    val images: List<String>? = null
+    val updatedAt: String,
+    val images: List<String>? = null,
+    val isSaved: Boolean = false,
+    val canTradeIn: Boolean = false,
+    val latitude: Double,
+    val longitude: Double,
 )
+
 

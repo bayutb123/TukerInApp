@@ -1,51 +1,67 @@
 package com.bayutb123.tukerin.data.source.remote.repository
 
-import android.util.Log
-import com.bayutb123.tukerin.data.DataMapper
-import com.bayutb123.tukerin.data.NetworkResult
-import com.bayutb123.tukerin.data.source.remote.ApiService
+import android.content.Context
+import com.bayutb123.tukerin.core.data.NetworkResult
+import com.bayutb123.tukerin.core.utils.InputConverter.convertToInt
+import com.bayutb123.tukerin.core.utils.InputConverter.removeDoubleQuotes
+import com.bayutb123.tukerin.core.utils.MediaUtils
+import com.bayutb123.tukerin.core.utils.ResponseCode
+import com.bayutb123.tukerin.data.source.remote.request.CreatePostRequest
+import com.bayutb123.tukerin.data.source.remote.request.validate
+import com.bayutb123.tukerin.data.source.remote.response.detail.toPost
+import com.bayutb123.tukerin.data.source.remote.response.home.posts.toModel
+import com.bayutb123.tukerin.data.source.remote.response.home.posts.toPostList
+import com.bayutb123.tukerin.data.source.remote.response.home.suggestions.toSuggestionsList
+import com.bayutb123.tukerin.data.source.remote.service.PostService
 import com.bayutb123.tukerin.domain.model.Post
+import com.bayutb123.tukerin.domain.model.PostCategory
+import com.bayutb123.tukerin.domain.repository.DataStoreRepository
 import com.bayutb123.tukerin.domain.repository.PostRepository
+import timber.log.Timber
 import javax.inject.Inject
 
 class PostRepositoryImpl @Inject constructor(
-    private val apiService: ApiService
+    private val postService: PostService,
+    private val dataStoreRepository: DataStoreRepository
 ) : PostRepository {
+
     override suspend fun getAllPosts(userId: Int, page: Int): NetworkResult<List<Post>> {
         return try {
-            val response = apiService.getAllPosts(userId, page)
+            val response = postService.getAllPosts(userId, page)
             if (response.isSuccessful) {
-                Log.d("PostRepositoryImpl", "getAllPosts: ${response.body()!!.posts}")
-                val result = DataMapper.mapPostResponseToPost(response.body()!!.posts)
-                NetworkResult.Success(result)
+                val posts = response.body()?.toPostList().orEmpty()
+                NetworkResult.Success(posts)
             } else {
+                Timber.d(response.code().toString())
                 NetworkResult.Error(response.code())
             }
         } catch (e: Exception) {
+            Timber.d(e.toString())
             NetworkResult.Error(e.hashCode())
         }
     }
 
     override suspend fun searchPost(query: String, userId: Int): NetworkResult<List<Post>> {
         return try {
-            val response = apiService.searchPost(query, userId)
+            val response = postService.searchPost(query, userId)
             if (response.isSuccessful) {
-                NetworkResult.Success(DataMapper.mapPostResponseToPost(response.body()!!.posts!!))
+                val posts = response.body()?.toPostList().orEmpty()
+                NetworkResult.Success(posts)
             } else {
                 NetworkResult.Error(response.code())
             }
         } catch (e: Exception) {
+            Timber.d(e.toString())
             NetworkResult.Error(e.hashCode())
         }
     }
 
     override suspend fun getSuggestions(query: String, userId: Int): NetworkResult<List<String>> {
         return try {
-            val response = apiService.getSuggestions(query, userId)
+            val response = postService.getSuggestions(query, userId)
             if (response.isSuccessful) {
-                NetworkResult.Success(response.body()!!.suggestions.map {
-                    it.title
-                })
+                val suggestions = response.body()?.toSuggestionsList().orEmpty()
+                NetworkResult.Success(suggestions)
             } else {
                 NetworkResult.Error(response.code())
             }
@@ -56,9 +72,10 @@ class PostRepositoryImpl @Inject constructor(
 
     override suspend fun getPost(postId: Int): NetworkResult<Post> {
         return try {
-            val response = apiService.getPost(postId)
+            val response = postService.getPost(postId)
             if (response.isSuccessful) {
-                NetworkResult.Success(DataMapper.mapPostDetailResponseToPost(response.body()!!.post))
+                val post = response.body()!!
+                NetworkResult.Success(post.toPost())
             } else {
                 NetworkResult.Error(response.code())
             }
@@ -67,4 +84,156 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun createPost(createPostRequest: CreatePostRequest, context: Context): NetworkResult<Int> {
+        if (!createPostRequest.validate()) {
+            return NetworkResult.Error(400)
+        }
+        val images = MediaUtils.preparePart(createPostRequest.images, context)
+
+        return try {
+            val request = postService.createPost(
+                createPostRequest.userId,
+                createPostRequest.title.removeDoubleQuotes(),
+                createPostRequest.content.removeDoubleQuotes(),
+                images,
+                createPostRequest.lat,
+                createPostRequest.long,
+                createPostRequest.price,
+                createPostRequest.type.removeDoubleQuotes(),
+                createPostRequest.canTrade.convertToInt()
+            )
+
+            if (request.isSuccessful) {
+                NetworkResult.Success(request.code())
+            } else {
+                Timber.d(request.message())
+                NetworkResult.Error(request.code())
+            }
+        } catch (e: Exception) {
+            NetworkResult.Error(999)
+        } finally {
+            MediaUtils.clearLocalCache(context)
+        }
+    }
+
+    override suspend fun getMyPosts(userId: Int, page: Int): NetworkResult<List<Post>> {
+        return try {
+            val response = postService.getMyPosts(userId, page)
+            if (response.isSuccessful) {
+                val posts = response.body()?.toPostList().orEmpty()
+                NetworkResult.Success(posts)
+            } else {
+                Timber.d(response.code().toString())
+                NetworkResult.Error(response.code())
+            }
+        } catch (e: Exception) {
+            Timber.d(e.toString())
+            NetworkResult.Error(e.hashCode())
+        }
+    }
+
+    override suspend fun getPostCategories(): NetworkResult<List<PostCategory>> {
+        return try {
+            val response = postService.getPostCategories()
+            if (response.isSuccessful) {
+                val categories = response.body()?.toModel().orEmpty()
+                NetworkResult.Success(categories)
+            } else {
+                Timber.d(response.code().toString())
+                NetworkResult.Error(response.code())
+            }
+        } catch (e: Exception) {
+            Timber.d(e.toString())
+            NetworkResult.Error(e.hashCode())
+        }
+    }
+
+    override suspend fun getPostSubCategory(categoryId: Int): NetworkResult<List<PostCategory>> {
+        return try {
+            val response = postService.getPostSubCategory(categoryId)
+            if (response.isSuccessful) {
+                val category = response.body()?.toModel().orEmpty()
+                NetworkResult.Success(category)
+            } else {
+                Timber.d(response.code().toString())
+                NetworkResult.Error(response.code())
+            }
+        } catch (e: Exception) {
+            Timber.d(e.toString())
+            NetworkResult.Error(e.hashCode())
+        }
+    }
+
+    override suspend fun deletePost(postId: Int): NetworkResult<Int> {
+        return try {
+            val response = postService.deletePost(postId)
+            if (response.isSuccessful) {
+                NetworkResult.Success(response.code())
+            } else {
+                NetworkResult.Error(response.code())
+            }
+        } catch (e: Exception) {
+            NetworkResult.Error(e.hashCode())
+        }
+    }
+
+    override suspend fun getActivePosts(userId: Int): NetworkResult<List<Post>> {
+        return try {
+            val response = postService.getActivePosts(userId)
+            if (response.isSuccessful) {
+                val post = response.body()!!
+                NetworkResult.Success(post.toPostList())
+            } else if (response.code() == ResponseCode.NO_CONTENT) {
+                Timber.d("empty")
+                NetworkResult.Success(emptyList())
+            } else {
+                NetworkResult.Error(response.code())
+            }
+        } catch (e: Exception) {
+            Timber.e(e.message)
+            NetworkResult.Error(e.hashCode())
+        }
+    }
+
+    override suspend fun updatePostPublishStatus(postId: Int, statusId: Int) : NetworkResult<Int> {
+        return try {
+            val userId = dataStoreRepository.getUserId()
+            if (userId != null) {
+                val response = postService.updatePostPublishStatus(postId, userId,  statusId)
+                if (response.isSuccessful) {
+                    NetworkResult.Success(200)
+                } else {
+                    NetworkResult.Error(response.code())
+                }
+            } else {
+                NetworkResult.Error(401)
+            }
+        } catch (e: Exception) {
+            Timber.e(e.message)
+            NetworkResult.Error(e.hashCode())
+        }
+    }
+
+    override suspend fun postReview(postId: Int, review: String, rating: Int): NetworkResult<Int> {
+        return try {
+            val userId = dataStoreRepository.getUserId()
+            if (userId != null) {
+                val response = postService.postReview(userId, postId, rating, review)
+                if (response.isSuccessful) {
+                    NetworkResult.Success(200)
+                } else {
+                    if (response.code() == ResponseCode.CONFLICT) {
+                        Timber.d("response: ${ResponseCode.CONFLICT}")
+                        NetworkResult.Success(ResponseCode.CONFLICT)
+                    }
+                    NetworkResult.Error(response.code())
+                }
+            } else {
+                NetworkResult.Error(401)
+            }
+        } catch (e: Exception) {
+            Timber.e(e.message)
+            NetworkResult.Error(e.hashCode())
+        }
+    }
 }
