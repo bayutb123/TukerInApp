@@ -52,8 +52,9 @@ data class DetailPost(
 	@field:SerializedName("author_email")
 	val authorEmail: String,
 
+	// null when the post's author has no phone number
 	@field:SerializedName("author_phone")
-	val authorPhone: String,
+	val authorPhone: String?,
 
 	@field:SerializedName("id")
 	val id: Int,
