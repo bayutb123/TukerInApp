@@ -4,6 +4,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import com.bayutb123.tukerin.data.source.local.repository.DataStoreRepositoryImpl
 import com.bayutb123.tukerin.core.okhttp.TokenProvider
+import com.bayutb123.tukerin.core.okhttp.UnauthorizedHandler
+import com.bayutb123.tukerin.data.session.SessionManager
 import com.bayutb123.tukerin.domain.repository.DataStoreRepository
 import com.bayutb123.tukerin.domain.usecase.DataStoreUseCase
 import dagger.Module
@@ -24,6 +26,12 @@ object DataStoreModule {
     @Provides
     fun provideTokenProvider(dataStoreRepository: DataStoreRepository) : TokenProvider {
         return TokenProvider { dataStoreRepository.getToken() }
+    }
+
+    /** Logs the user out when AuthInterceptor in :core sees a rejected token. */
+    @Provides
+    fun provideUnauthorizedHandler(sessionManager: SessionManager) : UnauthorizedHandler {
+        return sessionManager
     }
 
     @Provides

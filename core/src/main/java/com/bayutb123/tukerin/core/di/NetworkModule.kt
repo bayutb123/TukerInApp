@@ -3,6 +3,7 @@ package com.bayutb123.tukerin.core.di
 import android.content.Context
 import com.bayutb123.tukerin.core.BuildConfig
 import com.bayutb123.tukerin.core.okhttp.TokenProvider
+import com.bayutb123.tukerin.core.okhttp.UnauthorizedHandler
 import com.bayutb123.tukerin.core.okhttp.interceptor.AuthInterceptor
 import com.bayutb123.tukerin.core.okhttp.interceptor.ContentTypeInterceptor
 import com.google.gson.GsonBuilder
@@ -25,8 +26,12 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(context: Context, tokenProvider: TokenProvider) : OkHttpClient {
-        val authInterceptor = AuthInterceptor(tokenProvider)
+    fun provideOkHttpClient(
+        context: Context,
+        tokenProvider: TokenProvider,
+        unauthorizedHandler: UnauthorizedHandler,
+    ) : OkHttpClient {
+        val authInterceptor = AuthInterceptor(tokenProvider, unauthorizedHandler)
         val interceptor = HttpLoggingInterceptor()
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
         // keep the user's token out of logcat
