@@ -25,8 +25,9 @@ data class User(
 	@field:SerializedName("name")
 	val name: String,
 
+	// null for accounts created before phone numbers were required
 	@field:SerializedName("phone")
-	val phone: String,
+	val phone: String?,
 
 	@field:SerializedName("rating")
 	val rating: Int,

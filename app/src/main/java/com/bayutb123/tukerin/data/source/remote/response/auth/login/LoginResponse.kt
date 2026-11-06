@@ -31,8 +31,9 @@ data class LoginUser(
 	@field:SerializedName("rating")
 	val rating: Int,
 
+	// null for accounts created before phone numbers were required
 	@field:SerializedName("phone")
-	val phone: String,
+	val phone: String?,
 
 	@field:SerializedName("created_at")
 	val createdAt: String,

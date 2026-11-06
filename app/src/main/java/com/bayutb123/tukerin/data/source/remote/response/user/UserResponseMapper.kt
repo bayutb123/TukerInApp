@@ -12,6 +12,6 @@ fun UserProfileResponse.toModel() : User {
         isPremium = this.user.isPremiumUser == "1",
         rating = this.user.rating.toDouble(),
         trxPoints = this.user.trxPoints,
-        phone = this.user.phone
+        phone = this.user.phone ?: ""
     )
 }

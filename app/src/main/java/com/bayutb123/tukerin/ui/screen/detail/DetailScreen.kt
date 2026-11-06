@@ -3,6 +3,7 @@ package com.bayutb123.tukerin.ui.screen.detail
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -132,6 +133,15 @@ fun DetailScreen(
                     modifier = Modifier
                         .clickable {
                             phoneNumber = StringUtils.preparePhoneNumber(post.value?.ownerPhone)
+                            if (phoneNumber == null) {
+                                // don't start a trade nobody can be contacted for
+                                Toast.makeText(
+                                    context,
+                                    "The seller hasn't added a phone number yet.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                return@clickable
+                            }
                             scope
                                 .launch {
                                     post.value?.let {

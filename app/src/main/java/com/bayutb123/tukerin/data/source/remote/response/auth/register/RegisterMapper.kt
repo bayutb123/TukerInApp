@@ -12,7 +12,7 @@ fun RegisterResponse.toDomain(): User {
             isPremium = user.isPremiumUser == "1",
             rating = user.rating.toDouble(),
             trxPoints = user.trxPoints,
-            phone = user.phone
+            phone = user.phone ?: ""
         )
     }
 }
