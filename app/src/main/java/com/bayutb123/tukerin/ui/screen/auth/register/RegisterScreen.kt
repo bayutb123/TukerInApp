@@ -30,7 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.bayutb123.tukerin.core.utils.InputValidation
 import com.bayutb123.tukerin.ui.components.input.CustomTextField
 import com.bayutb123.tukerin.ui.components.input.FullWidthButton
