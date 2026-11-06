@@ -6,7 +6,9 @@ fun UserProfileResponse.toModel() : User {
         id = this.user.id,
         name = this.user.name,
         email = this.user.email,
-        token = this.user.apiToken,
+        // the profile response doesn't include the token; saveUser keeps the
+        // one saved at login
+        token = "",
         isPremium = this.user.isPremiumUser == "1",
         rating = this.user.rating.toDouble(),
         trxPoints = this.user.trxPoints,
